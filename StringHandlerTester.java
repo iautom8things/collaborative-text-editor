@@ -1,6 +1,9 @@
 import junit.framework.TestCase;
 
-/*
+/**
+ * TODO
+ *      - Test Concurrency of StringHandler
+ *
  *  To help understand the tests below, I will use the following formats for
  *  my comments:
  *

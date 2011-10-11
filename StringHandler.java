@@ -22,8 +22,15 @@ public class StringHandler {
      *    Queries    *
      *****************/
 
+    /**
+     *  @Requires
+     *      int writer >= 0;
+     *      int writer < _cursorIndices.length;
+     */
+
     public synchronized int getIndex ( int writer ) {
         assert(writer < _cursorIndices.length);
+        assert(writer >= 0);
 
         return _cursorIndices[writer];
     }
@@ -62,17 +69,26 @@ public class StringHandler {
         assert(index < _buffer.length());
         assert(index >= 0);
         assert(writer < _cursorIndices.length);
+        assert(writer >= 0);
 
         _cursorIndices[writer] = index;
     }
 
     /**
-     *  The cursor should end up at the end of the inserted text.  So,
-     *  _cursorIndices += str.length()
+     *  Insert text at the position of the given writer's cursor.
+     *
+     *  Insertion is performed IN FRONT OF the cursor.  In other words, the
+     *  cursor is anchored to the tight.  The cursor should end up at the
+     *  end of the inserted text.
+     *
+     *  @Requires
+     *      int writer >= 0;
+     *      int writer < _cursorIndices.length;
      */
 
     public synchronized void insert ( int writer, String str ) {
         assert(writer < _cursorIndices.length);
+        assert(writer >= 0);
 
         int index = _cursorIndices[writer],
             len = _cursorIndices.length;
