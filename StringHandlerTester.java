@@ -56,7 +56,7 @@ public class StringHandlerTester extends TestCase {
     public void testInsert ( ) {
         String a = "arg!";
         assertEquals(_sh.toString(), _initialStr);
-        assertEquals(_sh.getIndex(0), 0);    // "^\This is only a t)st"
+        assertEquals(_sh.getIndex(0), 0);    // "^\This is only a test"
         _sh.insert(0, a);                    // "arg!^|This is only a test"
         assertEquals(_sh.toString(), "arg!This is only a test");
         assertEquals(_sh.getIndex(0), a.length());
