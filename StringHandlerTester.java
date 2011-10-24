@@ -73,6 +73,10 @@ public class StringHandlerTester extends TestCase {
     }
 
     public void testInsertConcurrency ( ) {
+        // Note: I am trying to cause a race condition in this test, so that
+        // two tasks to insert text are instantiated in a given order, where
+        // the first task should take longer than the second task.  The order
+        // should still be respected.
         String longStr = "This is going to be a really really really really really really really really really really really really really really long string to try to test whether or not the second, much shorter string is able to RACE, and beat, this thread to insertion.  If it is able to beat it (where it inserts first) then, heyyyoooo!  We have a problem!!  But it shouldn't happen...even though it executes only a thousandth of a second later and only has 1 character when this has like a bajillion.  WTF?  Why are you still reading this?  Why am I still typing this?  I should have just used a much of lorim ipsum (sp?) stuff instead of this.  Good thing I'm watching Dexter.  Okay, that should be good.  I like turtles.";
         // Come to think of it, the length of the string probably doesn't help
         // lengthen the operation of the first instantiated thread, since
@@ -81,16 +85,32 @@ public class StringHandlerTester extends TestCase {
         // It would be an interesting test to see if removing the
         // synchronization keywords from the StringHandler class and see if it
         // does in fact mess up.
+        //
+        // Follow up:
+        //  The concurrency tests NEED to be expanded upon.  StringHandler
+        //  wraps StringBuffer, which is itself Thread safe!  The result of
+        //  the aforemention test of removing 'volatile/synchronized' keywords
+        //  was that this concurrency test still passed.  This was because the
+        //  StringBuffer class is already thread safe.  What hasn't been
+        //  properly tested is the _cursorIndices.  If StringHandler is NOT
+        //  thread safe, then it would be possible for the indices to be out
+        //  of sync given a race between threads.
         Thread[] threads = new Thread[2];
-        threads[0] = new Thread(new ConcurrencyInsertTester(1000, longStr+longStr+longStr+longStr, 0));
-        threads[1] = new Thread(new ConcurrencyInsertTester(1001, "?", 1));
+        threads[0] = new Thread(new ConcurrencyInsertTester(1, longStr+longStr+longStr+longStr, 0));
+        threads[1] = new Thread(new ConcurrencyInsertTester(2, "?", 1));
         for (Thread t: threads) { t.start(); }
         for (Thread t: threads) {
             try { t.join(); }
             catch ( InterruptedException e ) { out.println(e); }
         }
-        out.println(_sh.toString());
         assertEquals(_sh.toString(), longStr+longStr+longStr+longStr+"?"+_initialStr);
+    }
+
+    public void testMetaInsertConcurrency ( ) {
+        for (int i = 0; i < 2000; i++) {
+            testInsertConcurrency();
+            setUp();
+        }
     }
 
 
