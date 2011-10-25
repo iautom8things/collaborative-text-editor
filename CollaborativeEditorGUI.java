@@ -39,9 +39,9 @@ public class CollaborativeEditorGUI{
       JMenu fileMenu = new JMenu("File");
       fileMenu.add("Open");
       fileMenu.add("Save");
-      fileMenu.add("Save As...");
       fileMenu.add("Collaborate");
-      fileMenu.add("Exit");
+      fileMenu.add("Exit Collaboration");
+      fileMenu.add("Exit Application");
       result.add(fileMenu);
       return result;
     }
