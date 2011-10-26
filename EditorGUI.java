@@ -55,11 +55,9 @@ public class EditorGUI{
   }
   
   private static class ExitListener implements ActionListener{
-    
     public void actionPerformed(ActionEvent e){
       System.exit(0);
     }
-    
-  }
+  }//End ExitListener
   
-}//End CollaborativeEditorGUI class
+}//End CollaborativeEditorGUI
