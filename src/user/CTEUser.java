@@ -18,7 +18,7 @@ public class CTEUser implements User {
      * Color _cursorColor != null;
      * String IPAdress != null;
      */
-    public CTEUser(String IPAddress, String userID, Color cursorColor) {
+    public CTEUser(String IPAddress, String userID, Color cursorColor) { // Consider using Inet4Address
         _cursorPosition = 0;
         _IPAddress = IPAddress;
         _userID = userID;
@@ -28,7 +28,7 @@ public class CTEUser implements User {
     private String _IPAddress;
     private String _userID;
     private Color _cursorColor;
-    private int _cursorPosition;
+    private int _cursorPosition; // Cursor positions will never be negative. Consider using unsigned int. (This is an invariante of cursorPosition)
 
     protected String getIPAddress() {
         return _IPAddress;
