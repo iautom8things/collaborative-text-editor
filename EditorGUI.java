@@ -3,12 +3,16 @@ import java.awt.event.*;
 
 public class EditorGUI{
   
+  private JMenuBar _menuBar;
+  private JTextArea _textArea;
+  
+  //Initialize all components of the GUI and register with listeners
   public EditorGUI(){
-    //constructor
+    _menuBar = createMenuBar();
+    _textArea = createTextArea();
   }
   
   public void launch(){
-    //Create and show this application's GUI
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         createAndShow();
@@ -16,19 +20,15 @@ public class EditorGUI{
     });
   }
   
-  //Create the GUI and show it
   private void createAndShow(){
-    //Create and set up the window
     JFrame frame = new JFrame("Collaborative Text Editor");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     //Add the menubar
-    JMenuBar menuBar = createMenuBar();
-    frame.setJMenuBar(menuBar);
+    frame.setJMenuBar(_menuBar);
     
     //Add the text area
-    JTextArea textArea = new JTextArea();
-    JScrollPane scrollPane = new JScrollPane(textArea);
+    JScrollPane scrollPane = new JScrollPane(_textArea);
     frame.getContentPane().add(scrollPane);
     
     //Display the window.
@@ -51,6 +51,13 @@ public class EditorGUI{
     exitMenuItem.addActionListener(exitListener);
     fileMenu.add(exitMenuItem);
     result.add(fileMenu);
+    return result;
+  }
+  
+  //Creates and returns a JTextArea with the approriate settings
+  private JTextArea createTextArea(){
+    JTextArea result = new JTextArea();
+    result.setLineWrap(true);
     return result;
   }
   
