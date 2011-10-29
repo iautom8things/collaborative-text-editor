@@ -29,7 +29,7 @@ public class CTEUser implements User {
     private Inet4Address _IPAddress;
     private String _userID;
     private Color _cursorColor;
-    private int _cursorPosition;
+    private int _cursorPosition; // Cursor positions will never be negative. Consider using unsigned int. (This is an invariant of cursorPosition)
 
     protected Inet4Address getIPAddress() {
         return _IPAddress;
