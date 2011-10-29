@@ -5,7 +5,7 @@
 package user;
 
 import java.awt.Color;
-import java.net.InetAddress;
+import java.net.Inet4Address;
 
 /**
  *
@@ -19,19 +19,19 @@ public class CTEUser implements User {
      * Color cursorColor != null;
      * InetAddress IPAdress != null;
      */
-    public CTEUser(InetAddress IPAddress, String userID, Color cursorColor) {
+    public CTEUser(String userID, Inet4Address IPAddress, Color cursorColor) {
         _cursorPosition = 0;
         _IPAddress = IPAddress;
         _userID = userID;
         _cursorColor = cursorColor;
     }
 
-    private InetAddress _IPAddress;
+    private Inet4Address _IPAddress;
     private String _userID;
     private Color _cursorColor;
     private int _cursorPosition;
 
-    protected InetAddress getIPAddress() {
+    protected Inet4Address getIPAddress() {
         return _IPAddress;
     }
 
