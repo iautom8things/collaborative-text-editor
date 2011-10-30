@@ -67,11 +67,19 @@ public class CTEUserManager implements UserManager{
         currentUser.setPosition(cursorPosition);
     }
     
+    /*
+     * Returns the number of CTEUsers contained in this CTEUserManager
+     */
     public int getNumberOfUsers(){
         return _users.size();
     }
     
     
+    /*
+     * Returns the CTEUser with the specified userID
+     * @Requires
+     *      a CTEUser with the specified userID is contained in this CTEUserManager
+     */
     public CTEUser getUser(String userID) throws UserNotFoundException{ 
         if(_users.containsKey(userID)){
             Object user = _users.get(userID);
