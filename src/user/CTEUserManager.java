@@ -1,31 +1,31 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package user;
 
 import java.awt.Color;
 import java.util.*;
+import java.net.Inet4Address;
 
 /**
- *
- * @author Melissa
+ * A container and manager for CTEUsers.
  */
 public class CTEUserManager implements UserManager{
 
+    /*
+     * Create a new empty CTEUserManager.
+     */
     public CTEUserManager (){
         //need to be able to rapidly call functions to the user container 
         //hashmap?
-         _CTEUserList = new LinkedList<CTEUser>();    
+         _users = new HashMap();
     }
     
-    LinkedList<CTEUser> _CTEUserList; 
+    
+    HashMap _users; //Container for all CTEUsers that this manages
     
     @Override
-    public void addUser(String userID, String IPAddress) {
+    public void addUser(String userID, Inet4Address IPAddress) {
         Color cursorColor = getNextColor();
         CTEUser newUser = new CTEUser(userID, IPAddress, cursorColor);
-        _CTEUserList.add(newUser);
+         _users.put(userID, newUser);        
     }
     
     public Color getNextColor(){
