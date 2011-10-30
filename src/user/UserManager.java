@@ -4,12 +4,14 @@
  */
 package user;
 
+import java.net.Inet4Address;
+
 /**
  *
  * @author mlalford
  */
 public interface UserManager {
     
-    public void addUser(String userID, String IPAddress);
+    public void addUser(String userID, Inet4Address IPAddress);
     
 }

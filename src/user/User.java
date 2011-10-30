@@ -4,14 +4,18 @@
  */
 package user;
 
+import java.awt.Color;
+
 /**
  *
  * @author mlalford
  */
 public interface User {
 
-    String getIPAddress();
-
-    String getUserID();
+    public String getUserID();
+    
+    public Color getCursorColor();
+    
+    public int getPosition();
     
 }
