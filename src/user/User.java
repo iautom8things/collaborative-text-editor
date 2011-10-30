@@ -5,6 +5,7 @@
 package user;
 
 import java.awt.Color;
+import handler.*;
 
 /**
  *
@@ -16,6 +17,8 @@ public interface User {
     
     public Color getCursorColor();
     
-    public int getPosition();
+    public TextPosition getPosition();
+    
+    public String toString();
     
 }

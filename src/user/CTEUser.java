@@ -5,7 +5,8 @@
 package user;
 
 import java.awt.Color;
-import java.net.Inet4Address;
+import java.net.InetAddress;
+import handler.*;
 
 /**
  *
@@ -19,19 +20,19 @@ public class CTEUser implements User {
      * Color cursorColor != null;
      * InetAddress IPAdress != null;
      */
-    public CTEUser(String userID, Inet4Address IPAddress, Color cursorColor) {
-        _cursorPosition = 0;
+    public CTEUser(String userID, InetAddress IPAddress, Color cursorColor){
+        _cursorPosition = new TextPosition();
         _IPAddress = IPAddress;
         _userID = userID;
         _cursorColor = cursorColor;
     }
 
-    private Inet4Address _IPAddress;
+    private InetAddress _IPAddress;
     private String _userID;
     private Color _cursorColor;
-    private int _cursorPosition; // Cursor positions will never be negative. Consider using unsigned int. (This is an invariant of cursorPosition)
+    private TextPosition _cursorPosition; 
 
-    protected Inet4Address getIPAddress() {
+    public InetAddress getIPAddress() {
         return _IPAddress;
     }
 
@@ -39,12 +40,20 @@ public class CTEUser implements User {
         return _userID;
     }
     
-    public int getPosition() {
+    public TextPosition getPosition() {
         return _cursorPosition;
     }
+    
+    public void setPosition(int position) throws OutOfBoundsException {
+        _cursorPosition.setPosition(position);
+    }    
     
     public Color getCursorColor() {
         return _cursorColor;
     }      
     
+    public String toString(){
+        String returnString = getUserID() + "{" + getPosition().getPosition() + ", " + getCursorColor().toString() +", " + getIPAddress() + "}";
+        return returnString;
+    }
 }

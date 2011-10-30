@@ -15,7 +15,7 @@ public class StringHandler implements SharedHandler {
      *  Constructor
      */
 
-    public StringHandler ( String str , int numWriters) {
+    public StringHandler (String str , int numWriters) {
         _buffer = new StringBuffer (str);
         _cursorIndices = new int[numWriters];
     }
@@ -71,7 +71,7 @@ public class StringHandler implements SharedHandler {
      *
      */
 
-    @Override
+
     public synchronized void moveCursorTo ( int writer, int index ) {
         assert(index < _buffer.length());
         assert(index >= 0);

@@ -4,7 +4,7 @@
  */
 package user;
 
-import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /**
  *
@@ -12,6 +12,7 @@ import java.net.Inet4Address;
  */
 public interface UserManager {
     
-    public void addUser(String userID, Inet4Address IPAddress);
+    public void addUser(String userID, InetAddress IPAddress) throws Exception;
     
+    public int getNumberOfUsers();
 }
