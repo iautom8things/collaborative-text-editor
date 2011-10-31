@@ -1,5 +1,6 @@
 package test;
 
+import handler.OutOfBoundsException;
 import user.*;
 import junit.framework.TestCase;
 import java.lang.Thread;
