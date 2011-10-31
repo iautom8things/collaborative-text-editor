@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package user;
 
 import java.awt.Color;
@@ -9,8 +5,7 @@ import java.net.InetAddress;
 import handler.*;
 
 /**
- *
- * @author mlalford
+ * A User of a Collaborative Text Editor
  */
 public class CTEUser implements User {
 
@@ -32,26 +27,53 @@ public class CTEUser implements User {
     private Color _cursorColor;
     private TextPosition _cursorPosition; 
 
+    /*
+     * The InetAddress of this User.
+     */    
     public InetAddress getIPAddress() {
         return _IPAddress;
     }
 
+    /*
+     * The user ID.
+     * @Ensures
+     *      Result.length() > 0
+     */
     public String getUserID() {
         return _userID;
     }
+
     
+    /*
+     * The position of the cursor.
+     * @Ensures
+     *      Result != null
+     */    
     public TextPosition getPosition() {
         return _cursorPosition;
     }
     
-    public void setPosition(int position) throws OutOfBoundsException {
-        _cursorPosition.setPosition(position);
+    /*
+     * Set the position of this User.
+     * @Requires 
+     *      TextPosition != null
+     */    
+    public void setPosition(TextPosition position) throws OutOfBoundsException {
+        _cursorPosition = position;
     }    
     
+    /*
+     * The cursor color.
+     * @Ensures
+     *      Result != null
+     */    
     public Color getCursorColor() {
         return _cursorColor;
     }      
     
+    /*
+     * A String representation of this User.
+     */    
     public String toString(){
         String returnString = getUserID() + "{" + getPosition().getPosition() + ", " + getCursorColor().toString() +", " + getIPAddress() + "}";
         return returnString;

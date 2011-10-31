@@ -57,12 +57,10 @@ public class CTEUserManager implements UserManager{
      * Set the position of the user with the userID to the given cursorPosition
      * @Requires
      *      CTEUser with userID is contained in this CTEUserManager
-     *      cursorPosition < TextPosition.MAXPOSITION
-     *      cursorPosition > TextPosition.MINPOSITION
      * @Ensures
      *      the value of the cursor position for this user is the same as cursorPosition
      */
-    public void setCursorForUser(String userID, int cursorPosition) throws UserNotFoundException, OutOfBoundsException{
+    public void setCursorForUser(String userID, TextPosition cursorPosition) throws UserNotFoundException, OutOfBoundsException{
         CTEUser currentUser = getUser(userID);
         currentUser.setPosition(cursorPosition);
     }
