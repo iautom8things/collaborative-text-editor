@@ -8,17 +8,17 @@ import handler.*;
 /**
  * A container and manager for CTEUsers.
  */
-public class CTEUserManager implements UserManager{
+public class CTEUserManager implements UserManager {
+
+    private Map _users; //Container for all CTEUsers that this manages
 
     /*
      * Create a new empty CTEUserManager.
      */
-    public CTEUserManager (){
+    public CTEUserManager ( ) {
          _users = new HashMap();
     }
-    
-    HashMap _users; //Container for all CTEUsers that this manages
-    
+
     /*
      * Add a new user with the specified userID and IPAddress to the container
      * @Requires
@@ -28,15 +28,15 @@ public class CTEUserManager implements UserManager{
      * @Ensures
      *      user will be added
      */
-    public void addUser(String userID, InetAddress IPAddress) throws UserIDNotUniqueException{
+    public void addUser ( String userID, InetAddress IPAddress ) throws UserIDNotUniqueException {
         Color cursorColor = ColorList.getColor(this.getNumberOfUsers());
         if(_users.containsKey(userID)){
             throw new UserIDNotUniqueException(userID);
         }
         CTEUser newUser = new CTEUser(userID, IPAddress, cursorColor);
-        _users.put(userID, newUser);  
+        _users.put(userID, newUser);
     }
-    
+
     /*
      * Remove the user with the specified userID from the collection
      * @Requires
@@ -44,15 +44,15 @@ public class CTEUserManager implements UserManager{
      * @Ensures
      *      the user is not conatined in this CTEUserManager
      */
-    public void removeUser(String userID) throws UserNotFoundException{
+    public void removeUser ( String userID ) throws UserNotFoundException {
         if(_users.containsKey(userID)){
             _users.remove(userID);
         }
         else{
-          throw new UserNotFoundException(userID);  
-        }      
-    }    
-    
+          throw new UserNotFoundException(userID);
+        }
+    }
+
     /*
      * Set the position of the user with the userID to the given cursorPosition
      * @Requires
@@ -60,25 +60,22 @@ public class CTEUserManager implements UserManager{
      * @Ensures
      *      the value of the cursor position for this user is the same as cursorPosition
      */
-    public void setCursorForUser(String userID, TextPosition cursorPosition) throws UserNotFoundException, OutOfBoundsException{
+    public void setCursorForUser ( String userID, TextPosition cursorPosition ) throws UserNotFoundException, OutOfBoundsException {
         CTEUser currentUser = getUser(userID);
         currentUser.setPosition(cursorPosition);
     }
-    
+
     /*
      * Returns the number of CTEUsers contained in this CTEUserManager
      */
-    public int getNumberOfUsers(){
-        return _users.size();
-    }
-    
-    
+    public int getNumberOfUsers ( ) { return _users.size(); }
+
     /*
      * Returns the CTEUser with the specified userID
      * @Requires
      *      a CTEUser with the specified userID is contained in this CTEUserManager
      */
-    public CTEUser getUser(String userID) throws UserNotFoundException{ 
+    public CTEUser getUser ( String userID ) throws UserNotFoundException {
         if(_users.containsKey(userID)){
             Object user = _users.get(userID);
             return (CTEUser)user;

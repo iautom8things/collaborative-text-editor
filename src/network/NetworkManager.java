@@ -9,5 +9,5 @@ package network;
  * @author mlalford
  */
 public class NetworkManager {
-    
+
 }

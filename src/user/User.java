@@ -5,7 +5,7 @@ import handler.*;
 import java.net.InetAddress;
 
 /**
- * A User of a Shared Editor. 
+ * A User of a Shared Editor.
  */
 public interface User {
 
@@ -14,37 +14,37 @@ public interface User {
      * @Ensures
      *      Result.length() > 0
      */
-    public String getUserID();
-    
+    public String getUserID ( );
+
     /*
      * The cursor color.
      * @Ensures
      *      Result != null
      */
-    public Color getCursorColor();
-    
+    public Color getCursorColor ( );
+
     /*
      * The position of the cursor.
      * @Ensures
      *      Result != null
      */
-    public TextPosition getPosition();
-    
+    public TextPosition getPosition ( );
+
     /*
      * A String representation of this User.
      */
-    public String toString();
+    public String toString ( );
 
     /*
      * The InetAddress of this User.
      */
-    public InetAddress getIPAddress();
+    public InetAddress getIPAddress ( );
 
     /*
      * Set the position of this User.
-     * @Requires 
+     * @Requires
      *      TextPosition != null
      */
-    public void setPosition(TextPosition position) throws OutOfBoundsException;
-    
+    public void setPosition ( TextPosition position ) throws OutOfBoundsException;
+
 }

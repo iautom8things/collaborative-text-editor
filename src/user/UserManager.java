@@ -22,20 +22,20 @@ public interface UserManager {
      *      IPAddress != null
      * @Ensures
      *      user will be added
-     */    
-    void addUser(String userID, InetAddress IPAddress) throws UserIDNotUniqueException;
+     */
+    void addUser ( String userID, InetAddress IPAddress ) throws UserIDNotUniqueException;
 
     /*
      * Returns the number of Users contained in this UserManager
-     */    
-    int getNumberOfUsers();
+     */
+    int getNumberOfUsers ( );
 
     /*
      * Returns the User with the specified userID
      * @Requires
      *      a User with the specified userID is contained in this UserManager
-     */    
-    User getUser(String userID) throws UserNotFoundException;
+     */
+    User getUser ( String userID ) throws UserNotFoundException;
 
     /*
      * Remove the user with the specified userID from the collection
@@ -43,8 +43,8 @@ public interface UserManager {
      *      the user is contained in this UserManager
      * @Ensures
      *      the user is not conatined in this UserManager
-     */    
-    void removeUser(String userID) throws UserNotFoundException;
+     */
+    void removeUser ( String userID ) throws UserNotFoundException;
 
     /*
      * Set the position of the user with the userID to the given cursorPosition
@@ -52,7 +52,7 @@ public interface UserManager {
      *      User with userID is contained in this UserManager
      * @Ensures
      *      the value of the cursor position for this user is the same as cursorPosition
-     */    
-    void setCursorForUser(String userID, TextPosition cursorPosition) throws UserNotFoundException, OutOfBoundsException;
+     */
+    void setCursorForUser ( String userID, TextPosition cursorPosition ) throws UserNotFoundException, OutOfBoundsException;
 
 }

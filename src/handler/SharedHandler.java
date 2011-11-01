@@ -15,9 +15,9 @@ public interface SharedHandler {
      * int writer >= 0;
      * int writer < _cursorIndices.length;
      */
-    int getIndex(int writer);
+    int getIndex ( int writer );
 
-    int getLength();
+    int getLength ( );
 
     /**
      * Insert text at the position of the given writer's cursor.
@@ -30,7 +30,7 @@ public interface SharedHandler {
      * int writer >= 0;
      * int writer < _cursorIndices.length;
      */
-    void insert(int writer, String str);
+    void insert ( int writer, String str );
 
     /**
      * Move the cursor of a writer to a new index.
@@ -45,10 +45,10 @@ public interface SharedHandler {
      * _cursorIndices[writer] == index;
      *
      */
-    void moveCursorTo(int writer, int index);
+    void moveCursorTo ( int writer, int index );
 
-    int numWriters();
+    int numWriters ( );
 
-    String toString();
-    
+    String toString ( );
+
 }
