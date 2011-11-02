@@ -10,7 +10,7 @@ import handler.*;
  */
 public class CTEUserManager implements UserManager {
 
-    public Map _users; //Container for all CTEUsers that this manages
+    private Map _users; //Container for all CTEUsers that this manages
 
     /*
      * Create the CTEUserManager.
