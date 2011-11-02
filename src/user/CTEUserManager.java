@@ -10,13 +10,22 @@ import handler.*;
  */
 public class CTEUserManager implements UserManager {
 
-    private Map _users; //Container for all CTEUsers that this manages
+    private static CTEUserManager _CTEUserManager;
+    private static Map _users; //Container for all CTEUsers that this manages
 
     /*
-     * Create a new empty CTEUserManager.
+     * Create the CTEUserManager.
      */
-    public CTEUserManager ( ) {
+    private CTEUserManager ( ) {
          _users = new HashMap();
+    }
+
+    /*
+     * Get the Single(ton) Instance of the CTEUserManager
+     */
+    public static CTEUserManager getInstance ( ) {
+        if (_CTEUserManager == null) { _CTEUserManager = new CTEUserManager(); }
+        return _CTEUserManager;
     }
 
     /*
