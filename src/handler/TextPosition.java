@@ -10,12 +10,25 @@ public class TextPosition {
     public final static int MAXPOSITION = Integer.MAX_VALUE; //The maximum position possible
 
     /*
-     * Create a new TextPosition
+     * Create a new TextPosition with position at the origin ( _position = 0 )
      * @Ensures:
      * _position == 0;
      */
     public TextPosition ( ) { _position = 0; }
 
+    /*
+     * Create a new TextPosition with initial position not at origin.
+     * @Requires:
+     *      initialPosition >= MINPOSITION
+     *      initialPosition <= MAXPOSITION
+     * @Ensures:
+     *      _position == initialPosition
+     */
+    public TextPosition ( int initialPosition ) throws OutOfBoundsException {
+        if (initialPosition < MINPOSITION) { throw new OutOfBoundsException("TextPosition cannot be negative."); }
+
+        _position = initialPosition;
+    }
     /*
      * Increment the position by 1
      * @Requires:
