@@ -64,5 +64,5 @@ public class TextPosition {
      */
     public int getPosition( ) { return _position; }
 
-    public boolean equals( TextPosition tp ) { return _position == tp.position(); }
+    public boolean equals( TextPosition tp ) { return _position == tp.getPosition(); }
 }
