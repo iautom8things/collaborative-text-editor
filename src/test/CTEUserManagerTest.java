@@ -19,7 +19,7 @@ public class CTEUserManagerTest extends TestCase {
     }
 
     protected void setUp ( ) {
-        _userManager = CTEUserManager.getInstance();
+        _userManager = new CTEUserManager();
     }
 
     public void testUser ( ) {
@@ -57,7 +57,7 @@ public class CTEUserManagerTest extends TestCase {
 
     public void testCTEUserManager ( ) {
         try {
-            CTEUserManager _manager = CTEUserManager.getInstance();
+            CTEUserManager _manager = new CTEUserManager();
             assertEquals(_manager.getNumberOfUsers(), 0);
             _manager.addUser("mlbrinle", InetAddress.getLocalHost());
             assertEquals(_manager.getNumberOfUsers(), 1);
@@ -77,7 +77,7 @@ public class CTEUserManagerTest extends TestCase {
 
         public void testCTEUserManagerColors ( ) {
         try {
-            CTEUserManager _manager = CTEUserManager.getInstance();
+            CTEUserManager _manager = new CTEUserManager();
             String baseName = "user";
             int i = 1;
             while(i<15){
