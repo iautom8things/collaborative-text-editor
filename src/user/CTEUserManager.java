@@ -71,6 +71,7 @@ public class CTEUserManager implements UserManager {
      */
     public synchronized int getNumberOfUsers ( ) { return _users.size(); }
 
+    public synchronized boolean contains ( String name ) { return _users.containsKey(name); }
     /*
      * Returns the CTEUser with the specified userID
      * @Requires
