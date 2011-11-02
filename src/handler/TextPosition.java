@@ -79,7 +79,7 @@ public class TextPosition implements Comparable {
      */
     public int getPosition( ) { return _position; }
 
-    public boolean equals( TextPosition tp ) { return _position == tp.getPosition(); }
+    public boolean equals ( TextPosition tp ) { return _position == tp.getPosition(); }
 
     /*
      * Compare this TextPosition with another TextPosition.
@@ -96,4 +96,9 @@ public class TextPosition implements Comparable {
         int otherPosition = ((TextPosition) other).getPosition();
         return _position - otherPosition;
     }
+
+    /*
+     * Determine if this TextPosition is beyond another TextPosition.
+     */
+    public boolean isBeyond (TextPosition other ) { return this.compareTo(other) > 0; }
 }
