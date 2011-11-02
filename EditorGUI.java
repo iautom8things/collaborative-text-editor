@@ -3,13 +3,7 @@ import java.awt.event.*;
 
 public class EditorGUI{
   
-  private JMenuBar _menuBar;
-  private JTextArea _textArea;
-  
-  //Initialize all components of the GUI and register with listeners
   public EditorGUI(){
-    _menuBar = createMenuBar();
-    _textArea = createTextArea();
   }
   
   public void launch(){
@@ -25,10 +19,12 @@ public class EditorGUI{
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     //Add the menubar
-    frame.setJMenuBar(_menuBar);
+    frame.setJMenuBar(createMenuBar());
     
     //Add the text area
-    JScrollPane scrollPane = new JScrollPane(_textArea);
+    JTextPane textPane = new JTextPane();
+    JScrollPane scrollPane = new JScrollPane(textPane);
+    textPane.addKeyListener(new KeystrokeListener());
     frame.getContentPane().add(scrollPane);
     
     //Display the window.
@@ -38,33 +34,66 @@ public class EditorGUI{
   }
   
   //Creates and returns a JMenuBar with the appropriate JMenu items
-  private static JMenuBar createMenuBar(){
+  private JMenuBar createMenuBar(){
     JMenuBar result = new JMenuBar();
     JMenu fileMenu = new JMenu("File");
-    fileMenu.add("Open");
-    fileMenu.add("Save");
-    fileMenu.add("Save As...");
-    fileMenu.add("Collaborate");
-    fileMenu.add("Exit Collaboration");
-    JMenuItem exitMenuItem = new JMenuItem("Exit Application");
-    ExitListener exitListener = new ExitListener();
-    exitMenuItem.addActionListener(exitListener);
-    fileMenu.add(exitMenuItem);
+    
+    //Create menu items
+    JMenuItem open = new JMenuItem("Open");
+    JMenuItem save = new JMenuItem("Save");
+    JMenuItem saveAs = new JMenuItem("Save As...");
+    JMenuItem collab = new JMenuItem("Collaborate");
+    JMenuItem exitCollab = new JMenuItem("Exit Collaboration");
+    JMenuItem exitApp = new JMenuItem("Exit Application");
+    
+    //Add menu items to JMenu
+    fileMenu.add(open);
+    fileMenu.add(save);
+    fileMenu.add(saveAs);
+    fileMenu.add(collab);
+    fileMenu.add(exitCollab);
+    fileMenu.add(exitApp);
+    
+    //Register menu items with listeners
+    open.addActionListener(new OpenListener());
+    exitApp.addActionListener(new ExitListener());
+    
     result.add(fileMenu);
     return result;
   }
   
-  //Creates and returns a JTextArea with the approriate settings
-  private JTextArea createTextArea(){
-    JTextArea result = new JTextArea();
-    result.setLineWrap(true);
-    return result;
+  /*************************************
+   * Listeners for specific JMenuItems *
+   *************************************/
+  
+  //Display the dialog to open a file
+  private class OpenListener implements ActionListener{
+    public void actionPerformed(ActionEvent e){
+      System.out.println("Display the open file dialog.");
+    }
   }
   
-  private static class ExitListener implements ActionListener{
+  //Exit the application
+  private class ExitListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
       System.exit(0);
     }
-  }//End ExitListener
+  }
+  
+  /**************************************/
+  
+  private class KeystrokeListener implements KeyListener{
+    public void keyPressed(KeyEvent e){
+      //System.out.println("Key pressed.");
+    }
+    
+    public void keyReleased(KeyEvent e){
+      //System.out.println("Key released.");
+    }
+    
+    public void keyTyped(KeyEvent e){
+      System.out.println("Key typed: " + e.getKeyChar() + "(" + e.getKeyCode() + ")");
+    }
+  }//End KeystrokeListener
   
 }//End CollaborativeEditorGUI
