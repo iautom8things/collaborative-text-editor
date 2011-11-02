@@ -1,9 +1,11 @@
 package handler;
+import java.lang.Comparable;
+import java.lang.ClassCastException;
 
 /**
  * A position in a document.
  */
-public class TextPosition {
+public class TextPosition implements Comparable {
 
     int _position; //The position where this is at
     public final static int MINPOSITION = 0; //The minimum position possible
@@ -78,4 +80,20 @@ public class TextPosition {
     public int getPosition( ) { return _position; }
 
     public boolean equals( TextPosition tp ) { return _position == tp.getPosition(); }
+
+    /*
+     * Compare this TextPosition with another TextPosition.
+     * @Requires:
+     *      other instanceof TextPosition
+     * @Ensures:
+     *      returns a negative number if this._position < other.getPosition()
+     *      returns 0 if this._position == other.getPosition()
+     *      return a positive number if this._position > other.getPosition()
+     */
+    @Override
+    public int compareTo ( Object other ) {
+        if (!(other instanceof TextPosition)) { throw new ClassCastException("Can only compare to another TextPosition."); }
+        int otherPosition = ((TextPosition) other).getPosition();
+        return _position - otherPosition;
+    }
 }
