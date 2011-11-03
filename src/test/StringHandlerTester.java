@@ -1,3 +1,6 @@
+package test;
+
+import handler.StringHandler;
 import junit.framework.TestCase;
 import java.lang.Thread;
 import java.lang.Runnable;

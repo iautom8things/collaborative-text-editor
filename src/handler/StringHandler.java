@@ -1,4 +1,6 @@
-public class StringHandler {
+package handler;
+
+public class StringHandler implements SharedHandler {
 
     /**
      *  Invariants:
@@ -13,7 +15,7 @@ public class StringHandler {
      *  Constructor
      */
 
-    public StringHandler ( String str , int numWriters) {
+    public StringHandler (String str , int numWriters) {
         _buffer = new StringBuffer (str);
         _cursorIndices = new int[numWriters];
     }
@@ -28,6 +30,7 @@ public class StringHandler {
      *      int writer < _cursorIndices.length;
      */
 
+    @Override
     public synchronized int getIndex ( int writer ) {
         assert(writer < _cursorIndices.length);
         assert(writer >= 0);
@@ -35,14 +38,17 @@ public class StringHandler {
         return _cursorIndices[writer];
     }
 
+    @Override
     public synchronized int getLength ( ) {
         return _buffer.length();
     }
 
+    @Override
     public synchronized String toString ( ) {
         return _buffer.toString();
     }
 
+    @Override
     public int numWriters ( ) {
         return _cursorIndices.length;
     }
@@ -65,6 +71,7 @@ public class StringHandler {
      *
      */
 
+
     public synchronized void moveCursorTo ( int writer, int index ) {
         assert(index < _buffer.length());
         assert(index >= 0);
@@ -86,6 +93,7 @@ public class StringHandler {
      *      int writer < _cursorIndices.length;
      */
 
+    @Override
     public synchronized void insert ( int writer, String str ) {
         assert(writer < _cursorIndices.length);
         assert(writer >= 0);
