@@ -27,8 +27,20 @@ public class TextPositionTester extends TestCase {
 
     public void testIncrement ( ) {
         try {
-            _textPosition.setPosition(_textPosition.MAXPOSITION);
+            _textPosition.setPosition(TextPosition.MAXPOSITION);
             _textPosition.increment();
+        }
+        catch (OutOfBoundsException oobe) {
+            out.println(oobe.getMessage());
+        }
+    }
+
+    public void testIncrementBy ( ) {
+        try {
+            TextPosition _textPosition10 = new TextPosition(10);
+            TextPosition _textPosition20 = new TextPosition(20);
+            _textPosition10.incrementBy(10);
+            assertEquals(_textPosition10, _textPosition20);
         }
         catch (OutOfBoundsException oobe) {
             out.println(oobe.getMessage());
@@ -37,7 +49,7 @@ public class TextPositionTester extends TestCase {
 
     public void testDecrement ( ) {
         try {
-            _textPosition.setPosition(_textPosition.MINPOSITION);
+            _textPosition.setPosition(TextPosition.MINPOSITION);
             _textPosition.decrement();
         }
         catch (OutOfBoundsException oobe) {
@@ -45,6 +57,17 @@ public class TextPositionTester extends TestCase {
         }
     }
 
+    public void testDecrementBy ( ) {
+        try {
+            TextPosition _textPosition1000 = new TextPosition(1000);
+            TextPosition _textPosition10 = new TextPosition(10);
+            _textPosition1000.decrementBy(990);
+            assertEquals(_textPosition1000, _textPosition10);
+        }
+        catch (OutOfBoundsException oobe) {
+            out.println(oobe.getMessage());
+        }
+    }
     public void testEquals ( ) {
         try {
             TextPosition _textPositionA = new TextPosition();

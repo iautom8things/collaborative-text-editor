@@ -41,9 +41,22 @@ public class TextPosition implements Comparable {
     public void increment ( ) throws OutOfBoundsException {
         if (_position == MAXPOSITION) { throw new OutOfBoundsException("Maximum position reached. Can not increment position."); }
 
-        _position ++;
+        _position = _position + 1;
     }
 
+    /*
+     * Increment the position by some amount
+     * @Requires:
+     *      amount <= MAXPOSITION - _position
+     * @Ensures:
+     *      new._position = old._position + amount
+     */
+    public void incrementBy ( int amount ) throws OutOfBoundsException {
+        int maxIncrementSize = MAXPOSITION - _position;
+        if (amount > MAXPOSITION) { throw new OutOfBoundsException("Maximum position reached. Can not increment position."); }
+
+        _position = _position + amount;
+    }
     /*
      * Decrement the position by 1
      * @Requires:
@@ -54,9 +67,21 @@ public class TextPosition implements Comparable {
     public void decrement( ) throws OutOfBoundsException {
         if (_position == MINPOSITION) { throw new OutOfBoundsException("Minimum position reached. Can not decrement position."); }
 
-        _position --;
+        _position = _position - 1;
     }
 
+    /*
+     * Decrement the position by some amount
+     * @Requires:
+     *      _position >= amount
+     * @Ensures:
+     *      new._position = old._position - amount
+     */
+    public void decrementBy ( int amount ) throws OutOfBoundsException {
+        if (amount > _position) { throw new OutOfBoundsException("Minimum position reached. Can not decrement position."); }
+
+        _position = _position - amount;
+    }
     /*
      * Set the position to the specified position.
      * @Requires:
@@ -79,7 +104,21 @@ public class TextPosition implements Comparable {
      */
     public int getPosition( ) { return _position; }
 
-    public boolean equals ( TextPosition tp ) { return _position == tp.getPosition(); }
+    @Override
+    public boolean equals ( Object other ) {
+        if (other == null) { return false; }
+        if (other == this) { return true; }
+        if (other.getClass() != this.getClass()) { return false; }
+
+        TextPosition otherTP = (TextPosition) other;
+        return _position == otherTP.getPosition();
+    }
+
+    @Override
+    public int hashCode ( ) {
+        String result = "" + _position;
+        return result.hashCode();
+    }
 
     /*
      * Compare this TextPosition with another TextPosition.
