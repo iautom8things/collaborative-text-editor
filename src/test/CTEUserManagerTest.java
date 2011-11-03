@@ -117,4 +117,34 @@ public class CTEUserManagerTest extends TestCase {
             out.println(e.getMessage());
         }
     }
+
+    public void testUpdateBetween ( ) {
+        try {
+            _userManager.addUser("manuel", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("manuel", new TextPosition(21));
+            _userManager.addUser("pedro", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("pedro", new TextPosition(22));
+            _userManager.addUser("bonehead", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("bonehead", new TextPosition(23));
+            _userManager.addUser("frank", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("frank", new TextPosition(41));
+            _userManager.addUser("foo", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("foo", new TextPosition(42));
+            _userManager.addUser("bar", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("bar", new TextPosition(43));
+            TextPosition front = new TextPosition(22);
+            TextPosition back = new TextPosition(42);
+            _userManager.updateBetween(front, back);
+            assertEquals(_userManager.getUser("manuel").getPosition(), new TextPosition(21));
+            assertEquals(_userManager.getUser("pedro").getPosition(), new TextPosition(22));
+            assertEquals(_userManager.getUser("bonehead").getPosition(), new TextPosition(22));
+            assertEquals(_userManager.getUser("frank").getPosition(), new TextPosition(22));
+            assertEquals(_userManager.getUser("foo").getPosition(), new TextPosition(22));
+            assertEquals(_userManager.getUser("bar").getPosition(), new TextPosition(43));
+        }
+        catch (Exception e) {
+            out.println("Exception caught:");
+            out.println(e.getMessage());
+        }
+    }
 }

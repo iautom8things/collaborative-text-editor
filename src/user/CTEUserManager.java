@@ -103,4 +103,13 @@ public class CTEUserManager implements UserManager {
             }
         }
     }
+
+    public synchronized void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
+        for (User user : _users.values()) {
+            TextPosition tp = user.getPosition();
+            if (tp.isBeyond(front) && !tp.isBeyond(back)) {
+                this.setCursorForUser(user.getUserID(), front);
+            }
+        }
+    }
 }
