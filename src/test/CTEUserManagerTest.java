@@ -1,5 +1,5 @@
 package test;
-
+import handler.*;
 import user.*;
 import junit.framework.TestCase;
 import static java.lang.System.out;
@@ -75,7 +75,7 @@ public class CTEUserManagerTest extends TestCase {
         }
     }
 
-        public void testCTEUserManagerColors ( ) {
+    public void testCTEUserManagerColors ( ) {
         try {
             CTEUserManager _manager = new CTEUserManager();
             String baseName = "user";
@@ -92,6 +92,26 @@ public class CTEUserManagerTest extends TestCase {
                 k--;
             }
          }
+        catch (Exception e) {
+            out.println("Exception caught:");
+            out.println(e.getMessage());
+        }
+    }
+
+    public void testUpdateBeyond ( ) {
+        try {
+            _userManager.addUser("frank", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("frank", new TextPosition(41));
+            _userManager.addUser("foo", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("foo", new TextPosition(42));
+            _userManager.addUser("bar", InetAddress.getLocalHost());
+            _userManager.setCursorForUser("bar", new TextPosition(43));
+            TextPosition pivot = new TextPosition(42);
+            _userManager.updateBeyond(pivot, 10);
+            assertEquals(_userManager.getUser("frank").getPosition(), new TextPosition(41));
+            assertEquals(_userManager.getUser("foo").getPosition(), new TextPosition(42));
+            assertEquals(_userManager.getUser("bar").getPosition(), new TextPosition(53));
+        }
         catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());

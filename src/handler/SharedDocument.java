@@ -48,9 +48,6 @@ public class SharedDocument implements Document {
 
     }
 
-    public synchronized void updatePositionsBeyond ( TextPosition pivot, int amount) {
-
-    }
     public synchronized void moveCursorTo ( User writer, TextPosition toPos ) throws OutOfBoundsException {
 
     }

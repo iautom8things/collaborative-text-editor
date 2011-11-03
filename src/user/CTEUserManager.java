@@ -72,6 +72,7 @@ public class CTEUserManager implements UserManager {
     public synchronized int getNumberOfUsers ( ) { return _users.size(); }
 
     public synchronized boolean contains ( String name ) { return _users.containsKey(name); }
+
     /*
      * Returns the CTEUser with the specified userID
      * @Requires
@@ -85,4 +86,21 @@ public class CTEUserManager implements UserManager {
         else throw new UserNotFoundException(userID);
     }
 
+    /*
+     * Given a pivot point, every TextPosition of a User that is beyond the
+     * pivot will be incremented (if amount > 0) or decremented (if amount < 0)
+     * by the amount specified.
+     */
+    public synchronized void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException {
+        for (User user : _users.values()) {
+            TextPosition tp = user.getPosition();
+            if (tp.isBeyond(pivot)) {
+                if (amount < 0) {
+                    amount = Math.abs(amount);
+                    tp.decrementBy(amount);
+                }
+                else { tp.incrementBy(amount); }
+            }
+        }
+    }
 }
