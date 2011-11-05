@@ -36,11 +36,6 @@ public interface User {
     public String toString ( );
 
     /*
-     * The InetAddress of this User.
-     */
-    public InetAddress getIPAddress ( );
-
-    /*
      * Set the position of this User.
      * @Requires
      *      TextPosition != null

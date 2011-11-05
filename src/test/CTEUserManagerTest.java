@@ -48,8 +48,9 @@ public class CTEUserManagerTest extends TestCase {
             User testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
             assertEquals(testUser1.getCursorColor(), _inputColor0);
             assertEquals(testUser1.getUserID(), "");
-        } catch (Exception e) {
-            out.println(e.getMessage());
+        } catch (InvalidUserIDException e) {
+            String exceptionMessage = e.getMessage();
+            assertEquals("User ID can not be null", exceptionMessage);
         }
     }
 
