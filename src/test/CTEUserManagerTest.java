@@ -25,32 +25,32 @@ public class CTEUserManagerTest extends TestCase {
     }
 
     public void testUser() {
-        Color _inputColor0 = Color.black;
-        String _inputUserID0 = "mlbrinle";
-        InetAddress _IPAddress0 = null;
         try {
+            Color _inputColor0 = Color.black;
+            String _inputUserID0 = "mlbrinle";
+            InetAddress _IPAddress0 = null;
             _IPAddress0 = InetAddress.getLocalHost();
-        } catch (UnknownHostException uhe) {
-            out.println("Exception caught + uhe.getMessage()");
-        }
-        try {
             CTEUser testUser0 = new CTEUser(_inputUserID0, _IPAddress0, _inputColor0);
             assertEquals(testUser0.getCursorColor(), _inputColor0);
             assertEquals(testUser0.getUserID(), _inputUserID0);
             assertEquals(testUser0.getIPAddress(), InetAddress.getLocalHost());
             assertEquals(testUser0.getPosition().getPosition(), 0);
-        } catch (Exception e) {
-            out.println(e.getMessage());
-        }
 
-        //Test create user with null userID
-        try {
-            User testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
-            assertEquals(testUser1.getCursorColor(), _inputColor0);
-            assertEquals(testUser1.getUserID(), "");
-        } catch (InvalidUserIDException e) {
-            String exceptionMessage = e.getMessage();
-            assertEquals("User ID can not be null", exceptionMessage);
+            //Test create user with null userID
+            try {
+                User testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
+                assertEquals(testUser1.getCursorColor(), _inputColor0);
+                assertEquals(testUser1.getUserID(), "");
+            } catch (InvalidUserIDException e) {
+                String exceptionMessage = e.getMessage();
+                assertEquals("User ID can not be null", exceptionMessage);
+            }
+            //Test IndividualUser
+            IndividualUser indi0 = new IndividualUser("userID1", Color.black);
+            assertEquals(indi0.getUserID(), "userID1");
+            assertEquals(indi0.getCursorColor(), Color.black);
+        } catch (Exception otherExceptions) {
+            otherExceptions.printStackTrace();
         }
     }
 
