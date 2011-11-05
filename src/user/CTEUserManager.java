@@ -82,6 +82,7 @@ public class CTEUserManager implements UserManager {
             Object user = _users.get(userID);
             return (CTEUser)user;
         }
+        
         else throw new UserNotFoundException(userID);
     }
 
