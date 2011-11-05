@@ -59,14 +59,15 @@ public class CTEUserManagerTest extends TestCase {
         try {
             CTEUserManager _manager = new CTEUserManager();
             assertEquals(_manager.getNumberOfUsers(), 0);
-            _manager.addUser("mlbrinle", InetAddress.getLocalHost());
+            CTEUser mbrinle = new CTEUser("mlbrinle", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _manager.addUser(mbrinle);
             assertEquals(_manager.getNumberOfUsers(), 1);
             //_manager.addUser("mlbrinle", InetAddress.getLocalHost());
             CTEUser myUser0 = _manager.getUser("mlbrinle");
             out.println(myUser0.toString());
             out.println("myuser: " + myUser0.toString());
             //CTEUser myUser1 = _manager.getUser("mlbrinl");
-            _manager.addUser("malford", InetAddress.getLocalHost());
+            _manager.addUser(myUser0);
 
         }
         catch (Exception e ) {
@@ -82,7 +83,8 @@ public class CTEUserManagerTest extends TestCase {
             int i = 1;
             while(i<15){
                 String userName = baseName + i;
-                _manager.addUser(userName, InetAddress.getLocalHost());
+                CTEUser temp = new CTEUser(userName, InetAddress.getLocalHost(), ColorList.getColor(i));
+                _manager.addUser(temp);
                 i++;
             }
             int k = 14;
@@ -100,11 +102,14 @@ public class CTEUserManagerTest extends TestCase {
 
     public void testUpdateBeyond ( ) {
         try {
-            _userManager.addUser("frank", InetAddress.getLocalHost());
+            CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(frank);
             _userManager.setCursorForUser("frank", new TextPosition(41));
-            _userManager.addUser("foo", InetAddress.getLocalHost());
+            CTEUser foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(1));
+            _userManager.addUser(foo);
             _userManager.setCursorForUser("foo", new TextPosition(42));
-            _userManager.addUser("bar", InetAddress.getLocalHost());
+            CTEUser bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(2));
+            _userManager.addUser(bar);
             _userManager.setCursorForUser("bar", new TextPosition(43));
             TextPosition pivot = new TextPosition(42);
             _userManager.updateBeyond(pivot, 10);
@@ -120,17 +125,23 @@ public class CTEUserManagerTest extends TestCase {
 
     public void testUpdateBetween ( ) {
         try {
-            _userManager.addUser("manuel", InetAddress.getLocalHost());
+            CTEUser manuel = new CTEUser("manuel", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(manuel);
             _userManager.setCursorForUser("manuel", new TextPosition(21));
-            _userManager.addUser("pedro", InetAddress.getLocalHost());
+            CTEUser pedro = new CTEUser("pedro", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(pedro);
             _userManager.setCursorForUser("pedro", new TextPosition(22));
-            _userManager.addUser("bonehead", InetAddress.getLocalHost());
+            CTEUser bonehead = new CTEUser("bonehead", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(bonehead);
             _userManager.setCursorForUser("bonehead", new TextPosition(23));
-            _userManager.addUser("frank", InetAddress.getLocalHost());
+            CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(frank);
             _userManager.setCursorForUser("frank", new TextPosition(41));
-            _userManager.addUser("foo", InetAddress.getLocalHost());
+            CTEUser foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(foo);
             _userManager.setCursorForUser("foo", new TextPosition(42));
-            _userManager.addUser("bar", InetAddress.getLocalHost());
+            CTEUser bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(0));
+            _userManager.addUser(bar);
             _userManager.setCursorForUser("bar", new TextPosition(43));
             TextPosition front = new TextPosition(22);
             TextPosition back = new TextPosition(42);

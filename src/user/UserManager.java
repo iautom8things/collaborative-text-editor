@@ -19,7 +19,7 @@ public interface UserManager {
      * @Ensures
      *      user will be added
      */
-    void addUser ( String userID, InetAddress IPAddress ) throws UserIDNotUniqueException;
+    void addUser ( User user ) throws UserIDNotUniqueException;
 
     /*
      * Returns the number of Users contained in this UserManager
@@ -32,15 +32,6 @@ public interface UserManager {
      *      a User with the specified userID is contained in this UserManager
      */
     User getUser ( String userID ) throws UserNotFoundException;
-
-    /*
-     * Remove the user with the specified userID from the collection
-     * @Requires
-     *      the user is contained in this UserManager
-     * @Ensures
-     *      the user is not conatined in this UserManager
-     */
-    void removeUser ( String userID ) throws UserNotFoundException;
 
     /*
      * Set the position of the user with the userID to the given cursorPosition
