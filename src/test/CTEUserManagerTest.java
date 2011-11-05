@@ -1,4 +1,5 @@
 package test;
+
 import handler.*;
 import user.*;
 import junit.framework.TestCase;
@@ -7,9 +8,10 @@ import java.net.*;
 import java.awt.Color;
 
 public class CTEUserManagerTest extends TestCase {
+
     private CTEUserManager _userManager;
 
-    public static void main ( String[] args ) {
+    public static void main(String[] args) {
         out.println("Begin Main");
         CTEUserManagerTest test = new CTEUserManagerTest();
         test.setUp();
@@ -18,18 +20,17 @@ public class CTEUserManagerTest extends TestCase {
         test.testCTEUserManagerColors();
     }
 
-    protected void setUp ( ) {
+    protected void setUp() {
         _userManager = new CTEUserManager();
     }
 
-    public void testUser ( ) {
+    public void testUser() {
         Color _inputColor0 = Color.black;
         String _inputUserID0 = "mlbrinle";
         InetAddress _IPAddress0 = null;
         try {
             _IPAddress0 = InetAddress.getLocalHost();
-        }
-        catch (UnknownHostException uhe) {
+        } catch (UnknownHostException uhe) {
             out.println("Exception caught + uhe.getMessage()");
         }
         try {
@@ -37,10 +38,8 @@ public class CTEUserManagerTest extends TestCase {
             assertEquals(testUser0.getCursorColor(), _inputColor0);
             assertEquals(testUser0.getUserID(), _inputUserID0);
             assertEquals(testUser0.getIPAddress(), InetAddress.getLocalHost());
-            out.println("position: " + testUser0.getPosition().getPosition());
             assertEquals(testUser0.getPosition().getPosition(), 0);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             out.println(e.getMessage());
         }
 
@@ -49,13 +48,12 @@ public class CTEUserManagerTest extends TestCase {
             User testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
             assertEquals(testUser1.getCursorColor(), _inputColor0);
             assertEquals(testUser1.getUserID(), "");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             out.println(e.getMessage());
         }
     }
 
-    public void testCTEUserManager ( ) {
+    public void testCTEUserManager() {
         try {
             CTEUserManager _manager = new CTEUserManager();
             assertEquals(_manager.getNumberOfUsers(), 0);
@@ -64,43 +62,44 @@ public class CTEUserManagerTest extends TestCase {
             assertEquals(_manager.getNumberOfUsers(), 1);
             //_manager.addUser("mlbrinle", InetAddress.getLocalHost());
             CTEUser myUser0 = _manager.getUser("mlbrinle");
-            out.println(myUser0.toString());
-            out.println("myuser: " + myUser0.toString());
-            //CTEUser myUser1 = _manager.getUser("mlbrinl");
-            _manager.addUser(myUser0);
-
-        }
-        catch (Exception e ) {
-            out.println("Exception caught:");
-            out.println(e.getMessage());
+            assertEquals(myUser0.toString(), mbrinle.toString());
+            assertEquals(myUser0, mbrinle);
+            //see if a user can be added with the same user ID as one contained
+            try {
+                _manager.addUser(myUser0);
+            } catch (InvalidUserIDException e) {
+                String exceptionMessage = e.getMessage();
+                assertEquals("User ID is not unique: mlbrinle", exceptionMessage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void testCTEUserManagerColors ( ) {
+    public void testCTEUserManagerColors() {
         try {
             CTEUserManager _manager = new CTEUserManager();
             String baseName = "user";
             int i = 1;
-            while(i<15){
+            while (i < 15) {
                 String userName = baseName + i;
                 CTEUser temp = new CTEUser(userName, InetAddress.getLocalHost(), ColorList.getColor(i));
                 _manager.addUser(temp);
                 i++;
             }
             int k = 14;
-            while (k>0) {
+            while (k > 0) {
                 String userName = baseName + k;
                 _manager.removeUser(userName);
                 k--;
             }
-         }
-        catch (Exception e) {
+        } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
         }
     }
 
-    public void testUpdateBeyond ( ) {
+    public void testUpdateBeyond() {
         try {
             CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
             _userManager.addUser(frank);
@@ -116,14 +115,13 @@ public class CTEUserManagerTest extends TestCase {
             assertEquals(_userManager.getUser("frank").getPosition(), new TextPosition(41));
             assertEquals(_userManager.getUser("foo").getPosition(), new TextPosition(42));
             assertEquals(_userManager.getUser("bar").getPosition(), new TextPosition(53));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
         }
     }
 
-    public void testUpdateBetween ( ) {
+    public void testUpdateBetween() {
         try {
             CTEUser manuel = new CTEUser("manuel", InetAddress.getLocalHost(), ColorList.getColor(0));
             _userManager.addUser(manuel);
@@ -152,8 +150,7 @@ public class CTEUserManagerTest extends TestCase {
             assertEquals(_userManager.getUser("frank").getPosition(), new TextPosition(22));
             assertEquals(_userManager.getUser("foo").getPosition(), new TextPosition(22));
             assertEquals(_userManager.getUser("bar").getPosition(), new TextPosition(43));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
         }

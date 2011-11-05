@@ -29,10 +29,10 @@ public class CTEUserManager implements UserManager {
      * @Ensures
      *      user will be added
      */
-    public synchronized void addUser ( User user ) throws UserIDNotUniqueException {
+    public synchronized void addUser ( User user ) throws InvalidUserIDException {
         Color cursorColor = ColorList.getColor(this.getNumberOfUsers());
         if(_users.containsValue(user)){
-            throw new UserIDNotUniqueException(user.getUserID());
+            throw new InvalidUserIDException(user.getUserID());
         }
         _users.put(user.getUserID(), user);
     }

@@ -19,7 +19,7 @@ public interface UserManager {
      * @Ensures
      *      user will be added
      */
-    void addUser ( User user ) throws UserIDNotUniqueException;
+    void addUser ( User user ) throws InvalidUserIDException;
 
     /*
      * Returns the number of Users contained in this UserManager
