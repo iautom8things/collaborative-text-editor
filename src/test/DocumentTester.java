@@ -56,6 +56,15 @@ public class DocumentTester extends TestCase {
         try {
             _doc.deleteText(_tp0, _tp0);
             assertEquals(_doc.toString(), _initialStr);
+            _doc.deleteText(_tp0, _tp5);
+            assertEquals(_doc.toString(), _initialStr.substring(5));
+        }
+        catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
+    }
+
+    public void testGetLastPosition ( ) {
+        try {
+            assertEquals(_doc.getLastPosition().getPosition(), _initialStr.length());
         }
         catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
     }
