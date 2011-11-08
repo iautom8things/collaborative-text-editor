@@ -2,6 +2,7 @@ package test;
 
 import handler.TextPosition;
 import handler.Document;
+import handler.OutOfBoundsException;
 import junit.framework.TestCase;
 import static java.lang.System.out;
 import java.lang.Exception;
@@ -42,14 +43,20 @@ public class DocumentTester extends TestCase {
     }
 
     public void testInsertText ( ) {
-        _doc.insertText(_tp0, _foobar);
-        assertEquals(_doc.toString(), _foobar + _initialStr);
-        _doc.insertText(_tp6, _addthis);
-        assertEquals(_doc.toString(), _foobar + _addthis + _initialStr);
+        try {
+            _doc.insertText(_tp0, _foobar);
+            assertEquals(_doc.toString(), _foobar + _initialStr);
+            _doc.insertText(_tp6, _addthis);
+            assertEquals(_doc.toString(), _foobar + _addthis + _initialStr);
+        }
+        catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
     }
 
     public void testDeleteText ( ) {
-        _doc.deleteText(_tp0, _tp0);
-        assertEquals(_doc.toString(), _initialStr);
+        try {
+            _doc.deleteText(_tp0, _tp0);
+            assertEquals(_doc.toString(), _initialStr);
+        }
+        catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
     }
 }
