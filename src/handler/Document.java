@@ -9,8 +9,7 @@ import user.*;
  */
 public class Document {
     private volatile StringBuffer _buffer;
-    private volatile UserManager _userManager;
-    private volatile TextPosition _lastPosition;
+    private volatile TextPosition _end;
 
     /*
      *  Create an empty SharedDocuemnt.
@@ -18,8 +17,7 @@ public class Document {
      */
     public Document ( ) {
         _buffer = new StringBuffer();
-        _userManager = new CTEUserManager();
-        _lastPosition = new TextPosition();
+        _end = new TextPosition();
     }
 
     /*
@@ -29,30 +27,32 @@ public class Document {
      *
      */
     public Document ( String str ) {
-        _userManager = new CTEUserManager();
         _buffer = new StringBuffer(str);
+        try { _end = new TextPosition(str.length()); }
+        catch (OutOfBoundsException oobe) { System.err.println(oobe.getMessage()); }
     }
 
     /*
      *  Return the length of the Document.
      */
-    public synchronized int getLength ( ) { return _buffer.length(); }
+    public int getLength ( ) { return _buffer.length(); }
 
+    private synchronized void updateEndPosition ( ) {
+        int size = this.getLength();
+        try { _end.setPosition(size); }
+        catch (OutOfBoundsException oobe) { System.err.println(oobe.getMessage()); }
+    }
     /*
      *  Given a writer and a string, insert the string at the writer's
      *  position then update the writer's position to be at the end of the
      *  inserted text, while also updating any other writer that was initially
      *  beyond the position of the writer.
      */
-    public synchronized void insertText ( String writer, String str ) throws OutOfBoundsException , UserNotFoundException {
-        User usr = _userManager.getUser(writer);
-        TextPosition pos = usr.getPosition();
-        int index = pos.getPosition();
-        int len = str.length();
+    public synchronized void insertText ( TextPosition pos, String text ) {
+        int offset = pos.getPosition();
 
-        _buffer.insert(index, str);
-        _userManager.updateBeyond(pos, len);
-        pos.incrementBy(len);
+        _buffer.insert(offset, text);
+        this.updateEndPosition();
     }
 
     /*
@@ -62,26 +62,12 @@ public class Document {
      *  postions beyond the back position by the size of the chunk of text
      *  removed.
      */
-    public synchronized void deleteText ( String writer, TextPosition toPos ) throws OutOfBoundsException, UserNotFoundException {
-        User usr = _userManager.getUser(writer);
-        TextPosition fromPos = usr.getPosition();
+    public synchronized void deleteText ( TextPosition from, TextPosition to) {
+        int fromIndex = from.getPosition();
+        int toIndex = to.getPosition();
 
-        if (fromPos.isBeyond(toPos)) {
-            // If fromPos is actually beyond toPos, then swap them
-            TextPosition temp = toPos;
-            toPos = fromPos;
-            fromPos = temp;
-        }
-
-        int fromIndex = fromPos.getPosition();
-        int toIndex = toPos.getPosition();
-        int range = fromIndex - toIndex;
-
-        _buffer.delete(fromIndex, toIndex);;
-        _userManager.updateBetween(fromPos, toPos);
-        _userManager.updateBeyond(toPos, range);
-        _userManager.setCursorForUser(writer, fromPos);
-
+        _buffer.delete(fromIndex, toIndex);
+        this.updateEndPosition();
     }
 
     public synchronized String toString ( ) {
