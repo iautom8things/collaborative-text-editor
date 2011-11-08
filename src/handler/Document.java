@@ -3,8 +3,7 @@ import user.*;
 
 
 /**
- * TODO Need to update everyone behind the actual writer when he/she writes/deletes!
- *      Need to ensure CTEUserManager is thread-safe
+ * The model of a Document.
  *
  * @author Manuel
  */

@@ -1,6 +1,7 @@
 package handler;
 
 /**
+ * An interface for Commands that are executed by the DocumentController.
  *
  * @author Manuel
  */

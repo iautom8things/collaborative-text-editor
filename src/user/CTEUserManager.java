@@ -13,12 +13,12 @@ public class CTEUserManager implements UserManager {
 
     private volatile ConcurrentMap<String, User> _users; //Container for all CTEUsers that this manages
 
-    /*
+    /**
      * Create the CTEUserManager.
      */
     public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, User>(); }
 
-    /*
+    /**
      * Add a new user with the specified userID and IPAddress to the container
      * @Requires
      *      userID != null
@@ -33,7 +33,7 @@ public class CTEUserManager implements UserManager {
         _users.put(user.getUserID(), user);
     }
 
-    /*
+    /**
      * Remove the user with the specified userID from the collection
      * @Requires
      *      the user is contained in this CTEUserManager
@@ -45,7 +45,7 @@ public class CTEUserManager implements UserManager {
         else { throw new UserNotFoundException(userID); }
     }
 
-    /*
+    /**
      * Set the position of the user with the userID to the given cursorPosition
      * @Requires
      *      CTEUser with userID is contained in this CTEUserManager
@@ -57,14 +57,14 @@ public class CTEUserManager implements UserManager {
         currentUser.setPosition(cursorPosition);
     }
 
-    /*
+    /**
      * Returns the number of CTEUsers contained in this CTEUserManager
      */
     public synchronized int getNumberOfUsers ( ) { return _users.size(); }
 
     public synchronized boolean contains ( String name ) { return _users.containsKey(name); }
 
-    /*
+    /**
      * Returns the CTEUser with the specified userID
      * @Requires
      *      a CTEUser with the specified userID is contained in this CTEUserManager
@@ -77,7 +77,7 @@ public class CTEUserManager implements UserManager {
         else { throw new UserNotFoundException(userID); }
     }
 
-    /*
+    /**
      * Given a pivot point, every TextPosition of a User that is beyond the
      * pivot will be incremented (if amount > 0) or decremented (if amount < 0)
      * by the amount specified.
@@ -103,7 +103,7 @@ public class CTEUserManager implements UserManager {
         }
     }
 
-    /*
+    /**
      * This is used when a selection of text is deleted. All users within the
      * selected text should be updated to the front TextPosition.
      * @Requires

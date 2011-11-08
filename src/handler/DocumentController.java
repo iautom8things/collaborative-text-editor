@@ -1,7 +1,7 @@
 package handler;
 
 /**
- *
+ * Controller for the Document Model.
  *
  * @author Manuel
  */
