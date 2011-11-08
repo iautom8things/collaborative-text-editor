@@ -42,4 +42,30 @@ public interface UserManager {
      */
     void setCursorForUser ( String userID, TextPosition cursorPosition ) throws UserNotFoundException, OutOfBoundsException;
 
+    /*
+     * Given a pivot point, every TextPosition of a User that is beyond the
+     * pivot will be incremented (if amount > 0) or decremented (if amount < 0)
+     * by the amount specified.
+     * @Requires
+     *      pivot != null
+     *      amount != null
+     *      amount != 0
+     * @Ensures
+     *      Any User whose TextPosition is beyond the pivot
+     *      will have their Position Incremented by amount if amount > 0
+     *      or Decremented by Math.abs(amount) if amount < 0.
+     */
+    void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException;
+
+    /*
+     * This is used when a selection of text is deleted. All users within the
+     * selected text should be updated to the front TextPosition.
+     * @Requires
+     *      front != null
+     *      back != null
+     * @Ensures
+     *      Any user whose TextPosition is between the two TextPositions, front and back,
+     *      will have their TextPosition updated to front.
+     */
+    void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException;
 }
