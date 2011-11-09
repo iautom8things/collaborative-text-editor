@@ -10,7 +10,7 @@ import java.net.InetAddress;
  */
 public interface UserManager {
 
-    /*
+    /**
      * Add a new user with the specified userID and IPAddress to the container
      * @Requires
      *      userID != null
@@ -21,19 +21,28 @@ public interface UserManager {
      */
     void addUser ( User user ) throws InvalidUserIDException;
 
-    /*
+    /**
+     * Remove the user with the specified userID from the collection
+     * @Requires
+     *      the user is contained in this CTEUserManager
+     * @Ensures
+     *      the user is not conatined in this CTEUserManager
+     */
+    void removeUser ( String userID ) throws UserNotFoundException;
+
+    /**
      * Returns the number of Users contained in this UserManager
      */
     int getNumberOfUsers ( );
 
-    /*
+    /**
      * Returns the User with the specified userID
      * @Requires
      *      a User with the specified userID is contained in this UserManager
      */
     User getUser ( String userID ) throws UserNotFoundException;
 
-    /*
+    /**
      * Set the position of the user with the userID to the given cursorPosition
      * @Requires
      *      User with userID is contained in this UserManager
@@ -42,7 +51,7 @@ public interface UserManager {
      */
     void setCursorForUser ( String userID, TextPosition cursorPosition ) throws UserNotFoundException, OutOfBoundsException;
 
-    /*
+    /**
      * Given a pivot point, every TextPosition of a User that is beyond the
      * pivot will be incremented (if amount > 0) or decremented (if amount < 0)
      * by the amount specified.
@@ -57,7 +66,7 @@ public interface UserManager {
      */
     void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException;
 
-    /*
+    /**
      * This is used when a selection of text is deleted. All users within the
      * selected text should be updated to the front TextPosition.
      * @Requires

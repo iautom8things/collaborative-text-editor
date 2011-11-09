@@ -8,5 +8,5 @@ import user.*;
  */
 public interface Command {
 
-    public void execute ( Document document, UserManager userManager ) throws UserNotFoundException, OutOfBoundsException;
+    public void execute ( Document document, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException;
 }

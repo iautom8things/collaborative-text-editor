@@ -18,7 +18,7 @@ public class RemoveTextCommand implements Command {
     }
 
     @Override
-    public void execute ( Document doc, UserManager userManager ) throws UserNotFoundException, OutOfBoundsException {
+    public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         User user = userManager.getUser(_userName);
         TextPosition fromPos = user.getPosition();
         TextPosition toPos = _toPos; // This is to preserve the state of the command if there's a need to swap below

@@ -16,7 +16,7 @@ public class DocumentController {
         _userManager = new CTEUserManager();
     }
 
-    public void executeCommand ( Command command ) throws UserNotFoundException, OutOfBoundsException {
+    public void executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         command.execute(_document, _userManager);
     }
 }

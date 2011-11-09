@@ -1,6 +1,12 @@
 package handler;
 import user.*;
 
+/**
+ * A command to execute Document's insert method which inserts text given a
+ * position and text to insert.
+ *
+ * @author Manuel
+ */
 public class InsertTextCommand implements Command {
 
     private String _userName;
@@ -12,7 +18,7 @@ public class InsertTextCommand implements Command {
     }
 
     @Override
-    public void execute ( Document doc, UserManager userManager ) throws UserNotFoundException, OutOfBoundsException {
+    public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         User usr = userManager.getUser(_userName);
         TextPosition pos = usr.getPosition();
         int len = _text.length();
