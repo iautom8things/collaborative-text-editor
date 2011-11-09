@@ -7,19 +7,16 @@ import user.*;
  * @author Manuel
  */
 public class Document {
+
     private volatile StringBuffer _buffer;
 
     /**
      * Create an empty SharedDocuemnt.
-     *
      */
     public Document ( ) { _buffer = new StringBuffer(); }
 
     /**
      * Create a new SharedDocument with the given string.
-     *  This will most likely be used for an offline user beginning a new
-     *  shared document.
-     *
      */
     public Document ( String str ) { _buffer = new StringBuffer(str); }
 
@@ -30,7 +27,6 @@ public class Document {
 
     /**
      * Get a TextPosition representing the end of the Document.
-     *
      */
     public synchronized TextPosition getLastPosition ( ) throws OutOfBoundsException { return new TextPosition(_buffer.length()); }
 
@@ -39,6 +35,13 @@ public class Document {
      *  position then update the writer's position to be at the end of the
      *  inserted text, while also updating any other writer that was initially
      *  beyond the position of the writer.
+     *
+     * @Requires
+     *      this.getLastPosition.isBeyond(pos)
+     *      pos != null
+     *      text != null
+     * @Ensures
+     *      new._buffer == old._buffer.subString(0,pos.getPosition()) + text + old._buffer.subString(pos.getPosition())
      */
     public synchronized void insertText ( TextPosition pos, String text ) throws OutOfBoundsException {
         TextPosition end = this.getLastPosition();
@@ -54,6 +57,14 @@ public class Document {
      *  so they all end up at the front anchor position while decrementing all
      *  postions beyond the back position by the size of the chunk of text
      *  removed.
+     *
+     * @Requires
+     *      from != null
+     *      to != null
+     *      this.getLastPosition.isBeyond(from)
+     *      this.getLastPosition.isBeyond(to)
+     * @Ensures
+     *      new._buffer == old._buffer.subString(0, from.getPosition()) + old._buffer.subString(to.getPosition())
      */
     public synchronized void deleteText ( TextPosition from, TextPosition to) throws OutOfBoundsException {
         TextPosition end = this.getLastPosition();
