@@ -18,18 +18,29 @@ import java.nio.charset.Charset;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.EditorKit;
 import javax.swing.text.DefaultEditorKit;
+import java.util.Observer;
+import java.util.Observable;
+import handler.*;
+import user.*;
 
-
-public class EditorGUI {
+public class EditorGUI implements Observer {
 
     JTextPane _textPane;
     JFrame _frame;
-    
+    DocumentController _controller;
+
     public EditorGUI ( ) {
+        _controller = new DocumentController();
+        _controller.addObserver(this);
     }
 
+    @Override
+    public void update ( Observable obs, Object obj) {
+        _textPane.setText(_controller.toString());
+        System.out.println(_controller.toString() + "\n<<<Has been updated");
+    }
     public void launch ( ) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable(){
+        javax.swing.SwingUtilities.invokeLater(new Runnable ( ) {
             public void run ( ) { createAndShow(); }
         });
     }
@@ -44,7 +55,7 @@ public class EditorGUI {
         //Add the text area
         _textPane = new JTextPane();
         JScrollPane scrollPane = new JScrollPane(_textPane);
-        // textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
+        _textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
         _textPane.addKeyListener(new KeystrokeListener());
         _frame.getContentPane().add(scrollPane);
 
@@ -112,7 +123,9 @@ public class EditorGUI {
                     MappedByteBuffer byteBuff = fChannel.map(FileChannel.MapMode.READ_ONLY, 0, fChannel.size());
 
                     String contents = Charset.defaultCharset().decode(byteBuff).toString();
-                    _textPane.setText(contents);
+                    //_textPane.setText(contents);
+                    _controller.setDocument(contents);
+                    System.out.println(contents + "\n<<<File has been read");
                     stream.close();
                 }
                 catch (Exception ioe) { System.out.println(ioe.getMessage()); }

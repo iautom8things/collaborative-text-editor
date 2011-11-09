@@ -1,13 +1,12 @@
 package handler;
 import user.*;
-import java.util.Observable;
 
 /**
  * The model of a Text Document.
  *
  * @author Manuel
  */
-public class Document extends Observable {
+public class Document {
     private volatile StringBuffer _buffer;
 
     /**
