@@ -1,6 +1,9 @@
 package handler;
 import user.*;
 
+/**
+ * @author Manuel
+ */
 public class AddUserCommand implements Command {
 
     private User _user;

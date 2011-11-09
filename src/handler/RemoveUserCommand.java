@@ -1,6 +1,10 @@
 package handler;
 import user.*;
 
+/**
+ *
+ * @author Manuel
+ */
 public class RemoveUserCommand implements Command {
 
     private String _userID;
