@@ -6,43 +6,63 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
+import java.io.FileWriter;
 import java.io.FileInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.Charset;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.EditorKit;
+import javax.swing.text.DefaultEditorKit;
+import java.util.Observer;
+import java.util.Observable;
+import handler.*;
+import user.*;
 
-public class EditorGUI {
+public class EditorGUI implements Observer {
 
-    JTextPane textPane;
-    JScrollPane scrollPane;
-    JFrame frame;
+    JTextPane _textPane;
+    JFrame _frame;
+    DocumentController _controller;
+
     public EditorGUI ( ) {
+        _controller = new DocumentController();
+        _controller.addObserver(this);
     }
 
+    @Override
+    public void update ( Observable obs, Object obj) {
+        _textPane.setText(_controller.toString());
+        System.out.println(_controller.toString() + "\n<<<Has been updated");
+    }
     public void launch ( ) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable(){
+        javax.swing.SwingUtilities.invokeLater(new Runnable ( ) {
             public void run ( ) { createAndShow(); }
         });
     }
 
     private void createAndShow ( ) {
-        frame = new JFrame("Collaborative Text Editor");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        _frame = new JFrame("Collaborative Text Editor");
+        _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add the menubar
-        frame.setJMenuBar(createMenuBar());
+        _frame.setJMenuBar(createMenuBar());
 
         //Add the text area
-        textPane = new JTextPane();
-        scrollPane = new JScrollPane(textPane);
-        // textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
-        textPane.addKeyListener(new KeystrokeListener());
-        frame.getContentPane().add(scrollPane);
+        _textPane = new JTextPane();
+        JScrollPane scrollPane = new JScrollPane(_textPane);
+        _textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
+        _textPane.addKeyListener(new KeystrokeListener());
+        _frame.getContentPane().add(scrollPane);
 
         //Display the window.
-        frame.pack();
-        frame.setSize(800, 600);
-        frame.setVisible(true);
+        _frame.pack();
+        _frame.setSize(800, 600);
+        _frame.setVisible(true);
     }
 
     //Creates and returns a JMenuBar with the appropriate JMenu items
@@ -51,6 +71,7 @@ public class EditorGUI {
         JMenu fileMenu = new JMenu("File");
 
         //Create menu items
+        JMenuItem newFile = new JMenuItem("New");
         JMenuItem open = new JMenuItem("Open");
         JMenuItem save = new JMenuItem("Save");
         JMenuItem saveAs = new JMenuItem("Save As...");
@@ -59,6 +80,7 @@ public class EditorGUI {
         JMenuItem exitApp = new JMenuItem("Exit Application");
 
         //Add menu items to JMenu
+        fileMenu.add(newFile);
         fileMenu.add(open);
         fileMenu.add(save);
         fileMenu.add(saveAs);
@@ -67,7 +89,9 @@ public class EditorGUI {
         fileMenu.add(exitApp);
 
         //Register menu items with listeners
-        open.addActionListener(new OpenListener());
+        newFile.addActionListener(new NewFileListner());
+        open.addActionListener(new OpenFileListener());
+        saveAs.addActionListener(new SaveAsListener());
         exitApp.addActionListener(new ExitListener());
 
         result.add(fileMenu);
@@ -78,15 +102,19 @@ public class EditorGUI {
     * Listeners for specific JMenuItems *
     *************************************/
 
+    private class NewFileListner implements ActionListener {
+        public void actionPerformed ( ActionEvent e ) {
+            _textPane.setText("");
+        }
+    }
+
     //Display the dialog to open a file
-    private class OpenListener implements ActionListener {
+    private class OpenFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             System.out.println("Display the open file dialog.");
             //Setup FileChooser
             JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter( "TXT & DAT Only", "txt", "dat" );
-            chooser.setFileFilter(filter);
-            int returnVal = chooser.showOpenDialog(frame);
+            int returnVal = chooser.showOpenDialog(_frame);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
                 File f = chooser.getSelectedFile();
                 try {
@@ -95,12 +123,33 @@ public class EditorGUI {
                     MappedByteBuffer byteBuff = fChannel.map(FileChannel.MapMode.READ_ONLY, 0, fChannel.size());
 
                     String contents = Charset.defaultCharset().decode(byteBuff).toString();
-                    textPane.setText(contents);
+                    //_textPane.setText(contents);
+                    _controller.setDocument(contents);
+                    System.out.println(contents + "\n<<<File has been read");
                     stream.close();
                 }
-                catch (IOException ioe) { System.out.println(ioe.getMessage()); }
+                catch (Exception ioe) { System.out.println(ioe.getMessage()); }
             }
 
+        }
+    }
+
+    private class SaveAsListener implements ActionListener {
+        public void actionPerformed ( ActionEvent e) {
+            JFileChooser _fileChooser = new JFileChooser();
+            int returnVal = _fileChooser.showSaveDialog(_frame);
+            if (returnVal == JFileChooser.APPROVE_OPTION){
+                try {
+                    File f = _fileChooser.getSelectedFile();
+                    Writer out = new OutputStreamWriter(new FileOutputStream(f));
+                    out.write(_textPane.getText());
+                    out.close();
+                }
+                catch(IOException ioe) { System.out.println(ioe.getMessage()); }
+                catch(Exception ex) { System.out.println(ex.getMessage()); }
+                System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName());
+            }
+            else { System.out.println("Save command cancelled by user."); }
         }
     }
 
