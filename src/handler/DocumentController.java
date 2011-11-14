@@ -1,13 +1,13 @@
 package handler;
+
 import user.*;
-import java.util.Observable;
 
 /**
  * Controller for the Document Model.
  *
  * @author Manuel
  */
-public class DocumentController extends Observable {
+public class DocumentController {
 
     private volatile UserManager _userManager;
     private volatile Document _document;
@@ -21,33 +21,25 @@ public class DocumentController extends Observable {
     }
 
     /**
-     * Executes the given command by passing a reference to the current state
-     * of the Document and UserManager to command.execute().
-     *
-     * @Requires
-     *      command != null
-     * @Ensures
-     *      No two commands can execute at a given time.
+     * Set the Document.
      */
-    public synchronized void executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        command.execute(_document, _userManager);
-        setChanged();
-        notifyObservers(this);
+    public void setDocument (Document document ) {
+        _document = document;
     }
 
     /**
-     * Creates a new Document with the given String.
-     *
-     * @Requires
-     *      text != null
-     * @Ensures
-     *      this.toString() == text
+     * Get the Document.
      */
-    public synchronized void setDocument ( String text ) {
-        _document = new Document(text);
-        setChanged();
-        notifyObservers(this);
+    public Document getDocument () {
+        return _document;
     }
+    
+    /**
+     * Get the UserManager.
+     */
+    public UserManager getUserManager () {
+        return _userManager;
+    }    
 
     /**
      * Returns a String representation of the Document

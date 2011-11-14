@@ -22,22 +22,23 @@ import java.util.Observer;
 import java.util.Observable;
 import handler.*;
 import user.*;
+import static java.lang.System.out;
 
 public class EditorGUI implements Observer {
 
     JTextPane _textPane;
     JFrame _frame;
-    DocumentController _controller;
+    Client _client;
 
     public EditorGUI ( ) {
-        _controller = new DocumentController();
-        _controller.addObserver(this);
+        _client = new Client();
+        _client.addObserver(this);
     }
 
     @Override
     public void update ( Observable obs, Object obj) {
-        _textPane.setText(_controller.toString());
-        System.out.println(_controller.toString() + "\n<<<Has been updated");
+        _textPane.setText(_client.toString());
+        out.println(_client.toString() + "\n<<<Has been updated");
     }
     public void launch ( ) {
         javax.swing.SwingUtilities.invokeLater(new Runnable ( ) {
@@ -124,7 +125,7 @@ public class EditorGUI implements Observer {
 
                     String contents = Charset.defaultCharset().decode(byteBuff).toString();
                     //_textPane.setText(contents);
-                    _controller.setDocument(contents);
+                    _client.setDocument(contents);
                     System.out.println(contents + "\n<<<File has been read");
                     stream.close();
                 }

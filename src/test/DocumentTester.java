@@ -20,6 +20,17 @@ public class DocumentTester extends TestCase {
     private TextPosition _tp15;
     private TextPosition _tp20;
 
+    public static void main(String[] args) {
+        DocumentTester test = new DocumentTester();
+        test.setUp();
+        test.testDocumentConstructor();
+        test.testInsertText();
+        test.setUp();
+        test.testDeleteText();
+        test.setUp();
+        test.testGetLastPosition();
+    }    
+    
     protected void setUp ( ) {
         _initialStr = "This is only a test!";
         _foobar = "foobar";

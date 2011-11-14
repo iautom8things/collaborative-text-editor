@@ -1,9 +1,12 @@
+package network;
+
 import java.io.*;
 import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 import java.util.concurrent.*;
+import static java.lang.System.out;
 
 public class CollabTextEditServer {
 	// static variables used to prevent magic values
@@ -11,34 +14,39 @@ public class CollabTextEditServer {
 	private static final String TEXT_ENCODING = "US-ASCII";
 
 	// instance variables used internally
-	private InetAddress ip;
-	private int port;
-	private Selector selector;
-	private Map<SocketChannel, List<byte[]>> dataMap;
+	private InetAddress _ip;
+	private int _port;
+	private Selector _selector;
+	private Map<SocketChannel, List<byte[]>> _dataMap;
 
 	/*
 	 * Will start an instance of this server running with the given i.p address,
-	 * listening on the given port number. REQUIRE: 0 <= given.port <= 65535
-	 * ENSURE: IllegalArgumentException isn't thrown and the server is started
-	 * successfully
+	 * listening on the given port number. 
 	 * 
 	 * (if given.port = 0, the system will bind a temporary port to this
 	 * server.)
+         * 
+         * @Requires
+         *      0 <= given.port <= 65535
+         * @Ensures
+         *      IllegalArgumentException isn't thrown and the server is started
+	 *      successfully
+         * 
 	 */
 	public CollabTextEditServer(InetAddress address, int port) throws IOException {
-		this.ip = address;
-		this.port = port;
+		_ip = address;
+		_port = port;
 		// using ConcurrentHashMap to prevent:
 		// java.util.ComcurrentModificationException when iterating
-		dataMap = new ConcurrentHashMap<SocketChannel, List<byte[]>>();
+		_dataMap = new ConcurrentHashMap<SocketChannel, List<byte[]>>();
 		// attempt to start the server,
 		// lots of things going on here (the reason for abstract)
 		// and will enter into its main loop.
 		startServer();
 	}
-
+        
 	// /////////////////////////////////////////////////////////////////////////
-	// HELPER METHODS: this.EchoServer /////////////////////////////////////////
+	// HELPER METHODS: _EchoServer /////////////////////////////////////////
 
 	/*
 	 * Will attempt to start this server with the given i.p and port
@@ -46,7 +54,7 @@ public class CollabTextEditServer {
 	 */
 	private void startServer() throws IOException {
 		// create a new selector from the system's default selector provider
-		this.selector = Selector.open();
+		_selector = Selector.open();
 
 		// create an open, unbound channel
 		ServerSocketChannel serverChannel = ServerSocketChannel.open();
@@ -54,24 +62,24 @@ public class CollabTextEditServer {
 		// set channel to Non-Blocking IO Mode
 		serverChannel.configureBlocking(false);
 
-		// create a SoketAddress instance to pair the server's i.p and port
+		// create a SocketAddress instance to pair the server's i.p and port
 		// number
-		InetSocketAddress listenAddress = new InetSocketAddress(this.ip,
-				this.port);
+		InetSocketAddress listenAddress = new InetSocketAddress(_ip,
+				_port);
 
 		// bind the channel to this server's port number and i.p address
 		serverChannel.socket().bind(listenAddress);
 
 		// register the server channel with the selector for key retrieval
-		serverChannel.register(this.selector, SelectionKey.OP_ACCEPT);
+		serverChannel.register(_selector, SelectionKey.OP_ACCEPT);
 
 		print("Server started successfully.");
 
 		// enter main loop
 		while (true) {
 			// check for i/o events
-			this.selector.select();
-			java.util.Iterator<SelectionKey> keys = this.selector
+			_selector.select();
+			java.util.Iterator<SelectionKey> keys = _selector
 					.selectedKeys().iterator();
 
 			// if any events exist, process them
@@ -133,8 +141,8 @@ public class CollabTextEditServer {
 		print("Connected to: " + remoteAddress);
 
 		// register the channel with the selector for future events
-		dataMap.put(channel, new ArrayList<byte[]>());
-		channel.register(this.selector, SelectionKey.OP_READ);
+		_dataMap.put(channel, new ArrayList<byte[]>());
+		channel.register(_selector, SelectionKey.OP_READ);
 	}
 
 	/*
@@ -168,7 +176,7 @@ public class CollabTextEditServer {
 		if (numRead == -1) {
 			// the connection has been severed,
 			// remove connection from the map
-			this.dataMap.remove(channel);
+			_dataMap.remove(channel);
 
 			// This is only done for some fancy close message formatting.//
 			// save the socket to retrieve the remote i.p address for print out
@@ -208,7 +216,7 @@ public class CollabTextEditServer {
 		SocketChannel channel = (SocketChannel) key.channel();
 		// retrieves the bytes associated with the channel awaiting
 		// processing and sets up a traversal method.
-		List<byte[]> pendingData = this.dataMap.get(channel);
+		List<byte[]> pendingData = _dataMap.get(channel);
 		java.util.Iterator<byte[]> items = pendingData.iterator();
 
 		// if there is data left in the stream
@@ -238,7 +246,7 @@ public class CollabTextEditServer {
 		SocketChannel channel = (SocketChannel) key.channel();
 
 		// retrieves the bytes associated with the channel awaiting processing
-		List<byte[]> pendingData = this.dataMap.get(channel);
+		List<byte[]> pendingData = _dataMap.get(channel);
 
 		// add to it the given data
 		pendingData.add(data);
@@ -249,10 +257,10 @@ public class CollabTextEditServer {
 
 	/*
 	 * Will print the given string to the command line. A quick is dirty way to
-	 * use System.out.println(...)
+	 * use out.println(...)
 	 */
 	private static void print(String s) {
-		System.out.println(s);
+		out.println(s);
 	}
 
 	/*
