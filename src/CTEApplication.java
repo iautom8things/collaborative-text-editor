@@ -12,7 +12,7 @@ public class CTEApplication {
     public static void main(String[] args) {
         out.println("Begin Main");
         Client _client = new Client();
-        _client.setDocument("Test document!");
+        _client.setDocument("");
         EditorGUI gui = new EditorGUI(_client);
         _client.addObserver(gui);
         gui.launch();

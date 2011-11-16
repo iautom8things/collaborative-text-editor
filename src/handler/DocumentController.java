@@ -31,7 +31,6 @@ public class DocumentController {
      */
     public void setDocument (Document document ) {
         _document = document;
-        System.out.println("setDocument: "+_document.toString());
     }
 
     /**

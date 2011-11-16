@@ -9,7 +9,7 @@ import static java.lang.System.out;
 public class Client extends Observable {
     
     private DocumentController _controller;
-    private ConnectionManager _connectionManager;
+    //private ConnectionManager _connectionManager;
 
     
     public Client() {

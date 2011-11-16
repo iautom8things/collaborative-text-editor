@@ -79,6 +79,7 @@ public class CTEUserManager implements UserManager {
         else { 
             throw new UserNotFoundException(userID);
         }
+        return null;
     }
 
     /**
