@@ -7,32 +7,15 @@ import java.util.Observable;
 import static java.lang.System.out;
 
 public class Client extends Observable {
-
-    public static void main(String[] args) {
-        out.println("Begin Main");
-        Client _client = new Client();
-        _client.setDocument("Test document!");
-        EditorGUI gui = new EditorGUI();
-        gui.launch();
-    }    
     
     private DocumentController _controller;
-    //private ConnectionManager _connectionManager;
+    private ConnectionManager _connectionManager;
+
     
-    /**
-     * Executes the given command by passing a reference to the current state
-     * of the Document and UserManager to command.execute().
-     *
-     * @Requires
-     *      command != null
-     * @Ensures
-     *      No two commands can execute at a given time.
-     */
-    public synchronized void executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        command.execute(_controller.getDocument(), _controller.getUserManager());
-        setChanged();
-        notifyObservers(this);
-    }    
+    public Client() {
+        _controller = new DocumentController();
+        //_connectionManager = new ConnectionManager();
+    }  
     
     /**
      * Creates a new Document with the given String.
@@ -45,7 +28,43 @@ public class Client extends Observable {
     public synchronized void setDocument ( String text ) {
         Document newDoc = new Document(text);
         _controller.setDocument(newDoc);
+        
+        //update text panes
+        notifyDocumentGotUpdated();
+    }
+    
+    public synchronized void insertTextInDocument ( String text ) {
+        //creates a corresponding command to send to the document controller
+        InsertTextCommand command = new InsertTextCommand("username", text);
+        
+        try{
+            _controller.executeCommand(command);
+        }catch(UserNotFoundException iue){
+            iue.printStackTrace();
+        }catch(InvalidUserIDException iuide){
+            iuide.printStackTrace();
+        }catch(OutOfBoundsException oobe){
+            oobe.printStackTrace();
+        }
+        
+        //since command execution was successful, update everyone's text pane
+        notifyDocumentGotUpdated();
+    }
+    
+    public synchronized void initateCollaboration ( ) {
+        //_connectionManager = new ConnectionManager();
+    }
+  
+    public synchronized Document getDocument () {
+        return _controller.getDocument();
+    }
+
+    public String toString() {
+        return "Client{" + "_controller=" + _controller.toString() + '}';
+    }
+    
+    private void notifyDocumentGotUpdated(){
         setChanged();
-        notifyObservers(this);
-    }    
+        notifyObservers(_controller.getDocument().toString());
+    }
 }

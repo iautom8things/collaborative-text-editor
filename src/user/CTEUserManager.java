@@ -28,6 +28,7 @@ public class CTEUserManager implements UserManager {
      *      user will be added
      */
     public synchronized void addUser ( User user ) throws InvalidUserIDException {
+        System.out.println(user.getUserID());
         Color cursorColor = ColorList.getColor(this.getNumberOfUsers());
         if (_users.containsValue(user)) { throw new InvalidUserIDException(user.getUserID()); }
         _users.put(user.getUserID(), user);
@@ -71,10 +72,13 @@ public class CTEUserManager implements UserManager {
      */
     public synchronized CTEUser getUser ( String userID ) throws UserNotFoundException {
         if (_users.containsKey(userID)) {
-            Object user = _users.get(userID);
-            return (CTEUser)user;
+            if(_users.get(userID) instanceof CTEUser){
+                return (CTEUser)_users.get(userID);
+            }
         }
-        else { throw new UserNotFoundException(userID); }
+        else { 
+            throw new UserNotFoundException(userID);
+        }
     }
 
     /**
@@ -119,4 +123,10 @@ public class CTEUserManager implements UserManager {
             if (tp.isBeyond(front) && !tp.isBeyond(back)) { this.setCursorForUser(user.getUserID(), front); }
         }
     }
+
+    public String toString() {
+        return "CTEUserManager{" + "_users=" + _users + '}';
+    }
+    
+    
 }
