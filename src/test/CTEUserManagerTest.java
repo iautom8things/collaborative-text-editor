@@ -45,7 +45,7 @@ public class CTEUserManagerTest extends TestCase {
                 String exceptionMessage = e.getMessage();
                 assertEquals("User ID can not be null", exceptionMessage);
             }
-            //Test IndividualUser
+            //Test IndividualUser.
             IndividualUser indi0 = new IndividualUser("userID1", Color.black);
             assertEquals(indi0.getUserID(), "userID1");
             assertEquals(indi0.getCursorColor(), Color.black);
