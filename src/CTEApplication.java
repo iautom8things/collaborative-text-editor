@@ -1,5 +1,3 @@
-
-
 import network.*;
 import user.*;
 import gui.*;
@@ -7,16 +5,19 @@ import handler.*;
 import java.util.Observable;
 import static java.lang.System.out;
 
+/*
+ * A Collaborative Text Editor Application.
+ */
 public class CTEApplication {
     
-    public static void main(String[] args) {
-        out.println("Begin Main");
+    /*
+     * Run the application. Create a Client. Create a GUI, which will observe the Client.
+     */
+    public static void main( String[] args ) {
         Client _client = new Client();
-        _client.setDocument("");
-        EditorGUI gui = new EditorGUI(_client);
-        _client.addObserver(gui);
+        EditorGUI gui = new EditorGUI( _client );
+        _client.addObserver( gui );
         gui.launch();
-        //gui.update(_client, _client.getDocument().toString());
     }        
     
 }

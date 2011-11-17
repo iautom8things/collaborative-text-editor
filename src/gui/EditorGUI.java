@@ -194,12 +194,7 @@ public class EditorGUI implements Observer {
         }
 
         public void keyTyped ( KeyEvent e ) {
-            //System.out.println("Key typed: " + e.getKeyChar() + "(" + e.toString() + ")");
-            if(e.getKeyChar() != KeyEvent.VK_BACK_SPACE)
-                _client.insertTextInDocument(Character.toString(e.getKeyChar()));
-            else{
-                System.out.println("backspace typed!");
-            }
+            _client.passKeyEvent(e);
         }
     }//End KeystrokeListener
 

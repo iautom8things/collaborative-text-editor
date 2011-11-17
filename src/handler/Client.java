@@ -1,19 +1,22 @@
 package handler;
 
-import network.*;
-import user.*;
-import gui.*;
 import java.util.Observable;
-import static java.lang.System.out;
+import java.awt.event.KeyEvent;
+import user.*;
 
 public class Client extends Observable {
     
     private DocumentController _controller;
     //private ConnectionManager _connectionManager;
 
-    
+    /*
+     * Create a new Client with a blank Document.
+     * @Ensures
+     *      _controller.getDocument().toString() = "";
+     */
     public Client() {
         _controller = new DocumentController();
+        setDocument("");
         //_connectionManager = new ConnectionManager();
     }  
     
@@ -32,23 +35,25 @@ public class Client extends Observable {
         //update text panes
         notifyDocumentGotUpdated();
     }
-    
-    public synchronized void insertTextInDocument ( String text ) {
-        //creates a corresponding command to send to the document controller
-        InsertTextCommand command = new InsertTextCommand("username", text);
-        
-        try{
-            _controller.executeCommand(command);
-        }catch(UserNotFoundException iue){
-            iue.printStackTrace();
-        }catch(InvalidUserIDException iuide){
-            iuide.printStackTrace();
-        }catch(OutOfBoundsException oobe){
-            oobe.printStackTrace();
+
+    public void passKeyEvent(KeyEvent keyEvent) {
+        //System.out.println("Key typed: " + e.getKeyChar() + "(" + e.toString() + ")");
+        if (keyEvent.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
+            InsertTextCommand command = new InsertTextCommand("username", Character.toString(keyEvent.getKeyChar()));
+            try {
+                _controller.executeCommand(command);
+            } catch (UserNotFoundException iue) {
+                iue.printStackTrace();
+            } catch (InvalidUserIDException iuide) {
+                iuide.printStackTrace();
+            } catch (OutOfBoundsException oobe) {
+                oobe.printStackTrace();
+            }
+            //since command execution was successful, update everyone's text pane
+            notifyDocumentGotUpdated();
+        } else {
+            System.out.println("backspace typed!");
         }
-        
-        //since command execution was successful, update everyone's text pane
-        notifyDocumentGotUpdated();
     }
     
     public synchronized void initateCollaboration ( ) {
