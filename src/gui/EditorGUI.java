@@ -30,25 +30,23 @@ public class EditorGUI implements Observer {
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
-    
+
     public EditorGUI(Client client){
         _client = client;
     }
-    
+
    /*
     * Update the frame with the specified docText.
     */
     public void update ( Observable observable, Object docText ) {
-<<<<<<< HEAD
-=======
         if (docText instanceof String){
             String docTextString = (String)docText;
             _textPane.setText(docTextString);
         }
     }
-    
+
     /*
-     * 
+     *
      */
     public void launch ( ) {
         /*
@@ -69,9 +67,9 @@ public class EditorGUI implements Observer {
         //Add the text area
         _textPane = new JTextPane();
         JScrollPane scrollPane = new JScrollPane(_textPane);
-        /*FIX ME: JTEXTPANE NEEDS CUSTOM CURSORS... 
-         * probably need to extend JTextPane... we could then add a 
-         * blinking pipe ("|") or something to be the cursor. 
+        /*FIX ME: JTEXTPANE NEEDS CUSTOM CURSORS...
+         * probably need to extend JTextPane... we could then add a
+         * blinking pipe ("|") or something to be the cursor.
          * As it is right now, there is no cursor showing because I had to make
          * the editable option false*
          */
@@ -114,7 +112,7 @@ public class EditorGUI implements Observer {
         saveAs.addActionListener(new SaveAsListener());
         collab.addActionListener(new CollabListener());
         exitApp.addActionListener(new ExitListener());
-        
+
         result.add(fileMenu);
         return result;
     }
@@ -142,7 +140,7 @@ public class EditorGUI implements Observer {
                 e1.printStackTrace();}
         }
     }
-    
+
     //Display the dialog to open a file
     private class OpenFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
@@ -157,7 +155,7 @@ public class EditorGUI implements Observer {
                     FileChannel fChannel = stream.getChannel();
                     MappedByteBuffer byteBuff = fChannel.map(FileChannel.MapMode.READ_ONLY, 0, fChannel.size());
                     String contents = Charset.defaultCharset().decode(byteBuff).toString();
-                    
+
                     //_textPane.setText(contents);
                     //update(this, contents);
                     _client.setDocument(contents);
