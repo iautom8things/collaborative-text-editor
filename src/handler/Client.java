@@ -37,30 +37,13 @@ public class Client extends Observable {
     }
 
     /*
-     * I guess this is where we decide what the keyEvent actually is:
-     * A character, a command(copy, paste, delete)
-     * I didn't look at the documentation enough yet to know how, so I just said 
-     * if not backspace, then insert the character
-     * TO DO: Implement all keyEvents supported and ignore those that aren't
-     * TO DO: Better Exception handling
+     * Not really sure how the command should go from the GUI to the 
+     * DocumentController... this is my solution
      */
-    public void passKeyEvent(KeyEvent keyEvent) {
-        if (keyEvent.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
-            InsertTextCommand command = new InsertTextCommand("username", Character.toString(keyEvent.getKeyChar()));
-            try {
-                _controller.executeCommand(command);
-            } catch (UserNotFoundException iue) {
-                iue.printStackTrace();
-            } catch (InvalidUserIDException iuide) {
-                iuide.printStackTrace();
-            } catch (OutOfBoundsException oobe) {
-                oobe.printStackTrace();
-            }
-            //since command execution was successful, update everyone's text pane
-            notifyDocumentGotUpdated();
-        } else {
-            System.out.println("backspace typed!");
-        }
+    public void passCommand(Command command) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+        _controller.executeCommand(command);
+        //since command execution was successful, update everyone's text pane
+        notifyDocumentGotUpdated();  
     }
     
     public synchronized void initateCollaboration ( ) {
