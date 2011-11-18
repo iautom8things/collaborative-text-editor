@@ -4,6 +4,11 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+/*
+ * Most of this class was copied from the networking source Kyle posted in 
+ * Google Docs.
+ * TO DO: Probably add this to the NetworkManager or the Client... not sure
+ */
 public class CollabTextEditClient {
 
     private static InetAddress host;
