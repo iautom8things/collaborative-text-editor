@@ -23,6 +23,7 @@ import java.util.Observable;
 import handler.*;
 import user.*;
 import static java.lang.System.out;
+import network.*;
 
 public class EditorGUI implements Observer {
 
@@ -118,6 +119,10 @@ public class EditorGUI implements Observer {
 
     private class CollabListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
+            try{
+                new CreateCollaboration(null).execute(null, null);
+            }
+            catch(Exception e1){e1.printStackTrace();}
         }
     }
     

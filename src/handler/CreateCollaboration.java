@@ -1,4 +1,6 @@
 package handler;
+
+import network.*;
 import user.*;
 
 public class CreateCollaboration implements Command {
@@ -17,6 +19,6 @@ public class CreateCollaboration implements Command {
     }
 
     public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        //
+        new CollabTextEditClient();
     }
 }
