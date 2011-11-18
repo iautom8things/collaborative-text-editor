@@ -9,266 +9,259 @@ import java.util.concurrent.*;
 import static java.lang.System.out;
 
 public class CollabTextEditServer {
-	// static variables used to prevent magic values
-	private static final int PORT = 1234;
-	private static final String TEXT_ENCODING = "US-ASCII";
+    // static variables used to prevent magic values
 
-	// instance variables used internally
-	private InetAddress _ip;
-	private int _port;
-	private Selector _selector;
-	private Map<SocketChannel, List<byte[]>> _dataMap;
+    private static final int PORT = 1234;
+    private static final String TEXT_ENCODING = "US-ASCII";
+    // instance variables used internally
+    private InetAddress _ip;
+    private int _port;
+    private Selector _selector;
+    private Map<SocketChannel, List<byte[]>> _dataMap;
 
-	/*
-	 * Will start an instance of this server running with the given i.p address,
-	 * listening on the given port number. 
-	 * 
-	 * (if given.port = 0, the system will bind a temporary port to this
-	 * server.)
-         * 
-         * @Requires
-         *      0 <= given.port <= 65535
-         * @Ensures
-         *      IllegalArgumentException isn't thrown and the server is started
-	 *      successfully
-         * 
-	 */
-	public CollabTextEditServer(InetAddress address, int port) throws IOException {
-		_ip = address;
-		_port = port;
-		// using ConcurrentHashMap to prevent:
-		// java.util.ComcurrentModificationException when iterating
-		_dataMap = new ConcurrentHashMap<SocketChannel, List<byte[]>>();
-		// attempt to start the server,
-		// lots of things going on here (the reason for abstract)
-		// and will enter into its main loop.
-		startServer();
-	}
-        
-	// /////////////////////////////////////////////////////////////////////////
-	// HELPER METHODS: _EchoServer /////////////////////////////////////////
+    /*
+     * Will start an instance of this server running with the given i.p address,
+     * listening on the given port number. 
+     * 
+     * (if given.port = 0, the system will bind a temporary port to this
+     * server.)
+     * 
+     * @Requires
+     *      0 <= given.port <= 65535
+     * @Ensures
+     *      IllegalArgumentException isn't thrown and the server is started
+     *      successfully
+     * 
+     */
+    public CollabTextEditServer(InetAddress address, int port) throws IOException {
+        _ip = address;
+        _port = port;
+        // using ConcurrentHashMap to prevent:
+        // java.util.ComcurrentModificationException when iterating
+        _dataMap = new ConcurrentHashMap<SocketChannel, List<byte[]>>();
+        // attempt to start the server,
+        // lots of things going on here (the reason for abstract)
+        // and will enter into its main loop.
+        startServer();
+    }
 
-	/*
-	 * Will attempt to start this server with the given i.p and port
-	 * information.
-	 */
-	private void startServer() throws IOException {
-		// create a new selector from the system's default selector provider
-		_selector = Selector.open();
+    // /////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS: _EchoServer /////////////////////////////////////////
 
-		// create an open, unbound channel
-		ServerSocketChannel serverChannel = ServerSocketChannel.open();
+    /*
+     * Will attempt to start this server with the given i.p and port
+     * information.
+     */
+    private void startServer() throws IOException {
+        // create a new selector from the system's default selector provider
+        _selector = Selector.open();
 
-		// set channel to Non-Blocking IO Mode
-		serverChannel.configureBlocking(false);
+        // create an open, unbound channel
+        ServerSocketChannel serverChannel = ServerSocketChannel.open();
 
-		// create a SocketAddress instance to pair the server's i.p and port
-		// number
-		InetSocketAddress listenAddress = new InetSocketAddress(_ip,
-				_port);
+        // set channel to Non-Blocking IO Mode
+        serverChannel.configureBlocking(false);
 
-		// bind the channel to this server's port number and i.p address
-		serverChannel.socket().bind(listenAddress);
+        // create a SocketAddress instance to pair the server's i.p and port
+        // number
+        InetSocketAddress listenAddress = new InetSocketAddress(_ip,
+                _port);
 
-		// register the server channel with the selector for key retrieval
-		serverChannel.register(_selector, SelectionKey.OP_ACCEPT);
+        // bind the channel to this server's port number and i.p address
+        serverChannel.socket().bind(listenAddress);
 
-		print("Server started successfully.");
+        // register the server channel with the selector for key retrieval
+        serverChannel.register(_selector, SelectionKey.OP_ACCEPT);
 
-		// enter main loop
-		while (true) {
-			// check for i/o events
-			_selector.select();
-			java.util.Iterator<SelectionKey> keys = _selector
-					.selectedKeys().iterator();
+        print("Server started successfully.");
 
-			// if any events exist, process them
-			while (keys.hasNext()) {
-				// save the event key
-				SelectionKey key = keys.next();
-				// remove the event from the list
-				keys.remove();
+        // enter main loop
+        while (true) {
+            // check for i/o events
+            _selector.select();
+            java.util.Iterator<SelectionKey> keys = _selector.selectedKeys().iterator();
 
-				// if the key is valid, process it
-				if (key.isValid()) {
-					// if the channel is ready to accept the key
-					if (key.isAcceptable()) {
-						// start the new connection to this server
-						this.accept(key);
-					}
-					// if the key's channel is ready to be read
-					else if (key.isReadable()) {
-						// read the event key
-						this.read(key);
-					}
-					// if the key can be written
-					else if (key.isWritable()) {
-						// write the key
-						this.write(key);
-					}
-				}
-			}// end of: Event Key loop
-		}// end of: Main loop
-	}
+            // if any events exist, process them
+            while (keys.hasNext()) {
+                // save the event key
+                SelectionKey key = keys.next();
+                // remove the event from the list
+                keys.remove();
 
-	/*
-	 * Will accept and establish the connection between the key event and this
-	 * server.
-	 */
-	private void accept(SelectionKey key) throws IOException {
-		// save the key's channel
-		ServerSocketChannel serverChannel = (ServerSocketChannel) (key
-				.channel());
-		// CASTING WARNING: needed as key.channel() will return a
-		// SelectableChannel, is ok because ServerSocketChannel extends
-		// AbstractSelectableChannel which extends SelectableChannel.
+                // if the key is valid, process it
+                if (key.isValid()) {
+                    // if the channel is ready to accept the key
+                    if (key.isAcceptable()) {
+                        // start the new connection to this server
+                        this.accept(key);
+                    } // if the key's channel is ready to be read
+                    else if (key.isReadable()) {
+                        // read the event key
+                        this.read(key);
+                    } // if the key can be written
+                    else if (key.isWritable()) {
+                        // write the key
+                        this.write(key);
+                    }
+                }
+            }// end of: Event Key loop
+        }// end of: Main loop
+    }
 
-		// save a channel with the connection to the key event accepted
-		SocketChannel channel = serverChannel.accept();
-		// channel is in blocking mode by default,
-		// need to correct this.
-		channel.configureBlocking(false);
+    /*
+     * Will accept and establish the connection between the key event and this
+     * server.
+     */
+    private void accept(SelectionKey key) throws IOException {
+        // save the key's channel
+        ServerSocketChannel serverChannel = (ServerSocketChannel) (key.channel());
+        // CASTING WARNING: needed as key.channel() will return a
+        // SelectableChannel, is ok because ServerSocketChannel extends
+        // AbstractSelectableChannel which extends SelectableChannel.
 
-		// write welcome message
-		channel.write(ByteBuffer.wrap("Welcome, this is the echo server\r\n"
-				.getBytes(TEXT_ENCODING)));
+        // save a channel with the connection to the key event accepted
+        SocketChannel channel = serverChannel.accept();
+        // channel is in blocking mode by default,
+        // need to correct this.
+        channel.configureBlocking(false);
 
-		// save an instance of a socket associated with the channel
-		Socket socket = channel.socket();
-		// save the end address the socket is connected to
-		// (the i.p/port where the connection is coming from)
-		SocketAddress remoteAddress = socket.getRemoteSocketAddress();
-		print("Connected to: " + remoteAddress);
+        // write welcome message
+        channel.write(ByteBuffer.wrap("Welcome, this is the echo server\r\n".getBytes(TEXT_ENCODING)));
 
-		// register the channel with the selector for future events
-		_dataMap.put(channel, new ArrayList<byte[]>());
-		channel.register(_selector, SelectionKey.OP_READ);
-	}
+        // save an instance of a socket associated with the channel
+        Socket socket = channel.socket();
+        // save the end address the socket is connected to
+        // (the i.p/port where the connection is coming from)
+        SocketAddress remoteAddress = socket.getRemoteSocketAddress();
+        print("Connected to: " + remoteAddress);
 
-	/*
-	 * Will read event information from the connection. If there is no data
-	 * read, the connection is assumed to have been severed. If data remains, it
-	 * is handled accordingly.
-	 */
-	private void read(SelectionKey key) throws IOException {
+        // register the channel with the selector for future events
+        _dataMap.put(channel, new ArrayList<byte[]>());
+        channel.register(_selector, SelectionKey.OP_READ);
+    }
 
-		SocketChannel channel = (SocketChannel) key.channel();
+    /*
+     * Will read event information from the connection. If there is no data
+     * read, the connection is assumed to have been severed. If data remains, it
+     * is handled accordingly.
+     */
+    private void read(SelectionKey key) throws IOException {
 
-		// clear up some memory space for the buffer
-		// no idea why 8192 in size, seems to be a standard
-		// i.e: everyone else is doing it
-		ByteBuffer buffer = ByteBuffer.allocate(8192);
+        SocketChannel channel = (SocketChannel) key.channel();
 
-		// used to determine how many bytes are read from the channel
-		int numRead = -1;
+        // clear up some memory space for the buffer
+        // no idea why 8192 in size, seems to be a standard
+        // i.e: everyone else is doing it
+        ByteBuffer buffer = ByteBuffer.allocate(8192);
 
-		// try to read from the channel, into the buffer
-		try {
-			numRead = channel.read(buffer);
-		}
-		// if an IOException is caught
-		catch (IOException e) {
-			// print the stack trace
-			e.printStackTrace();
-		}
+        // used to determine how many bytes are read from the channel
+        int numRead = -1;
 
-		// if the end of the buffer stream was reached
-		if (numRead == -1) {
-			// the connection has been severed,
-			// remove connection from the map
-			_dataMap.remove(channel);
+        // try to read from the channel, into the buffer
+        try {
+            numRead = channel.read(buffer);
+        } // if an IOException is caught
+        catch (IOException e) {
+            // print the stack trace
+            e.printStackTrace();
+        }
 
-			// This is only done for some fancy close message formatting.//
-			// save the socket to retrieve the remote i.p address for print out
-			Socket socket = channel.socket();
-			SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-			print("Connection closed by client: " + remoteAddr);
+        // if the end of the buffer stream was reached
+        if (numRead == -1) {
+            // the connection has been severed,
+            // remove connection from the map
+            _dataMap.remove(channel);
 
-			// close connection
-			channel.close();
-			// add the key to the canceled-key set
-			key.cancel();
-			// NOTE: if already closed or canceled, produces no errors.
-			// This is for safety measures only.
-		}
-		// otherwise,
-		// print the received string
-		else {
-			// set up a byte array to hold the info
-			byte[] data = new byte[numRead];
-			// copy the information in the first array to the second
-			System.arraycopy(buffer.array(), 0, data, 0, numRead);
+            // This is only done for some fancy close message formatting.//
+            // save the socket to retrieve the remote i.p address for print out
+            Socket socket = channel.socket();
+            SocketAddress remoteAddr = socket.getRemoteSocketAddress();
+            print("Connection closed by client: " + remoteAddr);
 
-			// print the array's data
-			print("Got: " + new String(data, TEXT_ENCODING));
+            // close connection
+            channel.close();
+            // add the key to the canceled-key set
+            key.cancel();
+            // NOTE: if already closed or canceled, produces no errors.
+            // This is for safety measures only.
+        } // otherwise,
+        // print the received string
+        else {
+            // set up a byte array to hold the info
+            byte[] data = new byte[numRead];
+            // copy the information in the first array to the second
+            System.arraycopy(buffer.array(), 0, data, 0, numRead);
 
-			// echo the data back to the client
-			doEcho(key, data);
-		}
-	}
+            // print the array's data
+            print("Got: " + new String(data, TEXT_ENCODING));
 
-	/*
-	 * Will write all queued up data for the given key's channel to the channel
-	 * and sets the key to read mode.
-	 */
-	private void write(SelectionKey key) throws IOException {
-		// save the connection
-		SocketChannel channel = (SocketChannel) key.channel();
-		// retrieves the bytes associated with the channel awaiting
-		// processing and sets up a traversal method.
-		List<byte[]> pendingData = _dataMap.get(channel);
-		java.util.Iterator<byte[]> items = pendingData.iterator();
+            // echo the data back to the client
+            doEcho(key, data);
+        }
+    }
 
-		// if there is data left in the stream
-		while (items.hasNext()) {
-			// save the data
-			byte[] item = items.next();
-			// remove it from the list so as to not be processed multiple times
-			items.remove();
+    /*
+     * Will write all queued up data for the given key's channel to the channel
+     * and sets the key to read mode.
+     */
+    private void write(SelectionKey key) throws IOException {
+        // save the connection
+        SocketChannel channel = (SocketChannel) key.channel();
+        // retrieves the bytes associated with the channel awaiting
+        // processing and sets up a traversal method.
+        List<byte[]> pendingData = _dataMap.get(channel);
+        java.util.Iterator<byte[]> items = pendingData.iterator();
 
-			// write the data to the channel
-			channel.write(ByteBuffer.wrap(item));
-		}
-		// set the key to read mode
-		key.interestOps(SelectionKey.OP_READ);
-	}
+        // if there is data left in the stream
+        while (items.hasNext()) {
+            // save the data
+            byte[] item = items.next();
+            // remove it from the list so as to not be processed multiple times
+            items.remove();
 
-	/*
-	 * Will send the given data to the given key's channel,
-	 * echoing it back for the client to read.
-	 */
-	// NOTE: this is strictly for the echo implementation and not necessarily
-	// needed for our purposes. ALTHOUGH, the algorithm for sending data back to
-	// the client is important. We will need to of course understand the basics
-	// but with the added layering process included.
-	private void doEcho(SelectionKey key, byte[] data) {
-		// save the given key's channel
-		SocketChannel channel = (SocketChannel) key.channel();
+            // write the data to the channel
+            channel.write(ByteBuffer.wrap(item));
+        }
+        // set the key to read mode
+        key.interestOps(SelectionKey.OP_READ);
+    }
 
-		// retrieves the bytes associated with the channel awaiting processing
-		List<byte[]> pendingData = _dataMap.get(channel);
+    /*
+     * Will send the given data to the given key's channel,
+     * echoing it back for the client to read.
+     */
+    // NOTE: this is strictly for the echo implementation and not necessarily
+    // needed for our purposes. ALTHOUGH, the algorithm for sending data back to
+    // the client is important. We will need to of course understand the basics
+    // but with the added layering process included.
+    private void doEcho(SelectionKey key, byte[] data) {
+        // save the given key's channel
+        SocketChannel channel = (SocketChannel) key.channel();
 
-		// add to it the given data
-		pendingData.add(data);
+        // retrieves the bytes associated with the channel awaiting processing
+        List<byte[]> pendingData = _dataMap.get(channel);
 
-		// set the key to write mode
-		key.interestOps(SelectionKey.OP_WRITE);
-	}
+        // add to it the given data
+        pendingData.add(data);
 
-	/*
-	 * Will print the given string to the command line. A quick is dirty way to
-	 * use out.println(...)
-	 */
-	private static void print(String s) {
-		out.println(s);
-	}
+        // set the key to write mode
+        key.interestOps(SelectionKey.OP_WRITE);
+    }
 
-	/*
-	 * Creates a new instance of this server.
-	 */
-	public static void main(String[] args) throws Exception {
-		// will create a new server with a wildcard i.p and on a given port
-		// (static port initially set to 1234)
-		new CollabTextEditServer(null, PORT);
-	}
+    /*
+     * Will print the given string to the command line. A quick is dirty way to
+     * use out.println(...)
+     */
+    private static void print(String s) {
+        out.println(s);
+    }
+
+    /*
+     * Creates a new instance of this server.
+     */
+    public static void main(String[] args) throws Exception {
+        // will create a new server with a wildcard i.p and on a given port
+        // (static port initially set to 1234)
+        new CollabTextEditServer(null, PORT);
+    }
 }

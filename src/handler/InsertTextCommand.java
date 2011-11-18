@@ -12,12 +12,14 @@ public class InsertTextCommand implements Command {
     private String _userName;
     private String _text;
 
-    public InsertTextCommand ( String userName, String text) {
+    /*
+     * Insert the given text to the user's Document.
+     */
+    public InsertTextCommand ( String userName, String text ) {
         _userName = userName;
         _text = text;
     }
 
-    @Override
     public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         User usr = userManager.getUser(_userName);
         TextPosition pos = usr.getPosition();
