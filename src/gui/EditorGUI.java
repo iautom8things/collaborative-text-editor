@@ -46,7 +46,7 @@ public class EditorGUI implements Observer {
     }
 
     /*
-     *
+     * Launch the GUI.
      */
     public void launch ( ) {
         /*
