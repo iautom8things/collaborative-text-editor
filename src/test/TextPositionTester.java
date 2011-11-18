@@ -9,7 +9,9 @@ import java.awt.Color;
 import handler.*;
 
 
+//Testing
 public class TextPositionTester extends TestCase {
+
     private TextPosition _textPosition;
 
     public static void main ( String[] args ) {
