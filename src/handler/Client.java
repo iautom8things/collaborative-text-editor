@@ -3,11 +3,12 @@ package handler;
 import java.util.Observable;
 import java.awt.event.KeyEvent;
 import user.*;
+import network.*;
 
 public class Client extends Observable {
     
     private DocumentController _controller;
-    //private ConnectionManager _connectionManager; NOT implemented yet
+    private ClientNetworkManager _manager;
 
     /*
      * Create a new Client with a blank Document.

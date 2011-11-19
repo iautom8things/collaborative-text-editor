@@ -30,9 +30,11 @@ public class EditorGUI implements Observer {
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
+    private boolean _isCollaborated; //Is this Document in a collaborative mode. TO DO: The Collaborate menu button needs to be disabled if true
 
     public EditorGUI(Client client){
         _client = client;
+        _isCollaborated = false;
     }
 
    /*
@@ -133,7 +135,20 @@ public class EditorGUI implements Observer {
                 //TO DO: Added this code here for testing purposes. It needs to be moved
                 //TO DO: Need to have a popup window that asks for the user ID, Document ID
                 //and password
-                new CreateCollaboration(null).execute(null, null);
+                String documentName = "TestDoc1"; //Dumb info for testing
+                String pass = "password"; //Dumb password for testing
+                DocumentKey documentKey = new DocumentKey(documentName, pass);
+                
+                //FIX!!!
+                InsertTextCommand command = new InsertTextCommand("username", _textPane.getText());
+                NetworkCommand networkCommand = new NetworkCommand(command, documentKey);
+                
+                ClientNetworkManager cnm = new ClientNetworkManager();
+                cnm.connect();
+                cnm.sendCommandToServer(networkCommand);
+                //TO DO: Disable the collaborate when already collaborated
+                //cnm.disconnect();
+                _isCollaborated = true;
             }
             catch(Exception e1){
                 //Need better exception handling

@@ -1,4 +1,8 @@
 package handler;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import user.*;
 
 /**
@@ -7,7 +11,7 @@ import user.*;
  *
  * @author Manuel
  */
-public class InsertTextCommand implements Command {
+public class InsertTextCommand implements Command, Serializable{
 
     private String _userName;
     private String _text;
@@ -28,5 +32,22 @@ public class InsertTextCommand implements Command {
         doc.insertText(pos, _text);
         userManager.updateBeyond(pos, len);
         pos.incrementBy(len);
+    }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException{
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("_userName", _userName);
+        fields.put("_text", _text);
+        out.writeFields();
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+        ObjectInputStream.GetField fields = in.readFields();
+        _userName = (String)fields.get("_userName", null);
+        _text = (String)fields.get("_text", null);
+    }
+
+    public String toString() {
+        return "InsertTextCommand{" + "_userName=" + _userName + ", _text=" + _text + '}';
     }
 }
