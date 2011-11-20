@@ -76,7 +76,7 @@ public class CTEUserManager implements UserManager {
                 return (CTEUser)_users.get(userID);
             }
         }
-        else { 
+        else {
             throw new UserNotFoundException(userID);
         }
         return null;
@@ -128,6 +128,6 @@ public class CTEUserManager implements UserManager {
     public String toString() {
         return "CTEUserManager{" + "_users=" + _users + '}';
     }
-    
-    
+
+    public synchronized Collection<User> getUsers ( ) { return _users.values(); }
 }

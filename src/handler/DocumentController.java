@@ -3,6 +3,7 @@ package handler;
 import commands.*;
 import user.*;
 import java.net.*;
+import java.util.Collection;
 
 /**
  * Controller for the Document Model.
@@ -30,23 +31,17 @@ public class DocumentController {
     /**
      * Set the Document.
      */
-    public void setDocument (Document document ) {
-        _document = document;
-    }
+    public void setDocument (Document document ) { _document = document; }
 
     /**
      * Get the Document.
      */
-    public Document getDocument () {
-        return _document;
-    }
+    public Document getDocument ( ) { return _document; }
 
     /**
      * Get the UserManager.
      */
-    public UserManager getUserManager () {
-        return _userManager;
-    }
+    public UserManager getUserManager ( ) { return _userManager; }
 
     /**
      * Returns a String representation of the Document
@@ -65,4 +60,6 @@ public class DocumentController {
     public synchronized void executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         command.execute(getDocument(), getUserManager());
     }
+
+    public Collection<User> getUsers ( ) { return _userManager.getUsers(); }
 }

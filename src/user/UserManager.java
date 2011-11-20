@@ -3,6 +3,7 @@ package user;
 import handler.OutOfBoundsException;
 import handler.TextPosition;
 import java.net.InetAddress;
+import java.util.Collection;
 
 /**
  *
@@ -77,4 +78,6 @@ public interface UserManager {
      *      will have their TextPosition updated to front.
      */
     void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException;
+
+    Collection<User> getUsers ( );
 }

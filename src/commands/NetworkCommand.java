@@ -20,7 +20,7 @@ public class NetworkCommand implements Serializable {
 
     private Command _command;
     private DocumentKey _documentKey;
-    private User _user;
+    private CTEUser _user;
 
     /**
      * Create a new NetworkCommand.
@@ -28,7 +28,7 @@ public class NetworkCommand implements Serializable {
      *      command != null
      *      documentKey != null
      */
-    public NetworkCommand ( Command command, DocumentKey documentKey, User user ) {
+    public NetworkCommand ( Command command, DocumentKey documentKey, CTEUser user ) {
         _command = command;
         _documentKey = documentKey;
         _user = user;
@@ -37,7 +37,7 @@ public class NetworkCommand implements Serializable {
     /**
      *  Returns the User associated with this Command.
      */
-    public User getUser ( ) { return _user; }
+    public CTEUser getUser ( ) { return _user; }
 
     /**
      *  Returns the Command.

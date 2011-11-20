@@ -11,7 +11,7 @@ public class Client extends Observable {
 
     private DocumentController _controller;
     private ClientNetworkManager _manager;
-    private User _localUser;
+    private CTEUser _localUser;
     private DocumentKey _docKey;
     private boolean _isCollaborating;
 
