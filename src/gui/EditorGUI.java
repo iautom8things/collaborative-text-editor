@@ -31,10 +31,13 @@ public class EditorGUI implements Observer {
     JFrame _frame;
     protected Client _client;
     private boolean _isCollaborated; //Is this Document in a collaborative mode. TO DO: The Collaborate menu button needs to be disabled if true
+    
+    JFileChooser _fileChooser;  //one instance for following benefits: remeber directory, customize one file chooser (filters, etc.)
 
     public EditorGUI(Client client){
         _client = client;
         _isCollaborated = false;
+        _fileChooser = this.createFileChooser();
     }
 
    /*
@@ -119,6 +122,18 @@ public class EditorGUI implements Observer {
         return result;
     }
 
+      /*******************
+    * Helper methods *
+    * *****************/
+  
+  //Returns a the file chooser with the appropriate settings for this application
+  private JFileChooser createFileChooser(){
+    JFileChooser result = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Documents (*.txt | *.dat)", "txt", "dat");
+    result.setFileFilter(filter);
+    return result;
+  }
+    
     /*************************************
     * Listeners for specific JMenuItems *
     *************************************/
@@ -160,11 +175,9 @@ public class EditorGUI implements Observer {
     private class OpenFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             System.out.println("Display the open file dialog.");
-            //Setup FileChooser
-            JFileChooser chooser = new JFileChooser();
-            int returnVal = chooser.showOpenDialog(_frame);
+            int returnVal = _fileChooser.showOpenDialog(_frame);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
-                File f = chooser.getSelectedFile();
+                File f = _fileChooser.getSelectedFile();
                 try {
                     FileInputStream stream = new FileInputStream(f);
                     FileChannel fChannel = stream.getChannel();
@@ -182,13 +195,11 @@ public class EditorGUI implements Observer {
                     System.out.println(ioe.getMessage());
                 }
             }
-
         }
     }
 
     private class SaveAsListener implements ActionListener {
         public void actionPerformed ( ActionEvent e) {
-            JFileChooser _fileChooser = new JFileChooser();
             int returnVal = _fileChooser.showSaveDialog(_frame);
             if (returnVal == JFileChooser.APPROVE_OPTION){
                 try {
