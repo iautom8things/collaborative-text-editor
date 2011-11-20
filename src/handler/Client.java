@@ -1,5 +1,6 @@
 package handler;
 
+import commands.*;
 import java.util.Observable;
 import java.awt.event.KeyEvent;
 import user.*;

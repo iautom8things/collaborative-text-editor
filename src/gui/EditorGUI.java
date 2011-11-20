@@ -20,6 +20,7 @@ import javax.swing.text.EditorKit;
 import javax.swing.text.DefaultEditorKit;
 import java.util.Observer;
 import java.util.Observable;
+import commands.*;
 import handler.*;
 import user.*;
 import static java.lang.System.out;
