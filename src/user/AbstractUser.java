@@ -22,9 +22,9 @@ public abstract class AbstractUser implements User {
         _cursorColor = cursorColor;
     }
 
-    private String _userID;
-    private Color _cursorColor;
-    private TextPosition _cursorPosition;
+    protected String _userID;
+    protected Color _cursorColor;
+    protected TextPosition _cursorPosition;
 
     /*
      * The user ID.

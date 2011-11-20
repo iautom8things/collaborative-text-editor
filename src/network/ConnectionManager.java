@@ -10,9 +10,9 @@ import java.io.IOException;
  * @author mlalford
  */
 public class ConnectionManager {
-    
+
     private CollabTextEditServer _server;
-    
+
     public ConnectionManager(int port) throws IOException{
         _server = new CollabTextEditServer(null, port);
     }

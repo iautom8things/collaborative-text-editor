@@ -1,11 +1,15 @@
 package handler;
 import java.lang.Comparable;
 import java.lang.ClassCastException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * A position in a document.
  */
-public class TextPosition implements Comparable {
+public class TextPosition implements Comparable, Serializable {
 
     int _position; //The position where this is at
     public final static int MINPOSITION = 0; //The minimum position possible
@@ -140,4 +144,5 @@ public class TextPosition implements Comparable {
      * Determine if this TextPosition is beyond another TextPosition.
      */
     public boolean isBeyond (TextPosition other ) { return this.compareTo(other) > 0; }
+
 }

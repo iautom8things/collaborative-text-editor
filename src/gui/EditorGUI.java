@@ -132,20 +132,22 @@ public class EditorGUI implements Observer {
     private class CollabListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             try{
-                //TO DO: Added this code here for testing purposes. It needs to be moved
                 //TO DO: Need to have a popup window that asks for the user ID, Document ID
                 //and password
                 String documentName = "TestDoc1"; //Dumb info for testing
                 String pass = "password"; //Dumb password for testing
                 DocumentKey documentKey = new DocumentKey(documentName, pass);
-                
+
                 //FIX!!!
                 InsertTextCommand command = new InsertTextCommand("username", _textPane.getText());
-                NetworkCommand networkCommand = new NetworkCommand(command, documentKey);
-                
-                ClientNetworkManager cnm = new ClientNetworkManager();
-                cnm.connect();
-                cnm.sendCommandToServer(networkCommand);
+                _client.initateCollaboration();
+                //_client.passCommand(command);
+
+                //NetworkCommand networkCommand = new NetworkCommand(command, documentKey);
+
+                //ClientNetworkManager cnm = new ClientNetworkManager();
+                //cnm.connect();
+                //cnm.sendCommandToServer(networkCommand);
                 //TO DO: Disable the collaborate when already collaborated
                 //cnm.disconnect();
                 _isCollaborated = true;

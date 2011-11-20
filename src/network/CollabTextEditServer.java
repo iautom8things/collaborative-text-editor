@@ -21,17 +21,17 @@ public class CollabTextEditServer {
 
     /*
      * Will start an instance of this server running with the given i.p address,
-     * listening on the given port number. 
-     * 
+     * listening on the given port number.
+     *
      * (if given.port = 0, the system will bind a temporary port to this
      * server.)
-     * 
+     *
      * @Requires
      *      0 <= given.port <= 65535
      * @Ensures
      *      IllegalArgumentException isn't thrown and the server is started
      *      successfully
-     * 
+     *
      */
     public CollabTextEditServer(InetAddress address, int port) throws IOException {
         _ip = address;
