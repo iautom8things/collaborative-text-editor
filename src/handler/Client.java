@@ -21,7 +21,7 @@ public class Client extends Observable {
 
     /**
      * Create a new Client with a blank Document.
-     * @Ensures
+     * Ensures:
      *      _controller.getDocument().toString() = "";
      */
     public Client ( ) {
@@ -41,13 +41,23 @@ public class Client extends Observable {
      **********/
 
 
+    /**
+     * Return whether this Client is in Collaboration or not.
+     */
     public boolean isCollaborating ( ) { return _isCollaborating; }
 
+    /**
+     * Return a String representation of this Client.
+     */
     public String toString ( ) {
         return "Client{ " + "_controller: " + _controller.toString() + "_isCollaborating: " + _isCollaborating + " }";
     }
 
+    /**
+     * Return the CTEUser of this Client.
+     */
     public CTEUser getUser ( ) { return _localUser; }
+
 
     /************
      * Commands *
@@ -57,9 +67,9 @@ public class Client extends Observable {
     /**
      * Creates a new Document with the given String.
      *
-     * @Requires
+     * Requires:
      *      text != null
-     * @Ensures
+     * Ensures:
      *      this.toString() == text
      */
     public synchronized void setDocument ( String text ) {
@@ -71,13 +81,16 @@ public class Client extends Observable {
     }
 
     /**
-     * Not really sure how the command should go from the GUI to the
-     * DocumentController... this is my solution
+     * Given a command if this Client IS NOT collaborating, execute it on this._controller,
+     *                  if this Client IS collaborating, wrap it with a
+     *                  NetworkCommand and Forward it to the Server.
+     *
      */
     public void passCommand ( Command command ) throws RemoteException, InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         if (_isCollaborating) { _wrapAndForward(command); }
         else {
             _controller.executeCommand(command);
+
             //since command execution was successful, update everyone's text pane
             notifyDocumentGotUpdated();
         }
