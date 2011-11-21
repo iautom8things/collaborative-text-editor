@@ -9,15 +9,18 @@ import java.lang.Exception;
 
 public class ClientCommandListener extends UnicastRemoteObject implements ClientCommandListenerInterface {
 
-    private DocumentController _docController;
+    private boolean DEBUG = true;
 
-    public ClientCommandListener ( DocumentController controller ) throws Exception { _docController = controller; }
+    private Client _client;
+
+    public ClientCommandListener ( Client client) throws Exception {
+        if (DEBUG) { System.out.println("ClientCommandListener Constructor Called."); }
+        _client = client;
+    }
 
     public void execute ( NetworkCommand netCommand ) throws RemoteException {
-        Command docCommand = netCommand.getCommand();
-        CTEUser user = netCommand.getUser();
-
-        try { _docController.executeCommand(docCommand); }
+        if (DEBUG) { System.out.println("execute Called with argument: " + netCommand); }
+        try { _client.executeNetworkCommand(netCommand); }
         catch (InvalidUserIDException e ) { e.printStackTrace(); }
         catch (UserNotFoundException e ) { e.printStackTrace(); }
         catch (OutOfBoundsException e ) { e.printStackTrace(); }

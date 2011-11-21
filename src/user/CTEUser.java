@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * A User of a Collaborative Text Editor
  */
-public class CTEUser implements User, Serializable {
+public class CTEUser implements Serializable {
 
     private String _userID;
     private Color _cursorColor;

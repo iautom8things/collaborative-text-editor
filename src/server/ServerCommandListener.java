@@ -13,46 +13,33 @@ public class ServerCommandListener extends UnicastRemoteObject implements Server
 
     private boolean DEBUG = true;
 
-    private ConcurrentMap<DocumentKey, DocumentController> _documentMap;
-    private ConcurrentMap<User, InetAddress> _userAddressMap; // Really just need a concurrent set, but in order to use ConcurrentSkipListSet User needs to Implenet Comparable
+    private volatile ConcurrentMap<DocumentKey, DocumentController> _documentMap;
 
     public ServerCommandListener ( ) throws Exception {
         if (DEBUG) { System.out.println("ServerCommandListener Constructor Called."); }
+
         _documentMap = new ConcurrentHashMap<DocumentKey, DocumentController>();
-        _userAddressMap = new ConcurrentHashMap<User, InetAddress>();
     }
 
-    /**
-     * Should possibly be implemented with a Command
-     */
-    public void registerClient (CTEUser user) throws RemoteException {
-        if (DEBUG) { System.out.println("register Called with argument: " + user); }
-        InetAddress ipAddress = user.getIPAddress();
-        _userAddressMap.put(user, ipAddress);
-    }
-
-    /**
-     * Should possibly be implemented with a Command
-     */
-    public void unregisterClient (CTEUser user) throws RemoteException {
-        if (DEBUG) { System.out.println("unregister Called with argument: " + user); }
-        _userAddressMap.remove(user);
-    }
-
-    public void execute ( NetworkCommand netCommand ) throws RemoteException {
+    @Override
+    public synchronized void execute ( NetworkCommand netCommand ) throws RemoteException {
         if (DEBUG) { System.out.println("execute Called with argument: " + netCommand); }
+
         Command docCommand = netCommand.getCommand();
         DocumentKey key = netCommand.getDocumentKey();
         DocumentController docController = _documentMap.get(key);
+        CTEUserManager userManager = docController.getUserManager();
 
+        // Execute the command on the correct DocumentController
         try { docController.executeCommand(docCommand); }
-        catch (InvalidUserIDException e ) { e.printStackTrace(); }
-        catch (UserNotFoundException e ) { e.printStackTrace(); }
-        catch (OutOfBoundsException e ) { e.printStackTrace(); }
+        catch (InvalidUserIDException e ) { System.out.println("\n"+"IUIE"+"\n"); e.printStackTrace(); }
+        catch (UserNotFoundException e ) { System.out.println("\n"+"UNFE"+"\n"); e.printStackTrace(); }
+        catch (OutOfBoundsException e ) { System.out.println("\n"+"OOBE"+"\n"); e.printStackTrace(); }
 
-        // for all Users attached to this docontroller, forward the network
+        // for all Users attached to this docController, forward the network
         // command to each of them
-        for (InetAddress ipAddress: _userAddressMap.values()) {
+        for (CTEUser user : docController.getUsers()) {
+            InetAddress ipAddress = user.getIPAddress();
             String host = ipAddress.getHostAddress();
             try { ServerCommandListenerInterface commListener = (ServerCommandListenerInterface) Naming.lookup("rmi://" + host + "/CommandListener"); }
             catch (ConnectException ce) { System.out.println("Unable to Connect to " + host); }

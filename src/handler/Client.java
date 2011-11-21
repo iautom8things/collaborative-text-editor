@@ -37,12 +37,9 @@ public class Client extends Observable {
 
     public boolean isCollaborating ( ) { return _isCollaborating; }
 
-    public String toString() {
+    public String toString ( ) {
         return "Client{" + "_controller: " + _controller.toString() + "_isCollaborating: " + _isCollaborating + " }";
     }
-
-    public synchronized Document getDocument () { return _controller.getDocument(); }
-
 
     /************
      * Commands *

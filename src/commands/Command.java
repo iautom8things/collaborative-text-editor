@@ -9,5 +9,5 @@ import user.*;
  */
 public interface Command {
 
-    public void execute ( Document document, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException;
+    public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException;
 }

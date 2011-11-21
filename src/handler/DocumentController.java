@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 public class DocumentController {
 
-    private volatile UserManager _userManager;
+    private volatile CTEUserManager _userManager;
     private volatile Document _document;
 
     /**
@@ -22,10 +22,6 @@ public class DocumentController {
         _document = new Document();
         _userManager = new CTEUserManager();
 
-        try{
-            System.out.println("adding a user");
-            _userManager.addUser(new CTEUser("username", InetAddress.getLocalHost(), java.awt.Color.BLUE));
-        }catch(Exception e){e.printStackTrace();}
     }
 
     /**
@@ -41,7 +37,7 @@ public class DocumentController {
     /**
      * Get the UserManager.
      */
-    public UserManager getUserManager ( ) { return _userManager; }
+    public CTEUserManager getUserManager ( ) { return _userManager; }
 
     /**
      * Returns a String representation of the Document
@@ -58,8 +54,8 @@ public class DocumentController {
      *      No two commands can execute at a given time.
      */
     public synchronized void executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        command.execute(getDocument(), getUserManager());
+        command.execute(this);
     }
 
-    public Collection<User> getUsers ( ) { return _userManager.getUsers(); }
+    public Collection<CTEUser> getUsers ( ) { return _userManager.getUsers(); }
 }

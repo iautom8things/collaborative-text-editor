@@ -8,7 +8,8 @@ public class JoinCollaboration implements Command {
 
     }
 
-    public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+    @Override
+    public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
 
     }
 }

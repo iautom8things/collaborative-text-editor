@@ -9,14 +9,14 @@ import handler.*;
 /**
  * A container and manager for CTEUsers.
  */
-public class CTEUserManager implements UserManager {
+public class CTEUserManager {
 
-    private volatile ConcurrentMap<String, User> _users; //Container for all CTEUsers that this manages
+    private volatile ConcurrentMap<String, CTEUser> _users; //Container for all CTEUsers that this manages
 
     /**
      * Create the CTEUserManager.
      */
-    public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, User>(); }
+    public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, CTEUser>(); }
 
     /**
      * Add a new user with the specified userID and IPAddress to the container
@@ -27,7 +27,7 @@ public class CTEUserManager implements UserManager {
      * @Ensures
      *      user will be added
      */
-    public synchronized void addUser ( User user ) throws InvalidUserIDException {
+    public synchronized void addUser ( CTEUser user ) throws InvalidUserIDException {
         System.out.println(user.getUserID());
         Color cursorColor = ColorList.getColor(this.getNumberOfUsers());
         if (_users.containsValue(user)) { throw new InvalidUserIDException(user.getUserID()); }
@@ -96,7 +96,7 @@ public class CTEUserManager implements UserManager {
      *      or Decremented by Math.abs(amount) if amount < 0.
      */
     public synchronized void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException {
-        for (User user : _users.values()) {
+        for (CTEUser user : _users.values()) {
             TextPosition tp = user.getPosition();
             if (tp.isBeyond(pivot)) {
                 if (amount < 0) {
@@ -119,7 +119,7 @@ public class CTEUserManager implements UserManager {
      *      will have their TextPosition updated to front.
      */
     public synchronized void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
-        for (User user : _users.values()) {
+        for (CTEUser user : _users.values()) {
             TextPosition tp = user.getPosition();
             if (tp.isBeyond(front) && !tp.isBeyond(back)) { this.setCursorForUser(user.getUserID(), front); }
         }
@@ -129,5 +129,5 @@ public class CTEUserManager implements UserManager {
         return "CTEUserManager{" + "_users=" + _users + '}';
     }
 
-    public synchronized Collection<User> getUsers ( ) { return _users.values(); }
+    public synchronized Collection<CTEUser> getUsers ( ) { return _users.values(); }
 }

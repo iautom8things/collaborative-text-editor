@@ -7,12 +7,13 @@ import user.*;
  */
 public class AddUserCommand implements Command {
 
-    private User _user;
+    private CTEUser _user;
 
-    public AddUserCommand ( User user ) { _user = user; }
+    public AddUserCommand ( CTEUser user ) { _user = user; }
 
     @Override
-    public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+    public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+        CTEUserManager userManager = controller.getUserManager();
         userManager.addUser(_user);
     }
 }

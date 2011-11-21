@@ -25,8 +25,10 @@ public class InsertTextCommand implements Command, Serializable{
         _text = text;
     }
 
-    public void execute ( Document doc, UserManager userManager ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        User usr = userManager.getUser(_userName);
+    public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+        CTEUserManager userManager = controller.getUserManager();
+        Document doc = controller.getDocument();
+        CTEUser usr = userManager.getUser(_userName);
         TextPosition pos = usr.getPosition();
         int len = _text.length();
 
