@@ -20,6 +20,7 @@ import javax.swing.text.EditorKit;
 import javax.swing.text.DefaultEditorKit;
 import java.util.Observer;
 import java.util.Observable;
+import java.lang.Exception;
 import commands.*;
 import handler.*;
 import user.*;
@@ -246,6 +247,7 @@ public class EditorGUI implements Observer {
                 } catch (OutOfBoundsException oobe) {
                     oobe.printStackTrace();
                 }
+                catch (Exception ex) { ex.printStackTrace(); }
             } else {
                 System.out.println("backspace typed!");
             }

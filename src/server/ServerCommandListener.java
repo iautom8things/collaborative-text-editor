@@ -39,9 +39,16 @@ public class ServerCommandListener extends UnicastRemoteObject implements Server
         // for all Users attached to this docController, forward the network
         // command to each of them
         for (CTEUser user : docController.getUsers()) {
+            if (DEBUG) { System.out.println("Sending NetCommand:\n\t" + netCommand + "\nTo User: " + user);}
+
             InetAddress ipAddress = user.getIPAddress();
             String host = ipAddress.getHostAddress();
-            try { ServerCommandListenerInterface commListener = (ServerCommandListenerInterface) Naming.lookup("rmi://" + host + "/CommandListener"); }
+
+            try {
+                if (DEBUG) { System.out.println("Connecting to host: " + host); }
+                ClientCommandListenerInterface clientCommListener = (ClientCommandListenerInterface) Naming.lookup("rmi://" + host + "/ClientListener");
+                clientCommListener.execute(netCommand);
+            }
             catch (ConnectException ce) { System.out.println("Unable to Connect to " + host); }
             catch (Exception e) { e.printStackTrace(); }
         }

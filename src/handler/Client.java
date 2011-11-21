@@ -1,14 +1,18 @@
 package handler;
 
 import commands.*;
+import server.*;
 import java.util.Observable;
 import java.awt.event.KeyEvent;
+import java.rmi.*;
 import user.*;
 import network.*;
 import java.net.*;
 
 public class Client extends Observable {
 
+    private ClientCommandServerThread _commServerThread;
+    private ServerCommandListenerInterface _serverCommandListener;
     private DocumentController _controller;
     private ClientNetworkManager _manager;
     private CTEUser _localUser;
@@ -27,6 +31,7 @@ public class Client extends Observable {
         _docKey = new DocumentKey("DefaultDoc", "password");
         _controller = new DocumentController();
         setDocument("");
+        _commServerThread = new ClientCommandServerThread(this);
     }
 
 
@@ -66,7 +71,7 @@ public class Client extends Observable {
      * Not really sure how the command should go from the GUI to the
      * DocumentController... this is my solution
      */
-    public void passCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+    public void passCommand ( Command command ) throws RemoteException, InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         if (_isCollaborating) { _wrapAndForward(command); }
         else {
             _controller.executeCommand(command);
@@ -87,9 +92,12 @@ public class Client extends Observable {
     /**
      * Initiates a Connection to the Server.
      */
-    public synchronized void initateCollaboration ( ) {
-        _manager = new ClientNetworkManager();
-        _manager.connect();
+    public synchronized void initateCollaboration ( ) throws NotBoundException, MalformedURLException, RemoteException {
+        _commServerThread.start();
+        _serverCommandListener = (ServerCommandListenerInterface) Naming.lookup("rmi://localhost/CommandListener");
+
+        //_manager = new ClientNetworkManager();
+        //_manager.connect();
         _isCollaborating = true;
     }
 
@@ -117,14 +125,9 @@ public class Client extends Observable {
     /**
      * Creates a NetworkCommand and sends it to the Server.
      */
-    private void _wrapAndForward ( Command command ) {
-        if (command==null) { System.out.println("command is null"); }
-        if (_docKey==null) { System.out.println("_docKey is null"); }
-        if (_localUser==null) { System.out.println("_localUser is null"); }
-        if (_manager==null) { System.out.println("_manager is null"); }
-        System.out.println("Ohhai");
-        System.out.println(_localUser);
+    private void _wrapAndForward ( Command command ) throws RemoteException {
         NetworkCommand netCommand = new NetworkCommand(command, _docKey, _localUser);
-        _manager.sendCommandToServer(netCommand);
+        //_manager.sendCommandToServer(netCommand);
+        _serverCommandListener.execute(netCommand);
     }
 }

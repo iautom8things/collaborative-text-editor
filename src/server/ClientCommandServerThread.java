@@ -29,12 +29,6 @@ public class ClientCommandServerThread extends Thread {
             ClientCommandListener cCommListener = new ClientCommandListener(_client);
             String rmiObjectName = "rmi://" + HOST + "/ClientListener";
             Naming.rebind(rmiObjectName, cCommListener);
-            // Make a connection to the server, grab an instance of the
-            // CommandListener then execute the command.
-            ServerCommandListenerInterface sCommListener = (ServerCommandListenerInterface) Naming.lookup("rmi://localhost/CommandListener");
-            CTEUser u = new CTEUser("name", InetAddress.getLocalHost(), Color.RED);
-            NetworkCommand netComm = new NetworkCommand(new InsertTextCommand("name", "HEY"), new DocumentKey("docname", "docpass"), u);
-            sCommListener.execute(netComm);
         }
         catch (ConnectException ce) { System.out.println("Unable to connect to server!"); }
         catch (Exception e) { e.printStackTrace(); }
