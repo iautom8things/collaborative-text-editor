@@ -96,6 +96,7 @@ public class Client extends Observable {
         _commServerThread.start();
         _serverCommandListener = (ServerCommandListenerInterface) Naming.lookup("rmi://localhost/CommandListener");
 
+        _serverCommandListener.initDocument(_docKey, _controller);
         //_manager = new ClientNetworkManager();
         //_manager.connect();
         _isCollaborating = true;

@@ -5,11 +5,12 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.net.InetAddress;
 import handler.*;
+import java.io.Serializable;
 
 /**
  * A container and manager for CTEUsers.
  */
-public class CTEUserManager {
+public class CTEUserManager implements Serializable {
 
     private volatile ConcurrentMap<String, CTEUser> _users; //Container for all CTEUsers that this manages
 

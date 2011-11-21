@@ -22,13 +22,20 @@ public class ServerCommandListener extends UnicastRemoteObject implements Server
     }
 
     @Override
+    public synchronized void initDocument ( DocumentKey key, DocumentController controller ) throws RemoteException {
+        if (DEBUG) { System.out.println("initDocument with key: " + key + " for DocController: " + controller); }
+        if (_documentMap.containsKey(key)) { System.out.println("DOCUMENT ALREADY INITIONALIZED!"); /** Should Raise Exception*/ }
+        else { _documentMap.put(key, controller); }
+    }
+
+    @Override
     public synchronized void execute ( NetworkCommand netCommand ) throws RemoteException {
         if (DEBUG) { System.out.println("execute Called with argument: " + netCommand); }
 
-        Command docCommand = netCommand.getCommand();
-        DocumentKey key = netCommand.getDocumentKey();
-        DocumentController docController = _documentMap.get(key);
-        CTEUserManager userManager = docController.getUserManager();
+        Command docCommand = netCommand.getCommand(); if (docCommand == null) { System.out.println("docCommand was null"); }
+        DocumentKey key = netCommand.getDocumentKey(); if (key == null) { System.out.println("key was null"); }
+        DocumentController docController = _documentMap.get(key); if (docController == null) { System.out.println(_documentMap); }
+        CTEUserManager userManager = docController.getUserManager(); if (userManager == null) { System.out.println("userManager was null"); }
 
         // Execute the command on the correct DocumentController
         try { docController.executeCommand(docCommand); }
@@ -42,8 +49,8 @@ public class ServerCommandListener extends UnicastRemoteObject implements Server
             if (DEBUG) { System.out.println("Sending NetCommand:\n\t" + netCommand + "\nTo User: " + user);}
 
             InetAddress ipAddress = user.getIPAddress();
-            String host = ipAddress.getHostAddress();
-
+            //String host = ipAddress.getHostAddress();
+            String host = "localhost";
             try {
                 if (DEBUG) { System.out.println("Connecting to host: " + host); }
                 ClientCommandListenerInterface clientCommListener = (ClientCommandListenerInterface) Naming.lookup("rmi://" + host + "/ClientListener");

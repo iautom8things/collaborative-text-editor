@@ -4,13 +4,17 @@ import commands.*;
 import user.*;
 import java.net.*;
 import java.util.Collection;
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 
 /**
  * Controller for the Document Model.
  *
  * @author Manuel
  */
-public class DocumentController {
+public class DocumentController implements Serializable {
 
     private volatile CTEUserManager _userManager;
     private volatile Document _document;
@@ -58,4 +62,17 @@ public class DocumentController {
     }
 
     public Collection<CTEUser> getUsers ( ) { return _userManager.getUsers(); }
+
+    private void writeObject ( ObjectOutputStream out ) throws IOException {
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("_userManager", _userManager);
+        fields.put("_document", _document);
+        out.writeFields();
+    }
+
+    private void readObject ( ObjectInputStream in ) throws IOException, ClassNotFoundException {
+        ObjectInputStream.GetField fields = in.readFields();
+        _userManager = (CTEUserManager) fields.get("_userManager", null);
+        _document = (Document) fields.get("_document", null);
+    }
 }

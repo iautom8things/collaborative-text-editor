@@ -20,10 +20,10 @@ public class ClientCommandServerThread extends Thread {
     public ClientCommandServerThread ( Client client ) { _client = client; }
 
     public void run ( ) {
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new ZeroSecurityManager());
-            System.out.println("Success setting Security Manager.");
-        }
+        //if (System.getSecurityManager() == null) {
+            //System.setSecurityManager(new ZeroSecurityManager());
+            //System.out.println("Success setting Security Manager.");
+        //}
         try {
             // Set up the local Command Listener for the client
             ClientCommandListener cCommListener = new ClientCommandListener(_client);

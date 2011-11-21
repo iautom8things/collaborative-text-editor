@@ -1,12 +1,13 @@
 package handler;
 import user.*;
+import java.io.Serializable;
 
 /**
  * The model of a Text Document.
  *
  * @author Manuel
  */
-public class Document {
+public class Document implements Serializable {
 
     private volatile StringBuffer _buffer;
 
