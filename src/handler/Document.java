@@ -79,9 +79,7 @@ public class Document implements Serializable {
     /**
      * Return the String representation of the Document.
      */
-    public synchronized String toString ( ) {
-        return _buffer.toString();
-    }
+    public synchronized String toString ( ) { return "Document{ \"" + _buffer.toString() + "\" }"; }
 
 }
 
