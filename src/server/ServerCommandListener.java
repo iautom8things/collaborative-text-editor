@@ -32,10 +32,10 @@ public class ServerCommandListener extends UnicastRemoteObject implements Server
     public synchronized void execute ( NetworkCommand netCommand ) throws RemoteException {
         if (DEBUG) { System.out.println("execute Called with argument: " + netCommand); }
 
-        Command docCommand = netCommand.getCommand(); if (docCommand == null) { System.out.println("docCommand was null"); }
-        DocumentKey key = netCommand.getDocumentKey(); if (key == null) { System.out.println("key was null"); }
-        DocumentController docController = _documentMap.get(key); if (docController == null) { System.out.println(_documentMap); }
-        CTEUserManager userManager = docController.getUserManager(); if (userManager == null) { System.out.println("userManager was null"); }
+        Command docCommand = netCommand.getCommand();
+        DocumentKey key = netCommand.getDocumentKey();
+        DocumentController docController = _documentMap.get(key);
+        CTEUserManager userManager = docController.getUserManager();
 
         // Execute the command on the correct DocumentController
         try { docController.executeCommand(docCommand); }

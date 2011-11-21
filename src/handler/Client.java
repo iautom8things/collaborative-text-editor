@@ -27,10 +27,11 @@ public class Client extends Observable {
     public Client ( ) {
         _isCollaborating = false;
         try { _localUser = new CTEUser("DefaultUser", InetAddress.getLocalHost(), ColorList.getColor(0)); }
-        catch (Exception e) { /** This shouldn't happen >_<.*/}
+        catch (Exception e) { /** This shouldn't happen >_<.*/ }
         _docKey = new DocumentKey("DefaultDoc", "password");
         _controller = new DocumentController();
-        setDocument("");
+        try { _controller.executeCommand(new AddUserCommand(_localUser)); }
+        catch (Exception e) { /** This shouldn't happen */ }
         _commServerThread = new ClientCommandServerThread(this);
     }
 

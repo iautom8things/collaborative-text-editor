@@ -26,6 +26,10 @@ public class DocumentKey implements Serializable {
         _pass = pass;
     }
 
+    public String getName ( ) { return _documentName; }
+
+    public String getPass ( ) { return _pass; }
+
     /*
      *
      */
@@ -44,5 +48,20 @@ public class DocumentKey implements Serializable {
 
     public String toString ( ) {
         return "DocumentKey{" + "name: " + _documentName + ", password: " + _pass + " }";
+    }
+
+    @Override
+    public boolean equals ( Object other ) {
+        if (other == null) { return false; }
+        if (other == this) { return true; }
+        if (other.getClass() != this.getClass()) { return false; }
+
+        DocumentKey otherKey = (DocumentKey) other;
+        return (_documentName.equals(otherKey.getName())) && (_pass.equals(otherKey.getPass()));
+    }
+    @Override
+    public int hashCode ( ) {
+        String result = _documentName + _pass;
+        return result.hashCode();
     }
 }
