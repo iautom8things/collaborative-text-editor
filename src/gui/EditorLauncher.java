@@ -1,11 +1,12 @@
 package gui;
 
+import handler.*;
+
 public class EditorLauncher {
 //this is nice
   public static void main ( String[] args ) {
-      //nothing to say
-      //EditorGUI gui = new EditorGUI();
-      //gui.launch();
+      EditorGUI gui = new EditorGUI(new Client());
+      gui.launch();
   }
 
 }
