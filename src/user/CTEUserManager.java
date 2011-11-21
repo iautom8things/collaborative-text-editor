@@ -29,8 +29,6 @@ public class CTEUserManager implements Serializable {
      *      user will be added
      */
     public synchronized void addUser ( CTEUser user ) throws InvalidUserIDException {
-        System.out.println(user.getUserID());
-        Color cursorColor = ColorList.getColor(this.getNumberOfUsers());
         if (_users.containsValue(user)) { throw new InvalidUserIDException(user.getUserID()); }
         _users.put(user.getUserID(), user);
     }
@@ -72,15 +70,10 @@ public class CTEUserManager implements Serializable {
      *      a CTEUser with the specified userID is contained in this CTEUserManager
      */
     public synchronized CTEUser getUser ( String userID ) throws UserNotFoundException {
-        if (_users.containsKey(userID)) {
-            if(_users.get(userID) instanceof CTEUser){
-                return (CTEUser)_users.get(userID);
-            }
-        }
-        else {
-            throw new UserNotFoundException(userID);
-        }
-        return null;
+        CTEUser result;
+        if (_users.containsKey(userID)) { result = _users.get(userID); }
+        else { throw new UserNotFoundException(userID); }
+        return result;
     }
 
     /**
@@ -126,9 +119,7 @@ public class CTEUserManager implements Serializable {
         }
     }
 
-    public String toString() {
-        return "CTEUserManager{" + "_users=" + _users + '}';
-    }
+    public String toString() { return "CTEUserManager{ " + "_users=" + _users + " }"; }
 
     public synchronized Collection<CTEUser> getUsers ( ) { return _users.values(); }
 }

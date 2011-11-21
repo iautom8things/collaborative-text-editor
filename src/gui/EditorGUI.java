@@ -140,19 +140,7 @@ public class EditorGUI implements Observer {
                 String pass = "password"; //Dumb password for testing
                 DocumentKey documentKey = new DocumentKey(documentName, pass);
 
-                //FIX!!!
-                InsertTextCommand command = new InsertTextCommand("username", _textPane.getText());
                 _client.initateCollaboration();
-                //_client.passCommand(command);
-
-                //NetworkCommand networkCommand = new NetworkCommand(command, documentKey);
-
-                //ClientNetworkManager cnm = new ClientNetworkManager();
-                //cnm.connect();
-                //cnm.sendCommandToServer(networkCommand);
-                //TO DO: Disable the collaborate when already collaborated
-                //cnm.disconnect();
-                _isCollaborated = true;
             }
             catch(Exception e1){
                 //Need better exception handling
@@ -237,7 +225,7 @@ public class EditorGUI implements Observer {
          */
         public void keyTyped ( KeyEvent e ) {
             if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
-                InsertTextCommand command = new InsertTextCommand("username", Character.toString(e.getKeyChar()));
+                InsertTextCommand command = new InsertTextCommand(_client.getUser(), Character.toString(e.getKeyChar()));
                 try {
                     _client.passCommand(command);
                 } catch (UserNotFoundException iue) {

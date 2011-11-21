@@ -44,8 +44,10 @@ public class Client extends Observable {
     public boolean isCollaborating ( ) { return _isCollaborating; }
 
     public String toString ( ) {
-        return "Client{" + "_controller: " + _controller.toString() + "_isCollaborating: " + _isCollaborating + " }";
+        return "Client{ " + "_controller: " + _controller.toString() + "_isCollaborating: " + _isCollaborating + " }";
     }
+
+    public CTEUser getUser ( ) { return _localUser; }
 
     /************
      * Commands *
