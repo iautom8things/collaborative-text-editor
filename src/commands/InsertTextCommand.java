@@ -25,6 +25,18 @@ public class InsertTextCommand implements Command, Serializable{
         _text = text;
     }
 
+    /**
+     * Given a DocumentController, insert _text on behalf of _user on that
+     * DocumentController.
+     *
+     * Requires:
+     *      controller != null
+     *      controller.getUserManager().contains(_user)
+     *
+     * Ensures:
+     *      
+     *
+     */
     public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         CTEUserManager userManager = controller.getUserManager();
         Document doc = controller.getDocument();

@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * A User of a Collaborative Text Editor
  */
-public class CTEUser implements Serializable {
+public class CTEUser implements Serializable, Cloneable {
 
     private String _userID;
     private Color _cursorColor;
@@ -55,7 +57,7 @@ public class CTEUser implements Serializable {
     /*
      * Set the position of this User.
      * @Requires
-     *      TextPosition != null
+     *      Tex)Position != null
      */
     public void setPosition ( TextPosition position ) throws OutOfBoundsException { _cursorPosition = position; }
 
@@ -89,5 +91,37 @@ public class CTEUser implements Serializable {
         _cursorColor= (Color) fields.get("_cursorColor", null);
         _cursorPosition = (TextPosition) fields.get("_cursorPosition", null);
         _IPAddress = (InetAddress) fields.get("_IPAddress", null);
+    }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        CTEUser clone = null;
+        try {
+            clone = new CTEUser(_userID, _IPAddress, _cursorColor);
+            clone.setPosition(_cursorPosition);
+        }
+        catch (InvalidUserIDException iuede) { iuede.printStackTrace(); }
+        catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+
+        return clone;
+    }
+
+    @Override
+    public boolean equals ( Object other ) {
+        if (other == null) { return false; }
+        if (other == this) { return true; }
+        if (other.getClass() != this.getClass()) { return false; }
+
+        CTEUser otherUser = (CTEUser) other;
+
+        return _cursorPosition.equals(otherUser.getPosition())
+            && _cursorColor.equals(otherUser.getCursorColor())
+            && _userID.equals(otherUser.getUserID())
+            && _IPAddress.equals(otherUser.getIPAddress());
+    }
+    @Override
+    public int hashCode ( ) {
+        String result = "" + _userID + _IPAddress + _cursorPosition + _cursorColor;
+        return result.hashCode();
     }
 }

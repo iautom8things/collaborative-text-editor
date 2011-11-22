@@ -11,6 +11,8 @@ import java.net.*;
 
 public class Client extends Observable {
 
+    private static final boolean DEBUG = true;
+
     private ClientCommandServerThread _commServerThread;
     private ServerCommandListenerInterface _serverCommandListener;
     private DocumentController _controller;
@@ -99,10 +101,15 @@ public class Client extends Observable {
     /**
      * Given the Network Command, execute it.
      */
-    public void executeNetworkCommand ( NetworkCommand command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+    public void executeNetworkCommand ( NetworkCommand netCommand ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         // TODO Actually execute the command and notify the GUI
-        System.out.println("The Client has received:");
-        System.out.println(command);
+        if (DEBUG) {
+            System.out.println("The Client has received:");
+            System.out.println(netCommand);
+        }
+
+        //Command command = netCommand.getCommand();
+        //_executeCommand(command);
     }
 
     /**
@@ -146,5 +153,10 @@ public class Client extends Observable {
         NetworkCommand netCommand = new NetworkCommand(command, _docKey, _localUser);
         //_manager.sendCommandToServer(netCommand);
         _serverCommandListener.execute(netCommand);
+    }
+
+    private void _executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
+        _controller.executeCommand(command);
+        notifyDocumentGotUpdated();
     }
 }

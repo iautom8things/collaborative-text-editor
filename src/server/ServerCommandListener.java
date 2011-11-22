@@ -35,13 +35,12 @@ public class ServerCommandListener extends UnicastRemoteObject implements Server
         Command docCommand = netCommand.getCommand();
         DocumentKey key = netCommand.getDocumentKey();
         DocumentController docController = _documentMap.get(key);
-        CTEUserManager userManager = docController.getUserManager();
 
         // Execute the command on the correct DocumentController
         try { docController.executeCommand(docCommand); }
-        catch (InvalidUserIDException e ) { System.out.println("\n"+"IUIE"+"\n"); e.printStackTrace(); }
-        catch (UserNotFoundException e ) { System.out.println("\n"+"UNFE"+"\n"); e.printStackTrace(); }
-        catch (OutOfBoundsException e ) { System.out.println("\n"+"OOBE"+"\n"); e.printStackTrace(); }
+        catch (InvalidUserIDException e) { System.out.println("\n"+"IUIE"+"\n"); e.printStackTrace(); }
+        catch (UserNotFoundException e) { System.out.println("\n"+"UNFE"+"\n"); e.printStackTrace(); }
+        catch (OutOfBoundsException e) { System.out.println("\n"+"OOBE"+"\n"); e.printStackTrace(); }
 
         // for all Users attached to this docController, forward the network
         // command to each of them
