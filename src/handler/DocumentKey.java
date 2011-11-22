@@ -59,9 +59,7 @@ public class DocumentKey implements Serializable {
         DocumentKey otherKey = (DocumentKey) other;
         return (_documentName.equals(otherKey.getName())) && (_pass.equals(otherKey.getPass()));
     }
+
     @Override
-    public int hashCode ( ) {
-        String result = _documentName + _pass;
-        return result.hashCode();
-    }
+    public int hashCode ( ) { return this.toString().hashCode(); }
 }
