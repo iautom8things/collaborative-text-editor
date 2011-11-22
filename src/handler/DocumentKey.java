@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 /*
  * A Key for sending the Document name and password to the server.
  */
-public class DocumentKey implements Serializable {
+public class DocumentKey implements Serializable, Cloneable {
 
     private String _documentName; //Name of the Document
     private String _pass; //Password to connect to the Document
@@ -62,4 +63,7 @@ public class DocumentKey implements Serializable {
 
     @Override
     public int hashCode ( ) { return this.toString().hashCode(); }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException { return new DocumentKey(_documentName, _pass); }
 }
