@@ -47,7 +47,7 @@ public class InsertTextCommand implements Command, Serializable, Cloneable {
 
         doc.insertText(pos, _text);
         userManager.updateBeyond(pos, len);
-        pos.incrementBy(len);
+        userManager.getUser(_user.getUserID()).getPosition().incrementBy(len);
     }
 
     private void writeObject ( ObjectOutputStream out ) throws IOException {

@@ -6,11 +6,13 @@ import java.util.concurrent.*;
 import java.net.InetAddress;
 import handler.*;
 import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * A container and manager for CTEUsers.
  */
-public class CTEUserManager implements Serializable {
+public class CTEUserManager implements Serializable, Cloneable {
 
     private volatile ConcurrentMap<String, CTEUser> _users; //Container for all CTEUsers that this manages
 
@@ -19,6 +21,7 @@ public class CTEUserManager implements Serializable {
      */
     public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, CTEUser>(); }
 
+    public CTEUserManager ( ConcurrentMap<String, CTEUser> map) { _users = map; }
 
     /***********
      * Queries *
@@ -148,7 +151,7 @@ public class CTEUserManager implements Serializable {
      *      front != null
      *      back != null
      * @Ensures
-     *      Any user whose TextPosition is between the two TextPositions, front and back,
+     *      Any user whose TextPosition is between the two TextPositions, front }nd back,
      *      will have their TextPosition updated to front.
      */
     public synchronized void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
@@ -156,6 +159,18 @@ public class CTEUserManager implements Serializable {
             TextPosition tp = user.getPosition();
             if (tp.isBeyond(front) && !tp.isBeyond(back)) { this.setCursorForUser(user.getUserID(), front); }
         }
+    }
+
+    @Override
+    public synchronized Object clone ( ) throws CloneNotSupportedException {
+        ConcurrentMap<String, CTEUser> clonedMap = new ConcurrentHashMap<String, CTEUser>();
+        for (String key : _users.keySet()) {
+            CTEUser clonedValue = (CTEUser) _users.get(key).clone();
+            clonedMap.put(key, clonedValue);
+        }
+        CTEUserManager clone = new CTEUserManager(clonedMap);
+
+        return clone;
     }
 
 }

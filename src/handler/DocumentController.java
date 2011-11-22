@@ -8,13 +8,15 @@ import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * Controller for the Document Model.
  *
  * @author Manuel
  */
-public class DocumentController implements Serializable {
+public class DocumentController implements Serializable, Cloneable {
 
     private volatile CTEUserManager _userManager;
     private volatile Document _document;
@@ -26,6 +28,11 @@ public class DocumentController implements Serializable {
         _document = new Document();
         _userManager = new CTEUserManager();
 
+    }
+
+    public DocumentController (CTEUserManager manager, Document doc ) {
+        _document = doc;
+        _userManager = manager;
     }
 
     /**
@@ -74,5 +81,14 @@ public class DocumentController implements Serializable {
         ObjectInputStream.GetField fields = in.readFields();
         _userManager = (CTEUserManager) fields.get("_userManager", null);
         _document = (Document) fields.get("_document", null);
+    }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        Document clonedDoc = (Document) _document.clone();
+        CTEUserManager clonedManager = (CTEUserManager) _userManager.clone();
+        DocumentController clone = new DocumentController(clonedManager, clonedDoc);
+
+        return clone;
     }
 }
