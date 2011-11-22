@@ -50,6 +50,9 @@ public class InsertTextCommand implements Command, Serializable, Cloneable {
         userManager.getUser(_user.getUserID()).getPosition().incrementBy(len);
     }
 
+    /**
+     * For serialization of this Command.
+     */
     private void writeObject ( ObjectOutputStream out ) throws IOException {
         ObjectOutputStream.PutField fields = out.putFields();
         fields.put("_user", _user);
@@ -57,16 +60,25 @@ public class InsertTextCommand implements Command, Serializable, Cloneable {
         out.writeFields();
     }
 
+    /**
+     * For deserialization of this Command.
+     */
     private void readObject ( ObjectInputStream in ) throws IOException, ClassNotFoundException {
         ObjectInputStream.GetField fields = in.readFields();
-        _user = (CTEUser)fields.get("_user", null);
-        _text = (String)fields.get("_text", null);
+        _user = (CTEUser) fields.get("_user", null);
+        _text = (String) fields.get("_text", null);
     }
 
+    /**
+     * Returns a String represnetation of this command.
+     */
     public String toString ( ) {
         return "InsertTextCommand{" + "_user: " + _user + ", _text: " + _text + " }";
     }
 
+    /**
+     * Returns a deep copy of this Command.
+     */
     @Override
     public Object clone ( ) throws CloneNotSupportedException {
         CTEUser clonedUser = (CTEUser) _user.clone();

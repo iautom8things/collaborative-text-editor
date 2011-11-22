@@ -224,21 +224,21 @@ public class EditorGUI implements Observer {
          * When a key is typed, create a Command and pass it to the _client.
          */
         public void keyTyped ( KeyEvent e ) {
-            if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
-                InsertTextCommand command = new InsertTextCommand(_client.getUser(), Character.toString(e.getKeyChar()));
-                try {
-                    _client.passCommand(command);
-                } catch (UserNotFoundException iue) {
-                    iue.printStackTrace();
-                } catch (InvalidUserIDException iuide) {
-                    iuide.printStackTrace();
-                } catch (OutOfBoundsException oobe) {
-                    oobe.printStackTrace();
+            try {
+                Command command;
+                CTEUser user = _client.getUser();
+                TextPosition tp = (TextPosition) user.getPosition().clone();
+                if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) { command = new InsertTextCommand(user, Character.toString(e.getKeyChar())); }
+                else {
+                    tp.decrement();
+                    command = new RemoveTextCommand(user, tp);
                 }
-                catch (Exception ex) { ex.printStackTrace(); }
-            } else {
-                System.out.println("backspace typed!");
+                _client.passCommand(command);
             }
+            catch (UserNotFoundException iue) { iue.printStackTrace(); }
+            catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
+            catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+            catch (Exception ex) { ex.printStackTrace(); }
         }
     }//End KeystrokeListener
 

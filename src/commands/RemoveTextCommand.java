@@ -1,6 +1,10 @@
 package commands;
 import handler.*;
 import user.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.Cloneable;
 import java.lang.CloneNotSupportedException;
 
@@ -10,7 +14,7 @@ import java.lang.CloneNotSupportedException;
  *
  * @author Manuel
  */
-public class RemoveTextCommand implements Command, Cloneable {
+public class RemoveTextCommand implements Command, Serializable, Cloneable {
 
     private CTEUser _user;
     private TextPosition _toPos;
@@ -18,6 +22,25 @@ public class RemoveTextCommand implements Command, Cloneable {
     public RemoveTextCommand ( CTEUser user, TextPosition toPos) {
         _user = user;
         _toPos = toPos;
+    }
+
+    /**
+     * For serialization of this Command.
+     */
+    private void writeObject ( ObjectOutputStream out ) throws IOException {
+        ObjectOutputStream.PutField fields = out.putFields();
+        fields.put("_user", _user);
+        fields.put("_toPos", _toPos);
+        out.writeFields();
+    }
+
+    /**
+     * For deserialization of this Command.
+     */
+    private void readObject ( ObjectInputStream in ) throws IOException, ClassNotFoundException {
+        ObjectInputStream.GetField fields = in.readFields();
+        _user = (CTEUser) fields.get("_user", null);
+        _toPos = (TextPosition) fields.get("_toPos", null);
     }
 
     @Override
