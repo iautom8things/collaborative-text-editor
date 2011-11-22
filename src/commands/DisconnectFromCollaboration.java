@@ -1,8 +1,10 @@
 package commands;
 import user.*;
 import handler.*;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
-public class DisconnectFromCollaboration implements Command {
+public class DisconnectFromCollaboration implements Command, Cloneable {
 
 
 
@@ -14,4 +16,7 @@ public class DisconnectFromCollaboration implements Command {
     public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
 
     }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException { return null; }
 }

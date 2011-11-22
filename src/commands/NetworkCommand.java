@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.ClassNotFoundException;
 import network.*;
 import user.*;
 
@@ -16,7 +18,7 @@ import user.*;
  * sent to the Server.
  */
 
-public class NetworkCommand implements Serializable {
+public class NetworkCommand implements Serializable, Cloneable {
 
     private Command _command;
     private DocumentKey _documentKey;
@@ -75,5 +77,15 @@ public class NetworkCommand implements Serializable {
      */
     public String toString ( ) {
         return "NetworkCommand{" + "_command: " + _command + ", _documentKey: " + _documentKey + ", _user: " + _user + " }";
+    }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        CTEUser clonedUser = (CTEUser) _user.clone();
+        DocumentKey clonedKey = (DocumentKey) _documentKey.clone();
+        Command clonedCommand = (Command) _command.clone();
+        NetworkCommand clone = new NetworkCommand(clonedCommand, clonedKey, clonedUser);
+
+        return clone;
     }
 }

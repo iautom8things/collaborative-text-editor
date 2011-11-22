@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 import user.*;
 
 /**
@@ -12,7 +14,7 @@ import user.*;
  *
  * @author Manuel
  */
-public class InsertTextCommand implements Command, Serializable{
+public class InsertTextCommand implements Command, Serializable, Cloneable {
 
     private CTEUser _user;
     private String _text;
@@ -63,5 +65,12 @@ public class InsertTextCommand implements Command, Serializable{
 
     public String toString ( ) {
         return "InsertTextCommand{" + "_user: " + _user + ", _text: " + _text + " }";
+    }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        CTEUser clonedUser = (CTEUser) _user.clone();
+        InsertTextCommand clone = new InsertTextCommand(clonedUser, _text);
+        return clone;
     }
 }

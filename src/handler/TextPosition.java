@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * A position in a document.
  */
-public class TextPosition implements Comparable, Serializable {
+public class TextPosition implements Comparable, Serializable, Cloneable {
 
     int _position; //The position where this is at
     public final static int MINPOSITION = 0; //The minimum position possible
@@ -138,6 +140,15 @@ public class TextPosition implements Comparable, Serializable {
         if (!(other instanceof TextPosition)) { throw new ClassCastException("Can only compare to another TextPosition."); }
         int otherPosition = ((TextPosition) other).getPosition();
         return _position - otherPosition;
+    }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        TextPosition clone = null;
+        try { clone = new TextPosition(_position); }
+        catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+
+        return clone;
     }
 
     /*
