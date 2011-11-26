@@ -148,6 +148,12 @@ public class EditorGUI implements Observer {
     private class CollabListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             try {
+                CollaborateDialog dialog = new CollaborateDialog(_frame);
+                dialog.setVisible(true);
+           
+                
+                
+                
                 //TO DO: Need to have a popup window that asks for the user ID, Document ID
                 //and password
                 String documentName = "TestDoc1"; //Dumb info for testing
