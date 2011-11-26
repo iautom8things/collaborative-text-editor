@@ -93,10 +93,8 @@ public class CollaborateDialog extends JDialog {
         JButton cancelButton = new JButton("Cancel");
         addComponent(cancelButton, 5, 7, 1, GridBagConstraints.NONE);
 
-        _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        _frame.setSize(450, 270);
+        _frame.setSize(500, 270);
         _frame.setVisible(true);
-
 
         modeComboBox.addActionListener(new ActionListener() {
 
