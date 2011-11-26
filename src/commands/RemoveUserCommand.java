@@ -17,7 +17,7 @@ public class RemoveUserCommand implements Command, Cloneable {
     @Override
     public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         CTEUserManager userManager = controller.getUserManager();
-        userManager.removeUser(_user.getUserID());
+        userManager.removeUser(_user);
     }
 
     @Override

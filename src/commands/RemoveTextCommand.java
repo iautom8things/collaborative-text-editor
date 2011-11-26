@@ -60,7 +60,10 @@ public class RemoveTextCommand implements Command, Serializable, Cloneable {
         int deletionRange = fromPos.getPosition() - toPos.getPosition();
         userManager.updateBetween(fromPos, toPos);
         userManager.updateBeyond(toPos, deletionRange);
-        userManager.setCursorForUser(_user.getUserID(), fromPos);
+
+        try { userManager.setCursorForUser(_user, fromPos); }
+        catch (UserNotFoundException unfe) { unfe.printStackTrace(); }
+        catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
     }
 
     @Override

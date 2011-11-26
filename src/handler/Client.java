@@ -16,10 +16,10 @@ public class Client extends Observable {
     private ClientCommandServerThread _commServerThread;
     private ServerCommandListenerInterface _serverCommandListener;
     private DocumentController _controller;
-    private ClientNetworkManager _manager;
     private CTEUser _localUser;
     private DocumentKey _docKey;
     private boolean _isCollaborating;
+    private String _pid;
 
     /**
      * Create a new Client with a blank Document.
@@ -29,12 +29,13 @@ public class Client extends Observable {
     public Client ( ) {
         _isCollaborating = false;
         try { _localUser = new CTEUser("DefaultUser", InetAddress.getLocalHost(), ColorList.getColor(0)); }
-        catch (Exception e) { /** This shouldn't happen >_<.*/ }
+        catch (Exception e) { e.printStackTrace(); }
         _docKey = new DocumentKey("DefaultDoc", "password");
         _controller = new DocumentController();
         try { _controller.executeCommand(new AddUserCommand(_localUser)); }
-        catch (Exception e) { /** This shouldn't happen */ }
-        _commServerThread = new ClientCommandServerThread(this);
+        catch (Exception e) { e.printStackTrace(); }
+        _pid = "" + System.currentTimeMillis();
+        _commServerThread = new ClientCommandServerThread(this, _pid);
     }
 
 
@@ -66,6 +67,11 @@ public class Client extends Observable {
      ***********/
 
 
+    public void changeClientName ( String name ) throws OutOfBoundsException, UserNotFoundException, RemoteException, InvalidUserIDException {
+        passCommand(new UpdateUserNameCommand(_localUser, name));
+        _localUser.setName(name);
+    }
+
     /**
      * Creates a new Document with the given String.
      *
@@ -74,7 +80,7 @@ public class Client extends Observable {
      * Ensures:
      *      this.toString() == text
      */
-    public synchronized void setDocument ( String text ) {
+    public void setDocument ( String text ) {
         Document newDoc = new Document(text);
         _controller.setDocument(newDoc);
 
@@ -89,7 +95,7 @@ public class Client extends Observable {
      *
      */
     public void passCommand ( Command command ) throws RemoteException, InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        if (DEBUG) { System.out.println("passCommand called " + _localUser); }
+        if (DEBUG) { System.out.println("passCommand called"); }
         if (_isCollaborating) { _wrapAndForward(command); }
         else {
             _controller.executeCommand(command);
@@ -104,10 +110,7 @@ public class Client extends Observable {
      */
     public void executeNetworkCommand ( NetworkCommand netCommand ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         // TODO Actually execute the command and notify the GUI
-        if (DEBUG) {
-            System.out.println("The Client has received: " + _localUser);
-            System.out.println(netCommand);
-        }
+        if (DEBUG) { System.out.println("executeNetworkCommand called with Command: " + netCommand); }
 
         Command command = netCommand.getCommand();
         _executeCommand(command);
@@ -116,16 +119,27 @@ public class Client extends Observable {
     /**
      * Initiates a Connection to the Server.
      */
-    public synchronized void initateCollaboration ( ) throws NotBoundException, MalformedURLException, RemoteException {
-        if (DEBUG) { System.out.println("initateCollaboration called " + _localUser); }
+    public void initiateCollaboration ( ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException, NotBoundException, MalformedURLException, RemoteException {
+        _isCollaborating = true;
+        if (DEBUG) { System.out.println("initiateCollaboration called"); }
         _commServerThread.start();
         _serverCommandListener = (ServerCommandListenerInterface) Naming.lookup("rmi://localhost/CommandListener");
+        _serverCommandListener.initializeClient(_localUser, _pid);
+        boolean initSuccessful = _serverCommandListener.initializeDocument(_docKey, _controller);
 
-        try { _serverCommandListener.initDocument((DocumentKey)_docKey.clone(), (DocumentController) _controller.clone()); }
-        catch (CloneNotSupportedException cnse) { cnse.printStackTrace(); }
-        //_manager = new ClientNetworkManager();
-        //_manager.connect();
-        _isCollaborating = true;
+        if (initSuccessful) {
+            if (DEBUG) { System.out.println("Successfully initialized a new document on the server."); }
+        }
+        else {
+            if (DEBUG) { System.out.println("Document already initialized; Attempted to join document in-progress."); }
+            if (DEBUG) { System.out.println(_controller); }
+            _controller = _serverCommandListener.joinDocument(_localUser, _docKey);
+            if (DEBUG) { System.out.println(_controller); }
+            //_serverCommandListener.registerClient(_localUser, _docKey, _pid);
+            AddUserCommand addUser = new AddUserCommand(_localUser);
+            _executeCommand(addUser);
+            passCommand(addUser);
+        }
     }
 
     /**
@@ -145,7 +159,8 @@ public class Client extends Observable {
      * TODO: Implement for a Server Observer
      */
     private void notifyDocumentGotUpdated ( ) {
-        if (DEBUG) { System.out.println("notifyDocumentGotUpdated called " + _localUser); }
+        if (DEBUG) { System.out.println("notifyDocumentGotUpdated called"); }
+        if (DEBUG) { System.out.println("" + _controller + "\n" + _localUser); }
         setChanged();
         notifyObservers(_controller.getDocument().toString());
     }
@@ -154,15 +169,17 @@ public class Client extends Observable {
      * Creates a NetworkCommand and sends it to the Server.
      */
     private void _wrapAndForward ( Command command ) throws RemoteException {
-        if (DEBUG) { System.out.println("_wrapAndForward called " + _localUser); }
+        if (DEBUG) { System.out.println("_wrapAndForward called"); }
         NetworkCommand netCommand = new NetworkCommand(command, _docKey, _localUser);
-        //_manager.sendCommandToServer(netCommand);
         _serverCommandListener.execute(netCommand);
     }
 
     private void _executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        if (DEBUG) { System.out.println("_executeCommand called " + _localUser); }
-        _controller.executeCommand(command);
+        if (DEBUG) { System.out.println("_executeCommand called"); }
+
+        try  { _controller.executeCommand(command); }
+        catch (UserNotFoundException unfe) { System.out.println("OMGHI\n" + _controller); unfe.printStackTrace(); }
+
         notifyDocumentGotUpdated();
     }
 }

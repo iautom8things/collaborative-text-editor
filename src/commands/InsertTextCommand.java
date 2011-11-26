@@ -36,7 +36,7 @@ public class InsertTextCommand implements Command, Serializable, Cloneable {
      *      controller.getUserManager().contains(_user)
      *
      * Ensures:
-     *      
+     *
      *
      */
     public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
@@ -47,7 +47,8 @@ public class InsertTextCommand implements Command, Serializable, Cloneable {
 
         doc.insertText(pos, _text);
         userManager.updateBeyond(pos, len);
-        userManager.getUser(_user.getUserID()).getPosition().incrementBy(len);
+
+        userManager.getUser(_user.getUniqueID()).getPosition().incrementBy(len);
     }
 
     /**

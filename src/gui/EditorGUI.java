@@ -26,6 +26,7 @@ import handler.*;
 import user.*;
 import static java.lang.System.out;
 import network.*;
+import java.rmi.RemoteException;
 
 public class EditorGUI implements Observer {
 
@@ -93,6 +94,7 @@ public class EditorGUI implements Observer {
         JMenu fileMenu = new JMenu("File");
 
         //Create menu items
+        JMenuItem changeID = new JMenuItem("Change UserID");
         JMenuItem newFile = new JMenuItem("New");
         JMenuItem open = new JMenuItem("Open");
         JMenuItem save = new JMenuItem("Save");
@@ -102,6 +104,7 @@ public class EditorGUI implements Observer {
         JMenuItem exitApp = new JMenuItem("Exit Application");
 
         //Add menu items to JMenu
+        fileMenu.add(changeID);
         fileMenu.add(newFile);
         fileMenu.add(open);
         fileMenu.add(save);
@@ -111,6 +114,7 @@ public class EditorGUI implements Observer {
         fileMenu.add(exitApp);
 
         //Register menu items with listeners
+        changeID.addActionListener(new changeClientIDListener());
         newFile.addActionListener(new NewFileListener());
         open.addActionListener(new OpenFileListener());
         saveAs.addActionListener(new SaveAsListener());
@@ -125,6 +129,16 @@ public class EditorGUI implements Observer {
     * Listeners for specific JMenuItems *
     *************************************/
 
+    private class changeClientIDListener implements ActionListener {
+        public void actionPerformed ( ActionEvent e ) {
+            try { _client.changeClientName("OTHER"); }
+            catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
+            catch (RemoteException re) { re.printStackTrace(); }
+            catch (UserNotFoundException  unfe) { unfe.printStackTrace(); }
+            catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+        }
+    }
+
     private class NewFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             _textPane.setText("");
@@ -133,18 +147,16 @@ public class EditorGUI implements Observer {
 
     private class CollabListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
-            try{
+            try {
                 //TO DO: Need to have a popup window that asks for the user ID, Document ID
                 //and password
                 String documentName = "TestDoc1"; //Dumb info for testing
                 String pass = "password"; //Dumb password for testing
                 DocumentKey documentKey = new DocumentKey(documentName, pass);
 
-                _client.initateCollaboration();
+                _client.initiateCollaboration();
             }
-            catch(Exception e1){
-                //Need better exception handling
-                e1.printStackTrace();}
+            catch (Exception e1) { e1.printStackTrace(); }
         }
     }
 

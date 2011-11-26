@@ -1,5 +1,7 @@
 package user;
 
+import java.lang.Comparable;
+import java.lang.ClassCastException;
 import java.awt.Color;
 import java.net.InetAddress;
 import handler.*;
@@ -13,38 +15,68 @@ import java.lang.CloneNotSupportedException;
 /**
  * A User of a Collaborative Text Editor
  */
-public class CTEUser implements Serializable, Cloneable {
+public class CTEUser implements Comparable, Serializable, Cloneable {
 
-    private String _userID;
+    private String _name;
     private Color _cursorColor;
     private TextPosition _cursorPosition;
     private InetAddress _IPAddress;
+    private String _uniqueID;
 
     /**
+     * Constructor for clone.
      * @Requires
      * String userID != null;
      * Color cursorColor != null;
      * InetAddress IPAdress != null;
      */
-    public CTEUser ( String userID, InetAddress IPAddress, Color cursorColor ) throws InvalidUserIDException {
-        if(userID == "") throw new InvalidUserIDException();
+    public CTEUser ( String name, InetAddress IPAddress, Color cursorColor, String uniqueID ) throws InvalidUserIDException {
+        if(name == "") throw new InvalidUserIDException();
         _cursorPosition = new TextPosition();
-        _userID = userID;
+        _name = name;
         _cursorColor = cursorColor;
         _IPAddress = IPAddress;
+        _uniqueID = uniqueID;
     }
 
-    /*
+    /**
+     * Normal Constructor.
+     * @Requires
+     * String userID != null;
+     * Color cursorColor != null;
+     * InetAddress IPAdress != null;
+     */
+    public CTEUser ( String name, InetAddress IPAddress, Color cursorColor ) throws InvalidUserIDException {
+        if(name == "") throw new InvalidUserIDException();
+        _cursorPosition = new TextPosition();
+        _name = name;
+        _cursorColor = cursorColor;
+        _IPAddress = IPAddress;
+        _uniqueID = "" + System.currentTimeMillis();
+    }
+
+
+    /***********
+     * Queries *
+     ***********/
+
+
+    /**
+     * A unique ID for this User.
+     */
+    public String getUniqueID ( ) { return _uniqueID; }
+
+    /**
      * The InetAddress of this User.
      */
     public InetAddress getIPAddress ( ) { return _IPAddress; }
 
-    /*
-     * The user ID.
+    /**
+     * The user Name.
      * @Ensures
      *      Result.length() > 0
      */
-    public String getUserID ( ) { return _userID; }
+    public String getName ( ) { return _name; }
 
 
     /*
@@ -54,31 +86,46 @@ public class CTEUser implements Serializable, Cloneable {
      */
     public TextPosition getPosition ( ) { return _cursorPosition; }
 
-    /*
+
+    /************
+     * Commands *
+     ************/
+
+    /**
      * Set the position of this User.
      * @Requires
      *      Tex)Position != null
      */
     public void setPosition ( TextPosition position ) throws OutOfBoundsException { _cursorPosition = position; }
 
-    /*
+    /**
+     * Set the name of this User.
+     *
+     */
+    public void setName ( String name ) throws InvalidUserIDException {
+        if(name == "") throw new InvalidUserIDException();
+        _name= name;
+    }
+
+    /**
      * The cursor color.
      * @Ensures
      *      Result != null
      */
     public Color getCursorColor ( ) { return _cursorColor; }
 
-    /*
+    /**
      * A String representation of this User.
      */
     public String toString ( ) {
-        String returnString = getUserID() + "{" + getPosition().getPosition() + "}";
+        String returnString = _name + "{ id: " + _uniqueID + " pos: ["+ getPosition().getPosition() + "] }";
         return returnString;
     }
 
     private void writeObject ( ObjectOutputStream out ) throws IOException {
         ObjectOutputStream.PutField fields = out.putFields();
-        fields.put("_userID", _userID);
+        fields.put("_uniqueID", _uniqueID);
+        fields.put("_name", _name);
         fields.put("_cursorColor", _cursorColor);
         fields.put("_cursorPosition", _cursorPosition);
         fields.put("_IPAddress", _IPAddress);
@@ -87,8 +134,9 @@ public class CTEUser implements Serializable, Cloneable {
 
     private void readObject ( ObjectInputStream in ) throws IOException, ClassNotFoundException {
         ObjectInputStream.GetField fields = in.readFields();
-        _userID= (String) fields.get("_userID", null);
-        _cursorColor= (Color) fields.get("_cursorColor", null);
+        _uniqueID = (String) fields.get("_uniqueID", null);
+        _name = (String) fields.get("_name", null);
+        _cursorColor = (Color) fields.get("_cursorColor", null);
         _cursorPosition = (TextPosition) fields.get("_cursorPosition", null);
         _IPAddress = (InetAddress) fields.get("_IPAddress", null);
     }
@@ -97,8 +145,9 @@ public class CTEUser implements Serializable, Cloneable {
     public Object clone ( ) throws CloneNotSupportedException {
         CTEUser clone = null;
         try {
-            clone = new CTEUser(_userID, _IPAddress, _cursorColor);
-            clone.setPosition(_cursorPosition);
+            clone = new CTEUser(_name, _IPAddress, _cursorColor, _uniqueID);
+            TextPosition clonedPosition = (TextPosition) _cursorPosition.clone();
+            clone.setPosition(clonedPosition);
         }
         catch (InvalidUserIDException iuede) { iuede.printStackTrace(); }
         catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
@@ -114,14 +163,22 @@ public class CTEUser implements Serializable, Cloneable {
 
         CTEUser otherUser = (CTEUser) other;
 
-        return _cursorPosition.equals(otherUser.getPosition())
-            && _cursorColor.equals(otherUser.getCursorColor())
-            && _userID.equals(otherUser.getUserID())
-            && _IPAddress.equals(otherUser.getIPAddress());
+        return _name.equals(otherUser.getName())
+            && _uniqueID.equals(otherUser.getUniqueID());
     }
+
+    @Override
+    public int compareTo ( Object other ) {
+        if (!(other instanceof CTEUser)) { throw new ClassCastException("Can only compare to another CTEUser."); }
+
+        CTEUser otherUser = (CTEUser) other;
+
+        return _cursorPosition.compareTo(otherUser.getPosition());
+    }
+
     @Override
     public int hashCode ( ) {
-        String result = "" + _userID + _IPAddress + _cursorPosition + _cursorColor;
+        String result = "" + _uniqueID + _name;
         return result.hashCode();
     }
 }
