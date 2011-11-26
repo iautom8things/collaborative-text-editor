@@ -53,7 +53,7 @@ public class DocumentController implements Serializable, Cloneable {
     /**
      * Returns a String representation of the Document
      */
-    public String toString ( ) { return "DocumentController{ " + _document.toString() + " }"; }
+    public String toString ( ) { return "DocumentController{ " + _document + " " + _userManager +" }"; }
 
     /**
      * Executes the given command by passing a reference to the current state

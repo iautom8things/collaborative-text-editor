@@ -3,6 +3,7 @@ package server;
 import java.lang.SecurityManager;
 import java.lang.Exception;
 import java.rmi.*;
+import java.rmi.registry.*;
 import user.*;
 import commands.*;
 import handler.*;
@@ -15,19 +16,24 @@ public class ClientCommandServerThread extends Thread {
 
     private static final String HOST = "localhost";
 
-    private Client _client;
+    private static final boolean DEBUG = true;
 
-    public ClientCommandServerThread ( Client client ) { _client = client; }
+    private Client _client;
+    private String _id;
+
+    public ClientCommandServerThread ( Client client , String id ) {
+        if (DEBUG) { System.out.println("clientCommThread Constructor called with id: " + id); }
+        _client = client;
+        _id = id;
+    }
 
     public void run ( ) {
-        //if (System.getSecurityManager() == null) {
-            //System.setSecurityManager(new ZeroSecurityManager());
-            //System.out.println("Success setting Security Manager.");
-        //}
+        if (DEBUG) { System.out.println("thread.run called."); }
         try {
             // Set up the local Command Listener for the client
             ClientCommandListener cCommListener = new ClientCommandListener(_client);
-            String rmiObjectName = "rmi://" + HOST + "/ClientListener";
+            String rmiObjectName = "rmi://" + HOST + "/ClientListener" + _id;
+            if (DEBUG) { System.out.println("Binding to address: " + rmiObjectName); }
             Naming.rebind(rmiObjectName, cCommListener);
         }
         catch (ConnectException ce) { System.out.println("Unable to connect to server!"); }

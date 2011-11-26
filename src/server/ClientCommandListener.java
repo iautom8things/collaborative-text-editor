@@ -9,7 +9,7 @@ import java.lang.Exception;
 
 public class ClientCommandListener extends UnicastRemoteObject implements ClientCommandListenerInterface {
 
-    private boolean DEBUG = true;
+    private static final boolean DEBUG = true;
 
     private Client _client;
 
