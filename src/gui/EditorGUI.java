@@ -142,7 +142,13 @@ public class EditorGUI implements Observer {
         public void actionPerformed ( ActionEvent e ) {
             try {
                 _dialog.showDialog();
-                String documentName = "TestDoc1"; //Dumb info for testing
+                //while(_dialog.isVisible()){
+                  //  wait();
+                //}
+               // _dialog.setModal(true);
+                String documentName = _dialog.getDocumentName();
+        
+                //String documentName = "TestDoc1"; //Dumb info for testing
                 String pass = "password"; //Dumb password for testing
                 DocumentKey documentKey = new DocumentKey(documentName, pass);
 
