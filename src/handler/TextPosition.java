@@ -118,7 +118,6 @@ public class TextPosition implements Comparable, Serializable, Cloneable {
 
         TextPosition otherTP = (TextPosition) other;
 
-        System.out.println ("Comparing " + this + " with " + otherTP);
         return _position == otherTP.getPosition();
     }
 
