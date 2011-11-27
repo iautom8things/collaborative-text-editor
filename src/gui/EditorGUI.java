@@ -2,30 +2,20 @@ package gui;
 
 import javax.swing.*;
 import java.awt.event.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
-import java.io.FileWriter;
 import java.io.FileInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.Charset;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.EditorKit;
-import javax.swing.text.DefaultEditorKit;
 import java.util.Observer;
 import java.util.Observable;
-import java.lang.Exception;
 import commands.*;
 import handler.*;
 import user.*;
-import static java.lang.System.out;
-import network.*;
 import java.rmi.RemoteException;
 
 public class EditorGUI implements Observer {
@@ -34,7 +24,8 @@ public class EditorGUI implements Observer {
     JFrame _frame;
     protected Client _client;
     private boolean _isCollaborated; //Is this Document in a collaborative mode. TO DO: The Collaborate menu button needs to be disabled if true
-
+    private CollaborateDialog _dialog;
+    
     public EditorGUI(Client client){
         _client = client;
         _isCollaborated = false;
@@ -60,6 +51,8 @@ public class EditorGUI implements Observer {
         });
          */
         createAndShow();
+        _dialog = new CollaborateDialog(_frame);
+        _dialog.hide();
     }
 
     private void createAndShow ( ) {
@@ -148,10 +141,8 @@ public class EditorGUI implements Observer {
     private class CollabListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             try {
-                CollaborateDialog dialog = new CollaborateDialog(_frame);
-                //dialog.setVisible(true);
-                //TO DO: Need to have a popup window that asks for the user ID, Document ID
-                //and password
+                //CollaborateDialog dialog = new CollaborateDialog(_frame);
+                _dialog.show();
                 String documentName = "TestDoc1"; //Dumb info for testing
                 String pass = "password"; //Dumb password for testing
                 DocumentKey documentKey = new DocumentKey(documentName, pass);

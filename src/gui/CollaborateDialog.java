@@ -9,7 +9,22 @@ public class CollaborateDialog extends JDialog {
     private GridBagConstraints _gridBagConstraints;
     private JFrame _frame;
     private int _mode; //Type of Collaborative Session to Open
-    
+    private JLabel _modeLabel;
+    private final JComboBox _modeComboBox;
+    private JLabel _serverURLLabel;
+    private JTextField _serverURLField;
+    private JLabel _serverPortLabel;
+    private JTextField _serverPortField;
+    private JLabel _documentNameLabel;
+    private JTextField _documentNameField;
+    private JLabel _userIDLabel;
+    private JTextField _userIDField;
+    private JLabel _documentPasswordLabel;
+    private JPasswordField _documentPasswordField;
+    private final JLabel _confirmDocumentPasswordLabel;
+    private final JPasswordField _confirmDocumentPasswordField;
+    private JButton _okButton;
+    private JButton _cancelButton;
     public static final int SHARE_NEW = 1;
     public static final int SHARE_EXISTING = 2;
     
@@ -34,7 +49,25 @@ public class CollaborateDialog extends JDialog {
         _frame.add(component, _gridBagConstraints);
     }
 
+    /*
+     * Clear the contents of the text fields:
+     */
+    public void clearContents(){
+        _documentPasswordField.setText("");
+        _confirmDocumentPasswordField.setText("");
+        _documentNameField.setText("");
+        _serverURLField.setText("");
+        _serverPortField.setText("");
+    }
 
+    public void show(){
+        _frame.setVisible(true);
+    }
+    
+    public void hide(){
+        _frame.setVisible(false);
+    }    
+    
     public CollaborateDialog ( Frame parent ) {
         _mode = SHARE_NEW;
         _frame = new JFrame("Collaborate");
@@ -43,74 +76,84 @@ public class CollaborateDialog extends JDialog {
         _frame.setLayout(new GridBagLayout());
         _frame.setPreferredSize(new java.awt.Dimension(400, 250));
 
-        JLabel modeLabel = new JLabel("Collaborate By");
-        addComponent(modeLabel, 0, 0, 1, GridBagConstraints.NONE);
+        _modeLabel = new JLabel("Collaborate By");
+        addComponent(_modeLabel, 0, 0, 1, GridBagConstraints.NONE);
 
-        final JComboBox modeComboBox = new JComboBox();
+        _modeComboBox = new JComboBox();
         String[] options = new String[]{"Share Current Document", "Connect to Shared Document"};
-        modeComboBox.setModel(new javax.swing.DefaultComboBoxModel(options));
-        addComponent(modeComboBox, 1, 0, 1, GridBagConstraints.NONE);
+        _modeComboBox.setModel(new javax.swing.DefaultComboBoxModel(options));
+        addComponent(_modeComboBox, 1, 0, 1, GridBagConstraints.NONE);
 
-        JLabel serverURLLabel = new JLabel("Server URL");
-        addComponent(serverURLLabel, 0, 1, 1, GridBagConstraints.NONE);
+        _serverURLLabel = new JLabel("Server URL");
+        addComponent(_serverURLLabel, 0, 1, 1, GridBagConstraints.NONE);
 
-        JTextField serverURLField = new JTextField();
-        addComponent(serverURLField, 1, 1, 7, GridBagConstraints.HORIZONTAL);
+        _serverURLField = new JTextField();
+        addComponent(_serverURLField, 1, 1, 7, GridBagConstraints.HORIZONTAL);
  
-        JLabel serverPortLabel = new JLabel("Server Port");
-        addComponent(serverPortLabel, 0, 2, 1, GridBagConstraints.NONE);
+        _serverPortLabel = new JLabel("Server Port");
+        addComponent(_serverPortLabel, 0, 2, 1, GridBagConstraints.NONE);
 
-        JTextField serverPortField = new JTextField();
-        addComponent(serverPortField, 1, 2, 7, GridBagConstraints.HORIZONTAL);
+        _serverPortField = new JTextField();
+        addComponent(_serverPortField, 1, 2, 7, GridBagConstraints.HORIZONTAL);
         
-        JLabel documentNameLabel = new JLabel("Document Name");
-        addComponent(documentNameLabel, 0, 3, 1, GridBagConstraints.NONE);
+        _documentNameLabel = new JLabel("Document Name");
+        addComponent(_documentNameLabel, 0, 3, 1, GridBagConstraints.NONE);
 
-        JTextField documentNameField = new JTextField();
-        addComponent(documentNameField, 1, 3, 7, GridBagConstraints.HORIZONTAL);
+        _documentNameField = new JTextField();
+        addComponent(_documentNameField, 1, 3, 7, GridBagConstraints.HORIZONTAL);
 
-        JLabel userIDLabel = new JLabel("User ID");
-        addComponent(userIDLabel, 0, 4, 1, GridBagConstraints.NONE);
+        _userIDLabel = new JLabel("User ID");
+        addComponent(_userIDLabel, 0, 4, 1, GridBagConstraints.NONE);
 
-        JTextField userIDField = new JTextField();
-        addComponent(userIDField, 1, 4, 5, GridBagConstraints.HORIZONTAL);
+        _userIDField = new JTextField();
+        addComponent(_userIDField, 1, 4, 5, GridBagConstraints.HORIZONTAL);
 
-        JLabel documentPasswordLabel = new JLabel("Document Password");
-        addComponent(documentPasswordLabel, 0, 5, 1, GridBagConstraints.NONE);
+        _documentPasswordLabel = new JLabel("Document Password");
+        addComponent(_documentPasswordLabel, 0, 5, 1, GridBagConstraints.NONE);
 
-        JPasswordField docPasswordField = new JPasswordField();
-        addComponent(docPasswordField, 1, 5, 5, GridBagConstraints.HORIZONTAL);
+        _documentPasswordField = new JPasswordField();
+        addComponent(_documentPasswordField, 1, 5, 5, GridBagConstraints.HORIZONTAL);
 
-        final JLabel confirmDocumentPasswordLabel = new JLabel("Confirm Password");
-        addComponent(confirmDocumentPasswordLabel, 0, 6, 1, GridBagConstraints.NONE);
+        _confirmDocumentPasswordLabel = new JLabel("Confirm Password");
+        addComponent(_confirmDocumentPasswordLabel, 0, 6, 1, GridBagConstraints.NONE);
 
-        final JPasswordField confirmDocumentPasswordField = new JPasswordField();
-        addComponent(confirmDocumentPasswordField, 1, 6, 5, GridBagConstraints.HORIZONTAL);
+        _confirmDocumentPasswordField = new JPasswordField();
+        addComponent(_confirmDocumentPasswordField, 1, 6, 5, GridBagConstraints.HORIZONTAL);
 
-        JButton okButton = new JButton("OK");
-        addComponent(okButton, 4, 7, 1, GridBagConstraints.NONE);
+        _okButton = new JButton("OK");
+        addComponent(_okButton, 4, 7, 1, GridBagConstraints.NONE);
 
-        JButton cancelButton = new JButton("Cancel");
-        addComponent(cancelButton, 5, 7, 1, GridBagConstraints.NONE);
+        _cancelButton = new JButton("Cancel");
+        addComponent(_cancelButton, 5, 7, 1, GridBagConstraints.NONE);
 
         _frame.setSize(500, 270);
         _frame.setVisible(true);
 
-        modeComboBox.addActionListener(new ActionListener() {
+        _okButton.addActionListener(new ActionListener() {
+           public void actionPerformed( ActionEvent e ){
+               _frame.setVisible(false);
+               clearContents();
+           }
+            
+            
+            
+        });
+        
+        _modeComboBox.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                String optionName = modeComboBox.getSelectedItem().toString();
+                String optionName = _modeComboBox.getSelectedItem().toString();
                 if (optionName == "Share Current Document") {
                     //Enable the confirm password label and text field
-                    confirmDocumentPasswordLabel.setEnabled(true);
-                    confirmDocumentPasswordField.setEnabled(true);
+                    _confirmDocumentPasswordLabel.setEnabled(true);
+                    _confirmDocumentPasswordField.setEnabled(true);
                     _mode = SHARE_NEW;
                 } else if (optionName == "Connect to Shared Document") {
                     //Disable the confirm password label and text field
-                    confirmDocumentPasswordLabel.setEnabled(false);
-                    confirmDocumentPasswordField.setEnabled(false);
+                    _confirmDocumentPasswordLabel.setEnabled(false);
+                    _confirmDocumentPasswordField.setEnabled(false);
                     //Clear the field when disabled
-                    confirmDocumentPasswordField.setText("");
+                    _confirmDocumentPasswordField.setText("");
                     _mode = SHARE_EXISTING;
                 }
             }
