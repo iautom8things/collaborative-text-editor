@@ -23,12 +23,10 @@ public class EditorGUI implements Observer {
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
-    private boolean _isCollaborated; //Is this Document in a collaborative mode. TO DO: The Collaborate menu button needs to be disabled if true
     private CollaborateDialog _dialog;
-    
+
     public EditorGUI(Client client){
         _client = client;
-        _isCollaborated = false;
     }
 
    /*
@@ -51,7 +49,7 @@ public class EditorGUI implements Observer {
         });
          */
         createAndShow();
-        _dialog = new CollaborateDialog(_frame);
+        _dialog = new CollaborateDialog(_frame, _client);
         _dialog.hideDialog();
     }
 
