@@ -6,6 +6,7 @@ import javax.swing.*;
 
 public class CollaborateDialog extends JDialog {
     
+    private static final boolean DEBUG = true;
     private GridBagConstraints _gridBagConstraints;
     private JFrame _frame;
     private int _mode; //Type of Collaborative Session to Open
@@ -60,13 +61,62 @@ public class CollaborateDialog extends JDialog {
         _serverPortField.setText("");
     }
 
-    public void show(){
+    public void showDialog(){
         _frame.setVisible(true);
     }
     
-    public void hide(){
+    public void hideDialog(){
         _frame.setVisible(false);
-    }    
+    }
+    
+    private void print(String message){
+        if (DEBUG) { 
+            System.out.println(message); 
+        }        
+    }
+    
+    /*
+     * Make sure that the password and the confirm password are the same.
+     *  
+     */
+    private String validatePassword() {
+        String errorMessage = "";
+        String password = new String(_documentPasswordField.getPassword());
+        if(password.length() < 4){
+            errorMessage = "Password must be at least 4 characters.\n";
+        }
+        String confirm = new String(_confirmDocumentPasswordField.getPassword());
+        if(!(password.equals(confirm))){
+            errorMessage = errorMessage + "Passwords are not equal.\n";
+        }
+        return errorMessage;
+    }
+    
+    private String validateComponents(){
+        String errorMessage = "";
+        errorMessage = errorMessage + validateTextComponent("Server URL", _serverURLField);
+        errorMessage = errorMessage + validateTextComponent("Server Port", _serverPortField);
+        errorMessage = errorMessage + validateTextComponent("Document Name", _documentNameField);
+        errorMessage = errorMessage + validateTextComponent("User ID", _userIDField);
+        if(_mode == SHARE_NEW){
+            errorMessage = errorMessage + validatePassword();
+        }
+        return errorMessage;
+    }
+    
+    private String validateTextComponent ( String fieldName, JTextField textField ){
+        String componentText = textField.getText();
+        if(componentText.equals("")){
+            return fieldName + " must be populated.\n";
+        }
+        else{
+            return "";
+        }
+    }
+
+    private void popUpMessage( String message ){
+        JOptionPane.showMessageDialog(new JFrame(), message, "Error", JOptionPane.ERROR_MESSAGE);        
+    }
     
     public CollaborateDialog ( Frame parent ) {
         _mode = SHARE_NEW;
@@ -127,16 +177,17 @@ public class CollaborateDialog extends JDialog {
         addComponent(_cancelButton, 5, 7, 1, GridBagConstraints.NONE);
 
         _frame.setSize(500, 270);
-        _frame.setVisible(true);
+        //_frame.setVisible(true);
 
         _okButton.addActionListener(new ActionListener() {
-           public void actionPerformed( ActionEvent e ){
-               _frame.setVisible(false);
-               clearContents();
-           }
-            
-            
-            
+            public void actionPerformed(ActionEvent e) {
+                String errorMessage = validateComponents();
+                if (errorMessage.length() > 0) {
+                    popUpMessage(errorMessage);
+                } else {
+                    hideDialog();
+                }
+            }
         });
         
         _modeComboBox.addActionListener(new ActionListener() {

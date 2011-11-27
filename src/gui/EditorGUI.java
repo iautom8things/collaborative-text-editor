@@ -52,7 +52,7 @@ public class EditorGUI implements Observer {
          */
         createAndShow();
         _dialog = new CollaborateDialog(_frame);
-        _dialog.hide();
+        _dialog.hideDialog();
     }
 
     private void createAndShow ( ) {
@@ -141,13 +141,12 @@ public class EditorGUI implements Observer {
     private class CollabListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             try {
-                //CollaborateDialog dialog = new CollaborateDialog(_frame);
-                _dialog.show();
+                _dialog.showDialog();
                 String documentName = "TestDoc1"; //Dumb info for testing
                 String pass = "password"; //Dumb password for testing
                 DocumentKey documentKey = new DocumentKey(documentName, pass);
 
-                _client.initiateCollaboration();
+                //_client.initiateCollaboration();
             }
             catch (Exception e1) { e1.printStackTrace(); }
         }
