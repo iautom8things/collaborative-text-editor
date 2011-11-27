@@ -59,7 +59,7 @@ public class TextPosition implements Comparable, Serializable, Cloneable {
      */
     public void incrementBy ( int amount ) throws OutOfBoundsException {
         int maxIncrementSize = MAXPOSITION - _position;
-        if (amount > MAXPOSITION) { throw new OutOfBoundsException("Maximum position reached. Can not increment position."); }
+        if (amount > maxIncrementSize) { throw new OutOfBoundsException("Maximum position reached. Can not increment position."); }
 
         _position = _position + amount;
     }
@@ -117,8 +117,12 @@ public class TextPosition implements Comparable, Serializable, Cloneable {
         if (other.getClass() != this.getClass()) { return false; }
 
         TextPosition otherTP = (TextPosition) other;
+
+        System.out.println ("Comparing " + this + " with " + otherTP);
         return _position == otherTP.getPosition();
     }
+
+    public String toString ( ) { return "Position{ " + _position + " }"; }
 
     @Override
     public int hashCode ( ) {
@@ -154,6 +158,6 @@ public class TextPosition implements Comparable, Serializable, Cloneable {
     /*
      * Determine if this TextPosition is beyond another TextPosition.
      */
-    public boolean isBeyond (TextPosition other ) { return this.compareTo(other) > 0; }
+    public boolean isBeyond ( TextPosition other ) { return this.compareTo(other) > 0; }
 
 }
