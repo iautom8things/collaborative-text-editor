@@ -67,7 +67,6 @@ public class CollaborateDialog extends JDialog {
     
     public void hideDialog(){
         _frame.setVisible(false);
-        setModal(false);
     }
     
     private void print(String message){
@@ -117,22 +116,6 @@ public class CollaborateDialog extends JDialog {
 
     private void popUpMessage( String message ){
         JOptionPane.showMessageDialog(new JFrame(), message, "Error", JOptionPane.ERROR_MESSAGE);        
-    }
-    
-    public String getDocumentName(){
-        return _documentNameField.getText();
-    }
-    
-    public String getServerURL(){
-        return _serverURLField.toString();
-    }
-    
-    public String getServerPort(){
-        return _serverPortField.toString();
-    }
-    
-    public String getUserID(){
-        return _userIDField.toString();
     }
     
     public CollaborateDialog ( Frame parent ) {
@@ -195,7 +178,6 @@ public class CollaborateDialog extends JDialog {
 
         _frame.setSize(500, 270);
         //_frame.setVisible(true);
-        hideDialog();
 
         _okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
