@@ -85,9 +85,9 @@ public class CTEUserManagerTest extends TestCase {
             _userManager.addUser(bar);
             TextPosition pivot = new TextPosition(42);
             _userManager.updateBeyond(pivot, 10);
-            assertEquals(frank.getPosition(), new TextPosition(41));
-            assertEquals(foo.getPosition(), new TextPosition(42));
-            assertEquals(bar.getPosition(), new TextPosition(53));
+            assertEquals(new TextPosition(41), frank.getPosition());
+            assertEquals(new TextPosition(42), foo.getPosition());
+            assertEquals(new TextPosition(53), bar.getPosition());
         } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
@@ -117,12 +117,12 @@ public class CTEUserManagerTest extends TestCase {
             TextPosition front = new TextPosition(22);
             TextPosition back = new TextPosition(42);
             _userManager.updateBetween(front, back);
-            assertEquals(manuel.getPosition(), new TextPosition(21));
-            assertEquals(pedro.getPosition(), new TextPosition(22));
-            assertEquals(bonehead.getPosition(), new TextPosition(22));
-            assertEquals(frank.getPosition(), new TextPosition(22));
-            assertEquals(foo.getPosition(), new TextPosition(22));
-            assertEquals(bar.getPosition(), new TextPosition(43));
+            assertEquals(new TextPosition(21), manuel.getPosition());
+            assertEquals(new TextPosition(22), pedro.getPosition());
+            assertEquals(new TextPosition(22), bonehead.getPosition());
+            assertEquals(new TextPosition(22), frank.getPosition());
+            assertEquals(new TextPosition(22), foo.getPosition());
+            assertEquals(new TextPosition(43), bar.getPosition());
         } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
