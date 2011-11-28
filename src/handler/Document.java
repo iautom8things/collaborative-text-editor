@@ -1,12 +1,15 @@
 package handler;
 import user.*;
+import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * The model of a Text Document.
  *
  * @author Manuel
  */
-public class Document {
+public class Document implements Serializable, Cloneable {
 
     private volatile StringBuffer _buffer;
 
@@ -78,9 +81,16 @@ public class Document {
     /**
      * Return the String representation of the Document.
      */
-    public synchronized String toString ( ) {
-        return _buffer.toString();
+    public synchronized String toString ( ) { return "Document{ \"" + _buffer.toString() + "\" }"; }
+
+    /**
+     * Return the contents of the Document's StringBuffer.
+     */
+    public synchronized String contents ( ) { return _buffer.toString(); }
+
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        Document clone = (Document) new Document(_buffer.toString());
+        return clone;
     }
-
 }
-

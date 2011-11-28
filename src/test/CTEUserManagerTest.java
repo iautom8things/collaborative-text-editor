@@ -11,15 +11,6 @@ public class CTEUserManagerTest extends TestCase {
 
     private CTEUserManager _userManager;
 
-    public static void main(String[] args) {
-        out.println("Begin Main");
-        CTEUserManagerTest test = new CTEUserManagerTest();
-        test.setUp();
-        test.testUser();
-        test.testCTEUserManager();
-        test.testCTEUserManagerColors();
-    }
-
     protected void setUp() {
         _userManager = new CTEUserManager();
     }
@@ -32,23 +23,19 @@ public class CTEUserManagerTest extends TestCase {
             _IPAddress0 = InetAddress.getLocalHost();
             CTEUser testUser0 = new CTEUser(_inputUserID0, _IPAddress0, _inputColor0);
             assertEquals(testUser0.getCursorColor(), _inputColor0);
-            assertEquals(testUser0.getUserID(), _inputUserID0);
+            assertEquals(testUser0.getName(), _inputUserID0);
             assertEquals(testUser0.getIPAddress(), InetAddress.getLocalHost());
             assertEquals(testUser0.getPosition().getPosition(), 0);
 
             //Test create user with null userID
             try {
-                User testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
+                CTEUser testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
                 assertEquals(testUser1.getCursorColor(), _inputColor0);
-                assertEquals(testUser1.getUserID(), "");
+                assertEquals(testUser1.getName(), "");
             } catch (InvalidUserIDException e) {
                 String exceptionMessage = e.getMessage();
                 assertEquals("User ID can not be null", exceptionMessage);
             }
-            //Test IndividualUser
-            IndividualUser indi0 = new IndividualUser("userID1", Color.black);
-            assertEquals(indi0.getUserID(), "userID1");
-            assertEquals(indi0.getCursorColor(), Color.black);
         } catch (Exception otherExceptions) {
             otherExceptions.printStackTrace();
         }
@@ -61,20 +48,10 @@ public class CTEUserManagerTest extends TestCase {
             CTEUser mbrinle = new CTEUser("mlbrinle", InetAddress.getLocalHost(), ColorList.getColor(0));
             _manager.addUser(mbrinle);
             assertEquals(_manager.getNumberOfUsers(), 1);
-            //_manager.addUser("mlbrinle", InetAddress.getLocalHost());
-            CTEUser myUser0 = _manager.getUser("mlbrinle");
-            assertEquals(myUser0.toString(), mbrinle.toString());
-            assertEquals(myUser0, mbrinle);
             //see if a user can be added with the same user ID as one contained
-            try {
-                _manager.addUser(myUser0);
-            } catch (InvalidUserIDException e) {
-                String exceptionMessage = e.getMessage();
-                assertEquals("User ID is not unique: mlbrinle", exceptionMessage);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            _manager.addUser((CTEUser) mbrinle.clone());
         }
+        catch (Exception e) { e.printStackTrace(); }
     }
 
     public void testCTEUserManagerColors() {
@@ -89,11 +66,6 @@ public class CTEUserManagerTest extends TestCase {
                 i++;
             }
             int k = 14;
-            while (k > 0) {
-                String userName = baseName + k;
-                _manager.removeUser(userName);
-                k--;
-            }
         } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
@@ -103,19 +75,19 @@ public class CTEUserManagerTest extends TestCase {
     public void testUpdateBeyond() {
         try {
             CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
+            frank.setPosition(new TextPosition(41));
             _userManager.addUser(frank);
-            _userManager.setCursorForUser("frank", new TextPosition(41));
             CTEUser foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(1));
+            foo.setPosition(new TextPosition(42));
             _userManager.addUser(foo);
-            _userManager.setCursorForUser("foo", new TextPosition(42));
             CTEUser bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(2));
+            bar.setPosition(new TextPosition(43));
             _userManager.addUser(bar);
-            _userManager.setCursorForUser("bar", new TextPosition(43));
             TextPosition pivot = new TextPosition(42);
             _userManager.updateBeyond(pivot, 10);
-            assertEquals(_userManager.getUser("frank").getPosition(), new TextPosition(41));
-            assertEquals(_userManager.getUser("foo").getPosition(), new TextPosition(42));
-            assertEquals(_userManager.getUser("bar").getPosition(), new TextPosition(53));
+            assertEquals(frank.getPosition(), new TextPosition(41));
+            assertEquals(foo.getPosition(), new TextPosition(42));
+            assertEquals(bar.getPosition(), new TextPosition(53));
         } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());
@@ -125,32 +97,32 @@ public class CTEUserManagerTest extends TestCase {
     public void testUpdateBetween() {
         try {
             CTEUser manuel = new CTEUser("manuel", InetAddress.getLocalHost(), ColorList.getColor(0));
+            manuel.setPosition(new TextPosition(21));
             _userManager.addUser(manuel);
-            _userManager.setCursorForUser("manuel", new TextPosition(21));
             CTEUser pedro = new CTEUser("pedro", InetAddress.getLocalHost(), ColorList.getColor(0));
+            pedro.setPosition(new TextPosition(22));
             _userManager.addUser(pedro);
-            _userManager.setCursorForUser("pedro", new TextPosition(22));
             CTEUser bonehead = new CTEUser("bonehead", InetAddress.getLocalHost(), ColorList.getColor(0));
+            bonehead.setPosition(new TextPosition(23));
             _userManager.addUser(bonehead);
-            _userManager.setCursorForUser("bonehead", new TextPosition(23));
             CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
+            frank.setPosition(new TextPosition(41));
             _userManager.addUser(frank);
-            _userManager.setCursorForUser("frank", new TextPosition(41));
             CTEUser foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(0));
+            foo.setPosition(new TextPosition(42));
             _userManager.addUser(foo);
-            _userManager.setCursorForUser("foo", new TextPosition(42));
             CTEUser bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(0));
+            bar.setPosition(new TextPosition(43));
             _userManager.addUser(bar);
-            _userManager.setCursorForUser("bar", new TextPosition(43));
             TextPosition front = new TextPosition(22);
             TextPosition back = new TextPosition(42);
             _userManager.updateBetween(front, back);
-            assertEquals(_userManager.getUser("manuel").getPosition(), new TextPosition(21));
-            assertEquals(_userManager.getUser("pedro").getPosition(), new TextPosition(22));
-            assertEquals(_userManager.getUser("bonehead").getPosition(), new TextPosition(22));
-            assertEquals(_userManager.getUser("frank").getPosition(), new TextPosition(22));
-            assertEquals(_userManager.getUser("foo").getPosition(), new TextPosition(22));
-            assertEquals(_userManager.getUser("bar").getPosition(), new TextPosition(43));
+            assertEquals(manuel.getPosition(), new TextPosition(21));
+            assertEquals(pedro.getPosition(), new TextPosition(22));
+            assertEquals(bonehead.getPosition(), new TextPosition(22));
+            assertEquals(frank.getPosition(), new TextPosition(22));
+            assertEquals(foo.getPosition(), new TextPosition(22));
+            assertEquals(bar.getPosition(), new TextPosition(43));
         } catch (Exception e) {
             out.println("Exception caught:");
             out.println(e.getMessage());

@@ -20,6 +20,17 @@ public class DocumentTester extends TestCase {
     private TextPosition _tp15;
     private TextPosition _tp20;
 
+    public static void main(String[] args) {
+        DocumentTester test = new DocumentTester();
+        test.setUp();
+        test.testDocumentConstructor();
+        test.testInsertText();
+        test.setUp();
+        test.testDeleteText();
+        test.setUp();
+        test.testGetLastPosition();
+    }
+
     protected void setUp ( ) {
         _initialStr = "This is only a test!";
         _foobar = "foobar";
@@ -38,16 +49,16 @@ public class DocumentTester extends TestCase {
     }
 
     public void testDocumentConstructor ( ) {
-        assertEquals(_doc.toString(), _initialStr);
+        assertEquals(_doc.contents(), _initialStr);
         assertEquals(_doc.getLength(), _initialStr.length());
     }
 
     public void testInsertText ( ) {
         try {
             _doc.insertText(_tp0, _foobar);
-            assertEquals(_doc.toString(), _foobar + _initialStr);
+            assertEquals(_doc.contents(), _foobar + _initialStr);
             _doc.insertText(_tp6, _addthis);
-            assertEquals(_doc.toString(), _foobar + _addthis + _initialStr);
+            assertEquals(_doc.contents(), _foobar + _addthis + _initialStr);
         }
         catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
     }
@@ -55,9 +66,9 @@ public class DocumentTester extends TestCase {
     public void testDeleteText ( ) {
         try {
             _doc.deleteText(_tp0, _tp0);
-            assertEquals(_doc.toString(), _initialStr);
+            assertEquals(_doc.contents(), _initialStr);
             _doc.deleteText(_tp0, _tp5);
-            assertEquals(_doc.toString(), _initialStr.substring(5));
+            assertEquals(_doc.contents(), _initialStr.substring(5));
         }
         catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
     }

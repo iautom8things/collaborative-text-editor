@@ -5,82 +5,93 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.net.InetAddress;
 import handler.*;
+import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * A container and manager for CTEUsers.
  */
-public class CTEUserManager implements UserManager {
+public class CTEUserManager implements Serializable, Cloneable {
 
-    private volatile ConcurrentMap<String, User> _users; //Container for all CTEUsers that this manages
+    private volatile ConcurrentHashMap<String, CTEUser> _users; //Container for all CTEUsers that this manages
 
     /**
      * Create the CTEUserManager.
      */
-    public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, User>(); }
+    public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, CTEUser>(); }
+
+
+    /***********
+     * Queries *
+     **********/
+
 
     /**
-     * Add a new user with the specified userID and IPAddress to the container
-     * @Requires
-     *      userID != null
-     *      userID is unique - not contained in _users already
-     *      IPAddress != null
-     * @Ensures
-     *      user will be added
-     */
-    public synchronized void addUser ( User user ) throws InvalidUserIDException {
-        Color cursorColor = ColorList.getColor(this.getNumberOfUsers());
-        if (_users.containsValue(user)) { throw new InvalidUserIDException(user.getUserID()); }
-        _users.put(user.getUserID(), user);
-    }
-
-    /**
-     * Remove the user with the specified userID from the collection
-     * @Requires
-     *      the user is contained in this CTEUserManager
-     * @Ensures
-     *      the user is not conatined in this CTEUserManager
-     */
-    public synchronized void removeUser ( String userID ) throws UserNotFoundException {
-        if (_users.containsKey(userID)) { _users.remove(userID); }
-        else { throw new UserNotFoundException(userID); }
-    }
-
-    /**
-     * Set the position of the user with the userID to the given cursorPosition
-     * @Requires
-     *      CTEUser with userID is contained in this CTEUserManager
-     * @Ensures
-     *      the value of the cursor position for this user is the same as cursorPosition
-     */
-    public synchronized void setCursorForUser ( String userID, TextPosition cursorPosition ) throws UserNotFoundException, OutOfBoundsException {
-        CTEUser currentUser = getUser(userID);
-        currentUser.setPosition(cursorPosition);
-    }
-
-    /**
-     * Returns the number of CTEUsers contained in this CTEUserManager
+     * Returns the number of CTEUsers contained in this CTEUserManager.
      */
     public synchronized int getNumberOfUsers ( ) { return _users.size(); }
 
-    public synchronized boolean contains ( String name ) { return _users.containsKey(name); }
+    /**
+     * Checks if the given CTEUser is contained in the CTEUserManager.
+     *
+     * Requires:
+     *      CTEUser != null
+     */
+    public synchronized boolean contains ( CTEUser user ) { return _users.containsKey(user.getUniqueID()); }
 
     /**
-     * Returns the CTEUser with the specified userID
-     * @Requires
-     *      a CTEUser with the specified userID is contained in this CTEUserManager
+     * Return an Iterable Collection of the CTEUsers this CTEUserManager
+     * manages.
      */
-    public synchronized CTEUser getUser ( String userID ) throws UserNotFoundException {
-        if (_users.containsKey(userID)) {
-            Object user = _users.get(userID);
-            return (CTEUser)user;
-        }
+    public synchronized Collection<CTEUser> getUsers ( ) { return _users.values(); }
+
+
+    /************
+     * Commands *
+     ***********/
+
+
+    /**
+     * Add a new user with the specified userID and IPAddress to the
+     * container.
+     *
+     * Requires:
+     *      userID != null
+     *      userID is unique - not contained in _users already
+     *      IPAddress != null
+     * Ensures:
+     *      user will be added
+     */
+    public synchronized void addUser ( CTEUser user ) { _users.put(user.getUniqueID(), user); }
+
+    /**
+     * Remove the user with the specified userID from the collection.
+     *
+     * Requires:
+     *      the user is contained in this CTEUserManager
+     * Ensures:
+     *      the user is not conatined in this CTEUserManager
+     */
+    public synchronized void removeUser ( CTEUser user ) throws UserNotFoundException {
+        if (_users.containsKey(user.getUniqueID())) { _users.remove(user.getUniqueID()); }
+        else { throw new UserNotFoundException(user.getName()); }
+    }
+
+    public synchronized CTEUser getUser( String userID ) throws UserNotFoundException {
+        if (_users.containsKey(userID)) { return _users.get(userID); }
         else { throw new UserNotFoundException(userID); }
+    }
+
+    public synchronized void setCursorForUser ( CTEUser user, TextPosition pos ) throws OutOfBoundsException, UserNotFoundException {
+        getUser(user.getUniqueID()).setPosition(pos);
     }
 
     /**
      * Given a pivot point, every TextPosition of a User that is beyond the
      * pivot will be incremented (if amount > 0) or decremented (if amount < 0)
      * by the amount specified.
+     *
      * @Requires
      *      pivot != null
      *      amount != null
@@ -91,7 +102,7 @@ public class CTEUserManager implements UserManager {
      *      or Decremented by Math.abs(amount) if amount < 0.
      */
     public synchronized void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException {
-        for (User user : _users.values()) {
+        for (CTEUser user : _users.values()) {
             TextPosition tp = user.getPosition();
             if (tp.isBeyond(pivot)) {
                 if (amount < 0) {
@@ -110,13 +121,47 @@ public class CTEUserManager implements UserManager {
      *      front != null
      *      back != null
      * @Ensures
-     *      Any user whose TextPosition is between the two TextPositions, front and back,
+     *      Any user whose TextPosition is between the two TextPositions, front }nd back,
      *      will have their TextPosition updated to front.
      */
     public synchronized void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
-        for (User user : _users.values()) {
+        for (CTEUser user : _users.values()) {
             TextPosition tp = user.getPosition();
-            if (tp.isBeyond(front) && !tp.isBeyond(back)) { this.setCursorForUser(user.getUserID(), front); }
+            if (tp.isBeyond(front) && !tp.isBeyond(back)) { user.setPosition(front); }
         }
     }
+
+    /**
+     * Change a User's name.
+     */
+    public synchronized void setUserName ( CTEUser user, String name ) throws InvalidUserIDException, UserNotFoundException {
+        String key = user.getUniqueID();
+        if (_users.containsKey(key)) {
+            CTEUser value = _users.get(key);
+            value.setName(name);
+        }
+        else { throw new UserNotFoundException(user.getName()); }
+    }
+
+    @Override
+    public synchronized Object clone ( ) throws CloneNotSupportedException {
+        CTEUserManager clone = new CTEUserManager();
+
+        for (CTEUser user: _users.values()) { clone.addUser((CTEUser) user.clone()); }
+
+        return clone;
+    }
+
+    /**
+     * Return a String representation of the CTEUserManager.
+     */
+    public synchronized String toString ( ) {
+        String result = "UserManager{ ";
+        for (CTEUser user: _users.values()) { result += user + ", "; }
+        result = result.substring(0, result.length()-2);
+        result += " }";
+
+        return result;
+    }
+
 }

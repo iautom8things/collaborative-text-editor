@@ -1,11 +1,17 @@
 package handler;
 import java.lang.Comparable;
 import java.lang.ClassCastException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.Cloneable;
+import java.lang.CloneNotSupportedException;
 
 /**
  * A position in a document.
  */
-public class TextPosition implements Comparable {
+public class TextPosition implements Comparable, Serializable, Cloneable {
 
     int _position; //The position where this is at
     public final static int MINPOSITION = 0; //The minimum position possible
@@ -53,7 +59,7 @@ public class TextPosition implements Comparable {
      */
     public void incrementBy ( int amount ) throws OutOfBoundsException {
         int maxIncrementSize = MAXPOSITION - _position;
-        if (amount > MAXPOSITION) { throw new OutOfBoundsException("Maximum position reached. Can not increment position."); }
+        if (amount > maxIncrementSize) { throw new OutOfBoundsException("Maximum position reached. Can not increment position."); }
 
         _position = _position + amount;
     }
@@ -111,8 +117,11 @@ public class TextPosition implements Comparable {
         if (other.getClass() != this.getClass()) { return false; }
 
         TextPosition otherTP = (TextPosition) other;
+
         return _position == otherTP.getPosition();
     }
+
+    public String toString ( ) { return "Position{ " + _position + " }"; }
 
     @Override
     public int hashCode ( ) {
@@ -136,8 +145,18 @@ public class TextPosition implements Comparable {
         return _position - otherPosition;
     }
 
+    @Override
+    public Object clone ( ) throws CloneNotSupportedException {
+        TextPosition clone = null;
+        try { clone = new TextPosition(_position); }
+        catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+
+        return clone;
+    }
+
     /*
      * Determine if this TextPosition is beyond another TextPosition.
      */
-    public boolean isBeyond (TextPosition other ) { return this.compareTo(other) > 0; }
+    public boolean isBeyond ( TextPosition other ) { return this.compareTo(other) > 0; }
+
 }

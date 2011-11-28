@@ -2,47 +2,55 @@ package gui;
 
 import javax.swing.*;
 import java.awt.event.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
-import java.io.FileWriter;
 import java.io.FileInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.Charset;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.EditorKit;
-import javax.swing.text.DefaultEditorKit;
 import java.util.Observer;
 import java.util.Observable;
+import commands.*;
 import handler.*;
 import user.*;
+import java.rmi.RemoteException;
 
 public class EditorGUI implements Observer {
 
     JTextPane _textPane;
     JFrame _frame;
-    DocumentController _controller;
+    protected Client _client;
+    private CollaborateDialog _dialog;
 
-    public EditorGUI ( ) {
-        _controller = new DocumentController();
-        _controller.addObserver(this);
+    public EditorGUI(Client client){
+        _client = client;
     }
 
-    @Override
-    public void update ( Observable obs, Object obj) {
-        _textPane.setText(_controller.toString());
-        System.out.println(_controller.toString() + "\n<<<Has been updated");
+   /*
+    * Update the frame with the specified docText.
+    */
+    public void update ( Observable observable, Object docText ) {
+        if (docText instanceof String){
+            String docTextString = (String)docText;
+            _textPane.setText(docTextString);
+        }
     }
+
+    /*
+     * Launch the GUI.
+     */
     public void launch ( ) {
+        /*
         javax.swing.SwingUtilities.invokeLater(new Runnable ( ) {
             public void run ( ) { createAndShow(); }
         });
+         */
+        createAndShow();
+        _dialog = new CollaborateDialog(_frame, _client);
+        _dialog.hideDialog();
     }
 
     private void createAndShow ( ) {
@@ -55,6 +63,12 @@ public class EditorGUI implements Observer {
         //Add the text area
         _textPane = new JTextPane();
         JScrollPane scrollPane = new JScrollPane(_textPane);
+        /*FIX ME: JTEXTPANE NEEDS CUSTOM CURSORS...
+         * probably need to extend JTextPane... we could then add a
+         * blinking pipe ("|") or something to be the cursor.
+         * As it is right now, there is no cursor showing because I had to make
+         * the editable option false*
+         */
         _textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
         _textPane.addKeyListener(new KeystrokeListener());
         _frame.getContentPane().add(scrollPane);
@@ -71,6 +85,7 @@ public class EditorGUI implements Observer {
         JMenu fileMenu = new JMenu("File");
 
         //Create menu items
+        JMenuItem changeID = new JMenuItem("Change UserID");
         JMenuItem newFile = new JMenuItem("New");
         JMenuItem open = new JMenuItem("Open");
         JMenuItem save = new JMenuItem("Save");
@@ -80,6 +95,7 @@ public class EditorGUI implements Observer {
         JMenuItem exitApp = new JMenuItem("Exit Application");
 
         //Add menu items to JMenu
+        fileMenu.add(changeID);
         fileMenu.add(newFile);
         fileMenu.add(open);
         fileMenu.add(save);
@@ -89,9 +105,11 @@ public class EditorGUI implements Observer {
         fileMenu.add(exitApp);
 
         //Register menu items with listeners
-        newFile.addActionListener(new NewFileListner());
+        changeID.addActionListener(new changeClientIDListener());
+        newFile.addActionListener(new NewFileListener());
         open.addActionListener(new OpenFileListener());
         saveAs.addActionListener(new SaveAsListener());
+        collab.addActionListener(new CollabListener());
         exitApp.addActionListener(new ExitListener());
 
         result.add(fileMenu);
@@ -102,9 +120,33 @@ public class EditorGUI implements Observer {
     * Listeners for specific JMenuItems *
     *************************************/
 
-    private class NewFileListner implements ActionListener {
+    private class changeClientIDListener implements ActionListener {
+        public void actionPerformed ( ActionEvent e ) {
+            try { _client.changeClientName("OTHER"); }
+            catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
+            catch (RemoteException re) { re.printStackTrace(); }
+            catch (UserNotFoundException  unfe) { unfe.printStackTrace(); }
+            catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+        }
+    }
+
+    private class NewFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             _textPane.setText("");
+        }
+    }
+
+    private class CollabListener implements ActionListener {
+        public void actionPerformed ( ActionEvent e ) {
+            try {
+                _dialog.showDialog();
+                String documentName = "TestDoc1"; //Dumb info for testing
+                String pass = "password"; //Dumb password for testing
+                DocumentKey documentKey = new DocumentKey(documentName, pass);
+
+                //_client.initiateCollaboration();
+            }
+            catch (Exception e1) { e1.printStackTrace(); }
         }
     }
 
@@ -121,14 +163,18 @@ public class EditorGUI implements Observer {
                     FileInputStream stream = new FileInputStream(f);
                     FileChannel fChannel = stream.getChannel();
                     MappedByteBuffer byteBuff = fChannel.map(FileChannel.MapMode.READ_ONLY, 0, fChannel.size());
-
                     String contents = Charset.defaultCharset().decode(byteBuff).toString();
+
                     //_textPane.setText(contents);
-                    _controller.setDocument(contents);
-                    System.out.println(contents + "\n<<<File has been read");
+                    //update(this, contents);
+                    _client.setDocument(contents);
+                    //System.out.println(contents + "\n<<<File has been read");
                     stream.close();
                 }
-                catch (Exception ioe) { System.out.println(ioe.getMessage()); }
+                catch (Exception ioe) {
+                    ioe.printStackTrace();
+                    System.out.println(ioe.getMessage());
+                }
             }
 
         }
@@ -145,8 +191,14 @@ public class EditorGUI implements Observer {
                     out.write(_textPane.getText());
                     out.close();
                 }
-                catch(IOException ioe) { System.out.println(ioe.getMessage()); }
-                catch(Exception ex) { System.out.println(ex.getMessage()); }
+                catch(IOException ioe) {
+                    ioe.printStackTrace();
+                    System.out.println(ioe.getMessage());
+                }
+                catch(Exception ex) {
+                    ex.printStackTrace();
+                    System.out.println(ex.getMessage());
+                }
                 System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName());
             }
             else { System.out.println("Save command cancelled by user."); }
@@ -167,10 +219,28 @@ public class EditorGUI implements Observer {
 
         public void keyReleased ( KeyEvent e ) {
             //System.out.println("Key released.");
+            //_client.setDocument(_textPane.getText());
         }
 
+        /*
+         * When a key is typed, create a Command and pass it to the _client.
+         */
         public void keyTyped ( KeyEvent e ) {
-            System.out.println("Key typed: " + e.getKeyChar() + "(" + e.getKeyCode() + ")");
+            try {
+                Command command;
+                CTEUser user = _client.getUser();
+                TextPosition tp = (TextPosition) user.getPosition().clone();
+                if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) { command = new InsertTextCommand(user, Character.toString(e.getKeyChar())); }
+                else {
+                    tp.decrement();
+                    command = new RemoveTextCommand(user, tp);
+                }
+                _client.passCommand(command);
+            }
+            catch (UserNotFoundException iue) { iue.printStackTrace(); }
+            catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
+            catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
+            catch (Exception ex) { ex.printStackTrace(); }
         }
     }//End KeystrokeListener
 
