@@ -121,7 +121,7 @@ public class CTEUserManager implements Serializable, Cloneable {
      *      front != null
      *      back != null
      * @Ensures
-     *      Any user whose TextPosition is between the two TextPositions, front }nd back,
+     *      Any user whose TextPosition is between the two TextPositions, front and back,
      *      will have their TextPosition updated to front.
      */
     public synchronized void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
