@@ -105,7 +105,7 @@ public class EditorGUI implements Observer {
         fileMenu.add(exitApp);
 
         //Register menu items with listeners
-        changeID.addActionListener(new changeClientIDListener());
+        changeID.addActionListener(new ChangeClientIDListener());
         newFile.addActionListener(new NewFileListener());
         open.addActionListener(new OpenFileListener());
         saveAs.addActionListener(new SaveAsListener());
@@ -120,7 +120,7 @@ public class EditorGUI implements Observer {
     * Listeners for specific JMenuItems *
     *************************************/
 
-    private class changeClientIDListener implements ActionListener {
+    private class ChangeClientIDListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             try { _client.changeClientName("OTHER"); }
             catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
