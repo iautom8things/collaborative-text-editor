@@ -133,6 +133,8 @@ public class EditorGUI implements Observer {
     private class NewFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             _textPane.setText("");
+            //Also have to reset the model:
+            //After selecting "New File", begin to type and you'll see characters from "last" document
         }
     }
 
