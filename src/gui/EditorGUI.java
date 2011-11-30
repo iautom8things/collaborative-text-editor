@@ -219,7 +219,6 @@ public class EditorGUI implements Observer {
 
         public void keyReleased ( KeyEvent e ) {
             //System.out.println("Key released.");
-            //_client.setDocument(_textPane.getText());
         }
 
         /*
@@ -241,7 +240,8 @@ public class EditorGUI implements Observer {
             catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
             catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
             catch (Exception ex) { ex.printStackTrace(); }
-        }
+        }//End keyTyped()
+        
     }//End KeystrokeListener
 
-}//End CollaborativeEditorGUI
+}//End EditorGUI
