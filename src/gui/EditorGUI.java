@@ -20,10 +20,13 @@ import java.rmi.RemoteException;
 
 public class EditorGUI implements Observer {
 
+    
+    
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
     private CollaborateDialog _dialog;
+    private static final boolean DEBUG = true;
 
     public EditorGUI(Client client){
         _client = client;
@@ -39,6 +42,9 @@ public class EditorGUI implements Observer {
         }
     }
 
+    private void print ( String message ) { if (DEBUG) { System.out.println(message); } }
+
+    
     /*
      * Launch the GUI.
      */
@@ -155,7 +161,7 @@ public class EditorGUI implements Observer {
     //Display the dialog to open a file
     private class OpenFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
-            System.out.println("Display the open file dialog.");
+            print("Display the open file dialog.");
             //Setup FileChooser
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(_frame);
@@ -170,7 +176,7 @@ public class EditorGUI implements Observer {
                     //_textPane.setText(contents);
                     //update(this, contents);
                     _client.setDocument(contents);
-                    //System.out.println(contents + "\n<<<File has been read");
+                    //print(contents + "\n<<<File has been read");
                     stream.close();
                 }
                 catch (Exception ioe) {
@@ -201,9 +207,9 @@ public class EditorGUI implements Observer {
                     ex.printStackTrace();
                     System.out.println(ex.getMessage());
                 }
-                System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName());
+                print("Saved file as: " + _fileChooser.getSelectedFile().getName());
             }
-            else { System.out.println("Save command cancelled by user."); }
+            else { print("Save command cancelled by user."); }
         }
     }
 
@@ -213,14 +219,43 @@ public class EditorGUI implements Observer {
     }
 
     /**************************************/
-
     private class KeystrokeListener implements KeyListener {
-        public void keyPressed ( KeyEvent e ) {
-            //System.out.println("Key pressed.");
+
+        public void keyPressed(KeyEvent e) {
+            try {
+               
+
+                Command command = null;
+                CTEUser user = _client.getUser();
+                TextPosition tp = (TextPosition) user.getPosition().clone();
+                print("Text Position: " + tp);
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    print("Down pressed");
+                    _client.passCommand(command);
+                    
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    print("UP pressed");
+                    
+                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    print("LEFT pressed");
+                    command = new MoveCursorPositionCommand(user, -1);
+                    _client.passCommand(command);
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    print("RIGHT pressed");
+                    command = new MoveCursorPositionCommand(user, 1);
+                    _client.passCommand(command);
+                }
+
+                tp = (TextPosition) user.getPosition().clone();
+                print("Text Position: " + tp);  
+                                
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
 
         public void keyReleased ( KeyEvent e ) {
-            //System.out.println("Key released.");
+            print("Key released.");
         }
 
         /*

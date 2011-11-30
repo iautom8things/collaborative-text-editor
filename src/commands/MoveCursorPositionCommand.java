@@ -12,14 +12,15 @@ import user.*;
 public class MoveCursorPositionCommand implements Command, Serializable, Cloneable {
 
     private CTEUser _user;
-    private TextPosition _textPosition;
+    private TextPosition _currentPosition;
+    private int _offset;
 
     /*
      * Insert the given text to the user's Document.
      */
-    public MoveCursorPositionCommand ( CTEUser user, TextPosition textPosition ) {
+    public MoveCursorPositionCommand ( CTEUser user, int offset ) {
         _user = user;
-        _textPosition = textPosition;
+        _offset = offset;
     }
 
     /**
@@ -37,18 +38,14 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
         CTEUserManager userManager = controller.getUserManager();
         Document doc = controller.getDocument();
         TextPosition currentPosition = _user.getPosition();
-        int length;
-        //cursor is moved backwards
-        if(currentPosition.getPosition() > _textPosition.getPosition()){
-            //decrement
-            length = currentPosition.getPosition() - _textPosition.getPosition();
-            userManager.getUser(_user.getUniqueID()).getPosition().decrementBy(length);
-            
+        if (_offset > 0){
+            System.out.println("Executing command right arrow with " + _offset);
+            userManager.getUser(_user.getUniqueID()).getPosition().incrementBy(_offset);
         }
-        //cursor is moved forwards
-        else{
-            length = _textPosition.getPosition() - currentPosition.getPosition();
-            userManager.getUser(_user.getUniqueID()).getPosition().incrementBy(length);
+        else if (_offset < 0){
+            System.out.println("Executing command left arrow with " + _offset);
+            
+            userManager.getUser(_user.getUniqueID()).getPosition().decrementBy(Math.abs(_offset));System.out.println("Executing command right arrow with " + _offset);
         }
     }
 
@@ -58,7 +55,7 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
     private void writeObject ( ObjectOutputStream out ) throws IOException {
         ObjectOutputStream.PutField fields = out.putFields();
         fields.put("_user", _user);
-        fields.put("_textPosition", _textPosition);
+        fields.put("_offset", _offset);
         out.writeFields();
     }
 
@@ -68,14 +65,14 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
     private void readObject ( ObjectInputStream in ) throws IOException, ClassNotFoundException {
         ObjectInputStream.GetField fields = in.readFields();
         _user = (CTEUser) fields.get("_user", null);
-        _textPosition = (TextPosition) fields.get("_textPosition", null);
+        _offset = Integer.parseInt((String)fields.get("_offset", null));
     }
 
     /**
      * Returns a String represnetation of this command.
      */
     public String toString ( ) {
-        return "MoveCursorPositionCommand{" + "_user: " + _user + ", _textPosition: " + _textPosition + " }";
+        return "MoveCursorPositionCommand{" + "_user: " + _user + ", _offset: " + _offset + " }";
     }
 
     /**
@@ -84,8 +81,7 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
     @Override
     public Object clone ( ) throws CloneNotSupportedException {
         CTEUser clonedUser = (CTEUser) _user.clone();
-        TextPosition clonedTextPosition = (TextPosition)_textPosition.clone();
-        MoveCursorPositionCommand clone = new MoveCursorPositionCommand(clonedUser, clonedTextPosition);
+        MoveCursorPositionCommand clone = new MoveCursorPositionCommand(clonedUser, _offset);
         return clone;
     }
 }
