@@ -20,8 +20,6 @@ import java.rmi.RemoteException;
 
 public class EditorGUI implements Observer {
 
-    
-    
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
@@ -188,33 +186,40 @@ public class EditorGUI implements Observer {
     }
 
     private class SaveAsListener implements ActionListener {
-        public void actionPerformed ( ActionEvent e) {
+
+        public void actionPerformed(ActionEvent e) {
             JFileChooser _fileChooser = new JFileChooser();
             int returnVal = _fileChooser.showSaveDialog(_frame);
-            if (returnVal == JFileChooser.APPROVE_OPTION){
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 try {
                     File f = _fileChooser.getSelectedFile();
                     Writer out = new OutputStreamWriter(new FileOutputStream(f));
                     out.write(_textPane.getText());
                     out.close();
-                }
-                catch(IOException ioe) {
-                    ioe.printStackTrace();                    
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
                     System.out.println(ioe.getMessage());
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     System.out.println(ex.getMessage());
                 }
-                if (DEBUG) { System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName()); }   
+                if (DEBUG) {
+                    System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName());
+                }
+            } else {
+                if (DEBUG) {
+                    System.out.println("Save command cancelled by user.");
+                }
             }
-            else { if (DEBUG) { System.out.println("Save command cancelled by user.");}}
-            }   
+        }
     }
 
     //Exit the application
     private class ExitListener implements ActionListener {
-        public void actionPerformed ( ActionEvent e ) { System.exit(0); }
+
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
     }
 
     /**************************************/
@@ -227,15 +232,36 @@ public class EditorGUI implements Observer {
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                 
+                    if (DEBUG) {
+                        System.out.println("***DOWN KEY PRESSED. Not Implemented yet.");
+                    }
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                    
+                    if (DEBUG) {
+                        System.out.println("***DOWN KEY PRESSED. Not Implemented yet.");
+                    }
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    command = new MoveCursorPositionCommand(user, -1);
-                    _client.passCommand(command);
+                    try {
+                        command = new MoveCursorPositionCommand(user, -1);
+                        _client.passCommand(command);
+                    } catch (OutOfBoundsException oobe) {
+                        command = new MoveCursorTotHome(user);
+                        _client.passCommand(command);
+                    }
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    command = new MoveCursorPositionCommand(user, 1);
+                    try {
+                        command = new MoveCursorPositionCommand(user, 1);
+                        _client.passCommand(command);
+                    } catch (OutOfBoundsException oobe) {
+                        command = new MoveCursorToEnd(user);
+                        _client.passCommand(command);
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_HOME) {
+                    if (DEBUG) {
+                        System.out.println("***HOME KEY PRESSED");
+                    }
+                    command = new MoveCursorTotHome(user);
                     _client.passCommand(command);
+
                 }
                 tp = (TextPosition) user.getPosition().clone();
             } catch (Exception exception) {
