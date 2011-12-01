@@ -70,16 +70,15 @@ public class CTEUserTester extends TestCase {
     //will be run before any other method, establishing
     //the users' values for each subsequent test
     @Override
-    public void setUp() {
+    public void setUp ( ) {
         /*INITIALIZE IP ADDRESSES*/
         try {
             defaultUser_IP = InetAddress.getByName("www.uno.edu");
             uniqueUserOne_IP = InetAddress.getByName("www.google.com");
             uniqueUserTwo_IP = InetAddress.getByName("www.yahoo.com");
             likeUser_IP = InetAddress.getByName("www.uno.edu");
-        } catch (UnknownHostException e) {
-            System.out.println("USER IP's NOT SET PROPERLY");
         }
+        catch (UnknownHostException e) { fail("USER IP's NOT SET PROPERLY"); }
 
         //uses the default constructor to initialize
         //defaultUser = new CTEUser();
@@ -88,160 +87,153 @@ public class CTEUserTester extends TestCase {
         try {
             defaultUser = new CTEUser(defaultUser_NAME, defaultUser_IP,
                     defaultUser_COLOR, defaultUser_ID);
-        } catch (InvalidUserIDException e) {
-            System.out.println("defaultUser Name Invalid");
         }
+        catch (InvalidUserIDException e) { fail("defaultUser Name Invalid"); }
         try {
             //uses the uniqueUserOne static variables
             uniqueUserOne = new CTEUser(uniqueUserOne_NAME, uniqueUserOne_IP,
                     uniqueUserOne_COLOR, uniqueUserOne_ID);
-        } catch (InvalidUserIDException e) {
-            System.out.println("uniqueUserOne Name Invalid");
         }
+        catch (InvalidUserIDException e) { fail("uniqueUserOne Name Invalid"); }
         try {
             //uses the uniqueUserTwo static variables
             uniqueUserTwo = new CTEUser(uniqueUserTwo_NAME, uniqueUserTwo_IP,
                     uniqueUserTwo_COLOR, uniqueUserTwo_ID);
-        } catch (InvalidUserIDException e) {
-            System.out.println("uniqueUserTwo Name Invalid");
         }
+        catch (InvalidUserIDException e) { fail("uniqueUserTwo Name Invalid"); }
         try {
             //uses the likeUserXXX static variables
             likeUserOne = new CTEUser(likeUser_NAME, likeUser_IP,
                     likeUser_COLOR, likeUser_ID);
-        } catch (InvalidUserIDException e) {
-            System.out.println("likeUserOne Name Invalid");
         }
+        catch (InvalidUserIDException e) { fail("likeUserOne Name Invalid"); }
         try {
             //uses the likeUserXXX static variables
             likeUserTwo = new CTEUser(likeUser_NAME, likeUser_IP,
                     likeUser_COLOR, likeUser_ID);
-        } catch (InvalidUserIDException e) {
-            System.out.println("likeUserTwo Name Invalid");
         }
+        catch (InvalidUserIDException e) { fail("likeUserTwo Name Invalid"); }
     }
 
     /*
      * Tests getUniqueID()
      */
-    public void testGetUniqueID() {
+    public void testGetUniqueID ( ) {
         //test default user id
-        assertEquals(defaultUser.getUniqueID(),defaultUser_ID);
+        assertEquals(defaultUser_ID, defaultUser.getUniqueID());
         //NOTE default constructor not written
 
         //test unique user id
-        assertEquals(uniqueUserOne.getUniqueID(), uniqueUserOne_ID);
-        assertEquals(uniqueUserTwo.getUniqueID(), uniqueUserTwo_ID);
+        assertEquals(uniqueUserOne_ID, uniqueUserOne.getUniqueID());
+        assertEquals(uniqueUserTwo_ID, uniqueUserTwo.getUniqueID());
 
         //test like user name
-        assertEquals(likeUserOne.getUniqueID(), likeUser_ID);
-        assertEquals(likeUserOne.getUniqueID(), likeUser_ID);
+        assertEquals(likeUser_ID, likeUserOne.getUniqueID());
+        assertEquals(likeUser_ID, likeUserOne.getUniqueID());
     }
 
     /*
      * Tests getIPAddress()
      */
-    public void testGetIPAddress() {
+    public void testGetIPAddress ( ) {
         //test default user IP
-        assertEquals(defaultUser.getIPAddress(),defaultUser_IP);
+        assertEquals(defaultUser_IP, defaultUser.getIPAddress());
         //NOTE: default constructor not written
 
         //test unique user ip
-        assertEquals(uniqueUserOne.getIPAddress(), uniqueUserOne_IP);
-        assertEquals(uniqueUserTwo.getIPAddress(), uniqueUserTwo_IP);
+        assertEquals(uniqueUserOne_IP, uniqueUserOne.getIPAddress());
+        assertEquals(uniqueUserTwo_IP, uniqueUserTwo.getIPAddress());
 
         //test like user ip
-        assertEquals(likeUserOne.getIPAddress(), likeUser_IP);
-        assertEquals(likeUserTwo.getIPAddress(), likeUser_IP);
+        assertEquals(likeUser_IP, likeUserOne.getIPAddress());
+        assertEquals(likeUser_IP, likeUserTwo.getIPAddress());
     }
 
     /*
      * Tests getName()
      */
-    public void testGetName() {
+    public void testGetName ( ) {
         //test default user name
-        assertEquals(defaultUser.getName(),defaultUser_NAME);
+        assertEquals(defaultUser_NAME, defaultUser.getName());
         //NOTE: default constructor not written
 
         //test unique user name
-        assertEquals(uniqueUserOne.getName(), uniqueUserOne_NAME);
-        assertEquals(uniqueUserTwo.getName(), uniqueUserTwo_NAME);
+        assertEquals(uniqueUserOne_NAME, uniqueUserOne.getName());
+        assertEquals(uniqueUserTwo_NAME, uniqueUserTwo.getName());
 
         //test like user name
-        assertEquals(likeUserOne.getName(), likeUser_NAME);
-        assertEquals(likeUserTwo.getName(), likeUser_NAME);
+        assertEquals(likeUser_NAME, likeUserOne.getName());
+        assertEquals(likeUser_NAME, likeUserTwo.getName());
     }
 
     /*
      * Tests getCursorColor()
      */
-    public void testGetCursorColor() {
+    public void testGetCursorColor ( ) {
         //test default user cursor
-        assertEquals(defaultUser.getCursorColor(),defaultUser_COLOR);
+        assertEquals(defaultUser_COLOR, defaultUser.getCursorColor());
         //NOTE: default constructor not written
 
         //test unique user color
-        assertEquals(uniqueUserOne.getCursorColor(), uniqueUserOne_COLOR);
-        assertEquals(uniqueUserTwo.getCursorColor(), uniqueUserTwo_COLOR);
+        assertEquals(uniqueUserOne_COLOR, uniqueUserOne.getCursorColor());
+        assertEquals(uniqueUserTwo_COLOR, uniqueUserTwo.getCursorColor());
 
         //test like user color
-        assertEquals(likeUserOne.getCursorColor(), likeUser_COLOR);
-        assertEquals(likeUserTwo.getCursorColor(), likeUser_COLOR);
+        assertEquals(likeUser_COLOR, likeUserOne.getCursorColor());
+        assertEquals(likeUser_COLOR, likeUserTwo.getCursorColor());
     }
 
     /*
      * Tests getPosition() where cursor has not moved yet
      */
-    public void testInitialGetPosition() {
+    public void testInitialGetPosition ( ) {
         //test default user cursor
-        assertEquals(defaultUser.getPosition().getPosition(),0);
+        assertEquals(0, defaultUser.getPosition().getPosition());
         //NOTE: default constructor not written
 
         //test unique user position
-        assertEquals(uniqueUserOne.getPosition().getPosition(), 0);
-        assertEquals(uniqueUserTwo.getPosition().getPosition(), 0);
+        assertEquals(0, uniqueUserOne.getPosition().getPosition());
+        assertEquals(0, uniqueUserTwo.getPosition().getPosition());
 
         //test like user color
-        assertEquals(likeUserOne.getPosition().getPosition(), 0);
-        assertEquals(likeUserTwo.getPosition().getPosition(), 0);
+        assertEquals(0, likeUserOne.getPosition().getPosition());
+        assertEquals(0, likeUserTwo.getPosition().getPosition());
     }
 
     /*
      * Tests clone()
      */
-    public void testClone() {
+    public void testClone ( ) {
         //CLONE VARIABLE SET UP
         try {
             CTEUser defaultClone = (CTEUser) defaultUser.clone();
             //test default user clone
-            assertEquals(defaultClone.getUniqueID(),defaultUser.getUniqueID());
-            assertEquals(defaultClone.getIPAddress(),defaultUser.getIPAddress());
-            assertEquals(defaultClone.getName(),defaultUser.getName());
-            assertEquals(defaultClone.getCursorColor(),defaultUser.getCursorColor());
-            assertEquals(defaultClone.getPosition(),defaultUser.getPosition());
-            assertEquals(defaultClone.compareTo(defaultUser),0);
-            assertEquals(defaultClone.equals(defaultUser),true);
-            assertEquals(defaultClone.toString(),defaultUser.toString());
-            assertEquals(defaultClone.hashCode(),defaultUser.hashCode());
+            assertEquals(defaultUser.getUniqueID(), defaultClone.getUniqueID());
+            assertEquals(defaultUser.getIPAddress(), defaultClone.getIPAddress());
+            assertEquals(defaultUser.getName(), defaultClone.getName());
+            assertEquals(defaultUser.getCursorColor(), defaultClone.getCursorColor());
+            assertEquals(defaultUser.getPosition(), defaultClone.getPosition());
+            assertEquals(0, defaultClone.compareTo(defaultUser));
+            assertEquals(true, defaultClone.equals(defaultUser));
+            assertEquals(defaultUser.toString(), defaultClone.toString());
+            assertEquals(defaultUser.hashCode(), defaultClone.hashCode());
             //NOTE: default constructor not written
-        } catch (CloneNotSupportedException e) {
-            System.out.println("defaultClone Not Supported");
         }
+        catch (CloneNotSupportedException e) { fail("defaultClone Not Supported"); }
         try {
             CTEUser uniqueCloneOne = (CTEUser) uniqueUserOne.clone();
             //test unique user clones
-            assertEquals(uniqueCloneOne.getUniqueID(), uniqueUserOne.getUniqueID());
-            assertEquals(uniqueCloneOne.getIPAddress(), uniqueUserOne.getIPAddress());
-            assertEquals(uniqueCloneOne.getName(), uniqueUserOne.getName());
-            assertEquals(uniqueCloneOne.getCursorColor(), uniqueUserOne.getCursorColor());
-            assertEquals(uniqueCloneOne.getPosition(), uniqueUserOne.getPosition());
-            assertEquals(uniqueCloneOne.compareTo(uniqueUserOne), 0);
-            assertEquals(uniqueCloneOne.equals(uniqueUserOne), true);
-            assertEquals(uniqueCloneOne.toString(), uniqueUserOne.toString());
-            assertEquals(uniqueCloneOne.hashCode(), uniqueUserOne.hashCode());
-        } catch (CloneNotSupportedException e) {
-            System.out.println("uniqueCloneOne Not Supported");
+            assertEquals(uniqueUserOne.getUniqueID(), uniqueCloneOne.getUniqueID());
+            assertEquals(uniqueUserOne.getIPAddress(), uniqueCloneOne.getIPAddress());
+            assertEquals(uniqueUserOne.getName(), uniqueCloneOne.getName());
+            assertEquals(uniqueUserOne.getCursorColor(), uniqueCloneOne.getCursorColor());
+            assertEquals(uniqueUserOne.getPosition(), uniqueCloneOne.getPosition());
+            assertEquals(0, uniqueCloneOne.compareTo(uniqueUserOne));
+            assertEquals(true, uniqueCloneOne.equals(uniqueUserOne));
+            assertEquals(uniqueUserOne.toString(), uniqueCloneOne.toString());
+            assertEquals(uniqueUserOne.hashCode(), uniqueCloneOne.hashCode());
         }
+        catch (CloneNotSupportedException e) { fail("uniqueCloneOne Not Supported"); }
         try {
             CTEUser uniqueCloneTwo = (CTEUser) uniqueUserTwo.clone();
             assertEquals(uniqueCloneTwo.getUniqueID(), uniqueUserTwo.getUniqueID());
@@ -253,45 +245,39 @@ public class CTEUserTester extends TestCase {
             assertEquals(uniqueCloneTwo.equals(uniqueUserTwo), true);
             assertEquals(uniqueCloneTwo.toString(), uniqueUserTwo.toString());
             assertEquals(uniqueCloneTwo.hashCode(), uniqueUserTwo.hashCode());
-        } catch (CloneNotSupportedException e) {
-            System.out.println("uniqueCloneTwo Not Supported");
-        }
+        } catch (CloneNotSupportedException e) { fail("uniqueCloneTwo Not Supported"); }
         try {
             CTEUser likeCloneOne = (CTEUser) likeUserOne.clone();
-            assertEquals(likeCloneOne.getUniqueID(), likeUserOne.getUniqueID());
-            assertEquals(likeCloneOne.getIPAddress(), likeUserOne.getIPAddress());
-            assertEquals(likeCloneOne.getName(), likeUserOne.getName());
-            assertEquals(likeCloneOne.getCursorColor(), likeUserOne.getCursorColor());
-            assertEquals(likeCloneOne.getPosition(), likeUserOne.getPosition());
-            assertEquals(likeCloneOne.compareTo(likeUserOne), 0);
-            assertEquals(likeCloneOne.equals(likeUserOne), true);
-            assertEquals(likeCloneOne.toString(), likeUserOne.toString());
-            assertEquals(likeCloneOne.hashCode(), likeUserOne.hashCode());
-        } catch (CloneNotSupportedException e) {
-            System.out.println("likeCloneOne Not Supported");
-        }
+            assertEquals(likeUserOne.getUniqueID(), likeCloneOne.getUniqueID());
+            assertEquals(likeUserOne.getIPAddress(), likeCloneOne.getIPAddress());
+            assertEquals(likeUserOne.getName(), likeCloneOne.getName());
+            assertEquals(likeUserOne.getCursorColor(), likeCloneOne.getCursorColor());
+            assertEquals(likeUserOne.getPosition(), likeCloneOne.getPosition());
+            assertEquals(0, likeCloneOne.compareTo(likeUserOne));
+            assertEquals(true, likeCloneOne.equals(likeUserOne));
+            assertEquals(likeUserOne.toString(), likeCloneOne.toString());
+            assertEquals(likeUserOne.hashCode(), likeCloneOne.hashCode());
+        } catch (CloneNotSupportedException e) { fail("likeCloneOne Not Supported"); }
         try {
             CTEUser likeCloneTwo = (CTEUser) likeUserTwo.clone();
-            assertEquals(likeCloneTwo.getUniqueID(), likeUserTwo.getUniqueID());
-            assertEquals(likeCloneTwo.getIPAddress(), likeUserTwo.getIPAddress());
-            assertEquals(likeCloneTwo.getName(), likeUserTwo.getName());
-            assertEquals(likeCloneTwo.getCursorColor(), likeUserTwo.getCursorColor());
-            assertEquals(likeCloneTwo.getPosition(), likeUserTwo.getPosition());
-            assertEquals(likeCloneTwo.compareTo(likeUserTwo), 0);
-            assertEquals(likeCloneTwo.equals(likeUserTwo), true);
-            assertEquals(likeCloneTwo.toString(), likeUserTwo.toString());
-            assertEquals(likeCloneTwo.hashCode(), likeUserTwo.hashCode());
-        } catch (CloneNotSupportedException e) {
-            System.out.println("likeCloneTwo Not Supported");
-        }
+            assertEquals(likeUserTwo.getUniqueID(), likeCloneTwo.getUniqueID());
+            assertEquals(likeUserTwo.getIPAddress(), likeCloneTwo.getIPAddress());
+            assertEquals(likeUserTwo.getName(), likeCloneTwo.getName());
+            assertEquals(likeUserTwo.getCursorColor(), likeCloneTwo.getCursorColor());
+            assertEquals(likeUserTwo.getPosition(), likeCloneTwo.getPosition());
+            assertEquals(0, likeCloneTwo.compareTo(likeUserTwo));
+            assertEquals(true, likeCloneTwo.equals(likeUserTwo));
+            assertEquals(likeUserTwo.toString(), likeCloneTwo.toString());
+            assertEquals(likeUserTwo.hashCode(), likeCloneTwo.hashCode());
+        } catch (CloneNotSupportedException e) { fail("likeCloneTwo Not Supported"); }
     }
 
     /*
      * Tests compareTo()
      */
-    public void testCompareTo() {
+    public void testCompareTo ( ) {
         //test default user compareTo
-        assertEquals(defaultUser.compareTo(defaultUser),0);
+        assertEquals(0, defaultUser.compareTo(defaultUser));
         //NOTE: default constructor not written
 
         //test unique user compareTo
@@ -301,9 +287,8 @@ public class CTEUserTester extends TestCase {
             uniqueUserOne.setPosition(new TextPosition(10));
             assertTrue(uniqueUserOne.compareTo(uniqueUserTwo) > 0);
             assertTrue(uniqueUserTwo.compareTo(uniqueUserOne) < 0);
-        } catch (OutOfBoundsException e) {
-            System.out.println("uniqueUserOne's Position Out of Bounds");
         }
+        catch (OutOfBoundsException e) { fail("uniqueUserOne's Position Out of Bounds"); }
 
         //test like user compareTo
         //likeUserOne.getPosition() == likeUserTwo
@@ -314,7 +299,7 @@ public class CTEUserTester extends TestCase {
     /*
      * Tests equals()
      */
-    public void testEquals() {
+    public void testEquals ( ) {
         //test default user equals
         //assertTrue(defaultUser.equals(new CTEUser()));
         //NOTE: default constructor not initialized
@@ -339,57 +324,56 @@ public class CTEUserTester extends TestCase {
         String uniqueStringTwo = uniqueUserTwo_NAME + "{ id: " + uniqueUserTwo_ID + " pos: [" + 0 + "] }";
         String likeString = likeUser_NAME + "{ id: " + likeUser_ID + " pos: [" + 0 + "] }";
         //test default user toString
-        assertEquals(defaultUser.toString(), defaultString);
+        assertEquals(defaultString, defaultUser.toString());
         //NOTE: default constructor not written
 
         //test unique users toString
-        assertEquals(uniqueUserOne.toString(),uniqueStringOne);
-        assertEquals(uniqueUserTwo.toString(),uniqueStringTwo);
+        assertEquals(uniqueStringOne, uniqueUserOne.toString());
+        assertEquals(uniqueStringTwo, uniqueUserTwo.toString());
 
         //test like users toString
-        assertEquals(likeUserOne.toString(),likeString);
-        assertEquals(likeUserTwo.toString(),likeString);
-        assertEquals(likeUserOne.toString(),likeUserTwo.toString());
+        assertEquals(likeString, likeUserOne.toString());
+        assertEquals(likeString, likeUserTwo.toString());
+        assertEquals(likeUserTwo.toString(), likeUserOne.toString());
     }
 
     /*
      * Tests hashCode()
      */
-    public void testHashCode() {
+    public void testHashCode ( ) {
         //test default user hashCode
-        assertEquals(defaultUser.hashCode(),defaultUser.hashCode());
+        assertEquals(defaultUser.hashCode(), defaultUser.hashCode());
         //NOTE: default constructor not written
 
         //test unique user hashCode
-        assertEquals(uniqueUserOne.hashCode(),uniqueUserOne.hashCode());
-        assertEquals(uniqueUserTwo.hashCode(),uniqueUserTwo.hashCode());
+        assertEquals(uniqueUserOne.hashCode(), uniqueUserOne.hashCode());
+        assertEquals(uniqueUserTwo.hashCode(), uniqueUserTwo.hashCode());
         assertFalse(uniqueUserOne.hashCode() == uniqueUserTwo.hashCode());
 
         //test like user hashCode
-        assertEquals(likeUserOne.hashCode(),likeUserTwo.hashCode());
-        assertEquals(likeUserTwo.hashCode(),likeUserOne.hashCode());
+        assertEquals(likeUserOne.hashCode(), likeUserTwo.hashCode());
+        assertEquals(likeUserTwo.hashCode(), likeUserOne.hashCode());
     }
 
     /*
      * Tests setPosition()
      */
-    public void testSetPosition() {
+    public void testSetPosition ( ) {
         //test with default user
         try {
             defaultUser.setPosition(new TextPosition(10));
-            assertEquals(defaultUser.getPosition(),new TextPosition(10));
+            assertEquals(new TextPosition(10), defaultUser.getPosition());
 
             defaultUser.setPosition(new TextPosition(20));
-            assertEquals(defaultUser.getPosition(),new TextPosition(20));
+            assertEquals(new TextPosition(20), defaultUser.getPosition());
 
             defaultUser.setPosition(new TextPosition(42));
-            assertEquals(defaultUser.getPosition(),new TextPosition(42));
+            assertEquals(new TextPosition(42), defaultUser.getPosition());
 
             defaultUser.setPosition(new TextPosition(101));
-            assertEquals(defaultUser.getPosition(),new TextPosition(101));
-        } catch (OutOfBoundsException e) {
-            System.out.println("defaultUser setPosition TextPosition invalid");
+            assertEquals(new TextPosition(101), defaultUser.getPosition());
         }
+        catch (OutOfBoundsException e) { fail("defaultUser setPosition TextPosition invalid"); }
 
         //NOTE: default constructor not written
     }
@@ -397,19 +381,18 @@ public class CTEUserTester extends TestCase {
     /*
      * Tests setName()
      */
-    public void testSetName() {
+    public void testSetName ( ) {
         //test with default user
         try {
             defaultUser.setName("Gob");
-            assertEquals(defaultUser.getName(),"Gob");
+            assertEquals("Gob", defaultUser.getName());
 
             defaultUser.setName("St. Francis");
-            assertEquals(defaultUser.getName(),"St. Francis");
+            assertEquals("St. Francis", defaultUser.getName());
 
             defaultUser.setName("Zelda");
-            assertEquals(defaultUser.getName(),"Zelda");
-        } catch (InvalidUserIDException e) {
-            System.out.println("defaultUser setName Name invalid");
+            assertEquals("Zelda", defaultUser.getName());
         }
+        catch (InvalidUserIDException e) { fail("defaultUser setName Name invalid"); }
     }
 }
