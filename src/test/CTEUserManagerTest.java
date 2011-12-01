@@ -6,13 +6,44 @@ import junit.framework.TestCase;
 import static java.lang.System.out;
 import java.net.*;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.lang.Thread;
 
 public class CTEUserManagerTest extends TestCase {
 
-    private CTEUserManager _userManager;
+    private volatile CTEUserManager _userManager;
+    private CTEUser manuel;
+    private CTEUser pedro;
+    private CTEUser bonehead;
+    private CTEUser frank;
+    private CTEUser foo;
+    private CTEUser bar;
+    private CTEUser mbrinle;
+
+    public static void main(String[] args) {
+        out.println("Begin Main");
+        CTEUserManagerTest test = new CTEUserManagerTest();
+        test.setUp();
+        test.testUser();
+        test.testAddUser();
+        test.testCTEUserManager();
+        test.testCTEUserManagerColors();
+        test.testUpdateBeyond();
+        test.testUpdateBetween();
+    }
 
     protected void setUp() {
         _userManager = new CTEUserManager();
+        try {
+            manuel = new CTEUser("manuel", InetAddress.getLocalHost(), ColorList.getColor(0));
+            pedro = new CTEUser("pedro", InetAddress.getLocalHost(), ColorList.getColor(0));
+            bonehead = new CTEUser("bonehead", InetAddress.getLocalHost(), ColorList.getColor(0));
+            frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
+            foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(0));
+            bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(0));
+            mbrinle = new CTEUser("mlbrinle", InetAddress.getLocalHost(), ColorList.getColor(0));
+        }
+        catch (Exception e) { fail(e.getMessage()); }
     }
 
     public void testUser() {
@@ -36,96 +67,126 @@ public class CTEUserManagerTest extends TestCase {
                 String exceptionMessage = e.getMessage();
                 assertEquals("User ID can not be null", exceptionMessage);
             }
-        } catch (Exception otherExceptions) {
-            otherExceptions.printStackTrace();
+        } catch (Exception otherExceptions) { fail(otherExceptions.getMessage()); }
+    }
+
+    public void testAddUser ( ) {
+        try {
+            CTEUser[] array = { manuel, pedro, bonehead, frank, foo, bar };
+            assertEquals(_userManager.getNumberOfUsers(), 0);
+            _userManager.addUser(manuel);
+            assertTrue(_userManager.contains(manuel));
+            assertEquals(_userManager.getNumberOfUsers(), 1);
+            _userManager.addUser(pedro);
+            assertTrue(_userManager.contains(pedro));
+            assertEquals(_userManager.getNumberOfUsers(), 2);
+            _userManager.addUser(bonehead);
+            assertTrue(_userManager.contains(bonehead));
+            assertEquals(_userManager.getNumberOfUsers(), 3);
+            _userManager.addUser(frank);
+            assertTrue(_userManager.contains(frank));
+            assertEquals(_userManager.getNumberOfUsers(), 4);
+            _userManager.addUser(foo);
+            assertTrue(_userManager.contains(foo));
+            assertEquals(_userManager.getNumberOfUsers(), 5);
+            _userManager.addUser(bar);
+            assertTrue(_userManager.contains(bar));
+            assertEquals(_userManager.getNumberOfUsers(), 6);
+
+            assertTrue(_userManager.contains(manuel));
+            assertTrue(_userManager.contains(pedro));
+            assertTrue(_userManager.contains(bonehead));
+            assertTrue(_userManager.contains(frank));
+            assertTrue(_userManager.contains(foo));
+            assertTrue(_userManager.contains(bar));
         }
+        catch (Exception e) { fail(e.getMessage()); }
     }
 
     public void testCTEUserManager() {
+      out.println("testusermanager");
         try {
-            CTEUserManager _manager = new CTEUserManager();
-            assertEquals(_manager.getNumberOfUsers(), 0);
-            CTEUser mbrinle = new CTEUser("mlbrinle", InetAddress.getLocalHost(), ColorList.getColor(0));
-            _manager.addUser(mbrinle);
-            assertEquals(_manager.getNumberOfUsers(), 1);
+            assertEquals(_userManager.getNumberOfUsers(), 0);
+            _userManager.addUser(mbrinle);
+            assertEquals(_userManager.getNumberOfUsers(), 1);
             //see if a user can be added with the same user ID as one contained
-            _manager.addUser((CTEUser) mbrinle.clone());
+            _userManager.addUser((CTEUser) mbrinle.clone());
         }
-        catch (Exception e) { e.printStackTrace(); }
+        catch (Exception e) { fail(e.getMessage()); }
     }
 
     public void testCTEUserManagerColors() {
+      out.println("testcolors");
+        ArrayList<CTEUser> tempUsers = new ArrayList<CTEUser>();
         try {
-            CTEUserManager _manager = new CTEUserManager();
             String baseName = "user";
-            int i = 1;
-            while (i < 15) {
+            for (int i = 0; i < 15 ; i ++) {
+                Thread.sleep(1); // Ensures users aren't created fast enough they have the same uniqueID
                 String userName = baseName + i;
                 CTEUser temp = new CTEUser(userName, InetAddress.getLocalHost(), ColorList.getColor(i));
-                _manager.addUser(temp);
-                i++;
+
+                _userManager.addUser(temp);
+                tempUsers.add(temp);
             }
-            int k = 14;
-        } catch (Exception e) {
-            out.println("Exception caught:");
-            out.println(e.getMessage());
-        }
+            int len = tempUsers.size();
+            for (int i = 0; i < len; i ++) {
+                CTEUser temp = tempUsers.get(i);
+                _userManager.removeUser(temp);
+            }
+            assertEquals(_userManager.getNumberOfUsers(), 0);
+        } catch (Exception e) { fail(e.getMessage()); }
     }
 
     public void testUpdateBeyond() {
+      out.println("testupdatebeyond");
         try {
-            CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
             frank.setPosition(new TextPosition(41));
-            _userManager.addUser(frank);
-            CTEUser foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(1));
             foo.setPosition(new TextPosition(42));
-            _userManager.addUser(foo);
-            CTEUser bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(2));
             bar.setPosition(new TextPosition(43));
+
+            _userManager.addUser(frank);
+            _userManager.addUser(foo);
             _userManager.addUser(bar);
+
             TextPosition pivot = new TextPosition(42);
             _userManager.updateBeyond(pivot, 10);
+
             assertEquals(frank.getPosition(), new TextPosition(41));
             assertEquals(foo.getPosition(), new TextPosition(42));
             assertEquals(bar.getPosition(), new TextPosition(53));
-        } catch (Exception e) {
-            out.println("Exception caught:");
-            out.println(e.getMessage());
-        }
+        } catch (Exception e) { fail(e.getMessage()); }
     }
 
     public void testUpdateBetween() {
+      out.println("testupdatebetween");
         try {
-            CTEUser manuel = new CTEUser("manuel", InetAddress.getLocalHost(), ColorList.getColor(0));
             manuel.setPosition(new TextPosition(21));
-            _userManager.addUser(manuel);
-            CTEUser pedro = new CTEUser("pedro", InetAddress.getLocalHost(), ColorList.getColor(0));
             pedro.setPosition(new TextPosition(22));
-            _userManager.addUser(pedro);
-            CTEUser bonehead = new CTEUser("bonehead", InetAddress.getLocalHost(), ColorList.getColor(0));
             bonehead.setPosition(new TextPosition(23));
-            _userManager.addUser(bonehead);
-            CTEUser frank = new CTEUser("frank", InetAddress.getLocalHost(), ColorList.getColor(0));
             frank.setPosition(new TextPosition(41));
-            _userManager.addUser(frank);
-            CTEUser foo = new CTEUser("foo", InetAddress.getLocalHost(), ColorList.getColor(0));
             foo.setPosition(new TextPosition(42));
-            _userManager.addUser(foo);
-            CTEUser bar = new CTEUser("bar", InetAddress.getLocalHost(), ColorList.getColor(0));
             bar.setPosition(new TextPosition(43));
+
+            _userManager.addUser(manuel);
+            _userManager.addUser(pedro);
+            _userManager.addUser(bonehead);
+            _userManager.addUser(frank);
+            _userManager.addUser(foo);
             _userManager.addUser(bar);
+
             TextPosition front = new TextPosition(22);
             TextPosition back = new TextPosition(42);
+
+            System.out.println( "" + _userManager + " >>> " + _userManager.getNumberOfUsers());
             _userManager.updateBetween(front, back);
+            System.out.println(_userManager);
+
             assertEquals(manuel.getPosition(), new TextPosition(21));
             assertEquals(pedro.getPosition(), new TextPosition(22));
             assertEquals(bonehead.getPosition(), new TextPosition(22));
             assertEquals(frank.getPosition(), new TextPosition(22));
             assertEquals(foo.getPosition(), new TextPosition(22));
             assertEquals(bar.getPosition(), new TextPosition(43));
-        } catch (Exception e) {
-            out.println("Exception caught:");
-            out.println(e.getMessage());
-        }
+        } catch (Exception e) { fail(e.getMessage()); }
     }
 }

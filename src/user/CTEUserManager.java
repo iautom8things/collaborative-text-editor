@@ -8,18 +8,22 @@ import handler.*;
 import java.io.Serializable;
 import java.lang.Cloneable;
 import java.lang.CloneNotSupportedException;
+import java.util.ArrayList;
 
 /**
  * A container and manager for CTEUsers.
  */
 public class CTEUserManager implements Serializable, Cloneable {
 
-    private volatile ConcurrentHashMap<String, CTEUser> _users; //Container for all CTEUsers that this manages
+    private static final boolean DEBUG = true;
+    private final Object _lock = new Object();
+
+    private volatile ConcurrentMap<String, CTEUser> _users; //Container for all CTEUsers that this manages
 
     /**
      * Create the CTEUserManager.
      */
-    public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, CTEUser>(); }
+    public CTEUserManager ( ) { _users = new ConcurrentSkipListMap<String, CTEUser>(); }
 
 
     /***********
@@ -30,7 +34,11 @@ public class CTEUserManager implements Serializable, Cloneable {
     /**
      * Returns the number of CTEUsers contained in this CTEUserManager.
      */
-    public synchronized int getNumberOfUsers ( ) { return _users.size(); }
+    public int getNumberOfUsers ( ) {
+        int size;
+        synchronized (_lock) { size = _users.size(); }
+        return size;
+    }
 
     /**
      * Checks if the given CTEUser is contained in the CTEUserManager.
@@ -38,13 +46,21 @@ public class CTEUserManager implements Serializable, Cloneable {
      * Requires:
      *      CTEUser != null
      */
-    public synchronized boolean contains ( CTEUser user ) { return _users.containsKey(user.getUniqueID()); }
+    public boolean contains ( CTEUser user ) {
+        boolean result = false;
+        synchronized (_lock) { _users.containsKey(user.getUniqueID()); }
+        return result;
+    }
 
     /**
      * Return an Iterable Collection of the CTEUsers this CTEUserManager
      * manages.
      */
-    public synchronized Collection<CTEUser> getUsers ( ) { return _users.values(); }
+    public Collection<CTEUser> getUsers ( ) {
+        Collection<CTEUser> users;
+        synchronized (_lock) { users = _users.values(); }
+        return users;
+    }
 
 
     /************
@@ -63,7 +79,9 @@ public class CTEUserManager implements Serializable, Cloneable {
      * Ensures:
      *      user will be added
      */
-    public synchronized void addUser ( CTEUser user ) { _users.put(user.getUniqueID(), user); }
+    public void addUser ( CTEUser user ) {
+        synchronized (_lock) { _users.put(user.getUniqueID(), user); }
+    }
 
     /**
      * Remove the user with the specified userID from the collection.
@@ -73,18 +91,22 @@ public class CTEUserManager implements Serializable, Cloneable {
      * Ensures:
      *      the user is not conatined in this CTEUserManager
      */
-    public synchronized void removeUser ( CTEUser user ) throws UserNotFoundException {
-        if (_users.containsKey(user.getUniqueID())) { _users.remove(user.getUniqueID()); }
-        else { throw new UserNotFoundException(user.getName()); }
+    public void removeUser ( CTEUser user ) throws UserNotFoundException {
+        synchronized (_lock) {
+            if (_users.containsKey(user.getUniqueID())) { _users.remove(user.getUniqueID()); }
+            else { throw new UserNotFoundException(user.getName()); }
+        }
     }
 
-    public synchronized CTEUser getUser( String userID ) throws UserNotFoundException {
-        if (_users.containsKey(userID)) { return _users.get(userID); }
-        else { throw new UserNotFoundException(userID); }
+    public CTEUser getUser( String userID ) throws UserNotFoundException {
+        synchronized (_lock) {
+            if (_users.containsKey(userID)) { return _users.get(userID); }
+            else { throw new UserNotFoundException(userID); }
+        }
     }
 
-    public synchronized void setCursorForUser ( CTEUser user, TextPosition pos ) throws OutOfBoundsException, UserNotFoundException {
-        getUser(user.getUniqueID()).setPosition(pos);
+    public void setCursorForUser ( CTEUser user, TextPosition pos ) throws OutOfBoundsException, UserNotFoundException {
+        synchronized (_lock) { getUser(user.getUniqueID()).setPosition(pos); }
     }
 
     /**
@@ -101,15 +123,17 @@ public class CTEUserManager implements Serializable, Cloneable {
      *      will have their Position Incremented by amount if amount > 0
      *      or Decremented by Math.abs(amount) if amount < 0.
      */
-    public synchronized void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException {
-        for (CTEUser user : _users.values()) {
-            TextPosition tp = user.getPosition();
-            if (tp.isBeyond(pivot)) {
-                if (amount < 0) {
-                    amount = Math.abs(amount);
-                    tp.decrementBy(amount);
+    public void updateBeyond ( TextPosition pivot, int amount ) throws OutOfBoundsException {
+        synchronized (_lock) {
+            for (CTEUser user : _users.values()) {
+                TextPosition tp = user.getPosition();
+                if (tp.isBeyond(pivot)) {
+                    if (amount < 0) {
+                        amount = Math.abs(amount);
+                        tp.decrementBy(amount);
+                    }
+                    else { tp.incrementBy(amount); }
                 }
-                else { tp.incrementBy(amount); }
             }
         }
     }
@@ -121,33 +145,48 @@ public class CTEUserManager implements Serializable, Cloneable {
      *      front != null
      *      back != null
      * @Ensures
-     *      Any user whose TextPosition is between the two TextPositions, front }nd back,
+     *      Any user whose TextPosition is between the two TextPositions, front and back,
      *      will have their TextPosition updated to front.
      */
-    public synchronized void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
-        for (CTEUser user : _users.values()) {
-            TextPosition tp = user.getPosition();
-            if (tp.isBeyond(front) && !tp.isBeyond(back)) { user.setPosition(front); }
+    public void updateBetween ( TextPosition front, TextPosition back ) throws OutOfBoundsException, UserNotFoundException {
+        if (DEBUG) { System.out.println("updating textpositions between " + front + " and " + back); }
+        ArrayList<String> keys = new ArrayList<String>();
+        synchronized (_lock) {
+            for (String key : _users.keySet()) { keys.add(key); }
+            for (String key : keys) {
+                CTEUser user = _users.get(key);
+                if (DEBUG) { System.out.println("...checking " + user); }
+                TextPosition tp = user.getPosition();
+                if (DEBUG) { System.out.println(tp); }
+                if (tp.isBeyond(front) && back.isBeyond(tp)) {
+                    if (DEBUG) { System.out.println("...is between"); }
+                    user.setPosition(front);
+                }
+            }
         }
     }
 
     /**
      * Change a User's name.
      */
-    public synchronized void setUserName ( CTEUser user, String name ) throws InvalidUserIDException, UserNotFoundException {
+    public void setUserName ( CTEUser user, String name ) throws InvalidUserIDException, UserNotFoundException {
         String key = user.getUniqueID();
-        if (_users.containsKey(key)) {
-            CTEUser value = _users.get(key);
-            value.setName(name);
+        synchronized (_lock) {
+            if (_users.containsKey(key)) {
+                CTEUser value = _users.get(key);
+                value.setName(name);
+            }
+            else { throw new UserNotFoundException(user.getName()); }
         }
-        else { throw new UserNotFoundException(user.getName()); }
     }
 
     @Override
-    public synchronized Object clone ( ) throws CloneNotSupportedException {
+    public Object clone ( ) throws CloneNotSupportedException {
         CTEUserManager clone = new CTEUserManager();
 
-        for (CTEUser user: _users.values()) { clone.addUser((CTEUser) user.clone()); }
+        synchronized (_lock) {
+            for (CTEUser user: _users.values()) { clone.addUser((CTEUser) user.clone()); }
+        }
 
         return clone;
     }
@@ -155,9 +194,12 @@ public class CTEUserManager implements Serializable, Cloneable {
     /**
      * Return a String representation of the CTEUserManager.
      */
-    public synchronized String toString ( ) {
+    public String toString ( ) {
         String result = "UserManager{ ";
-        for (CTEUser user: _users.values()) { result += user + ", "; }
+
+        synchronized (_lock) {
+            for (CTEUser user: _users.values()) { result += user + ", "; }
+        }
         result = result.substring(0, result.length()-2);
         result += " }";
 
