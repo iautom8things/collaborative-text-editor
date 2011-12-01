@@ -27,23 +27,25 @@ public class EditorGUI implements Observer {
     protected Client _client;
     private CollaborateDialog _dialog;
     private static final boolean DEBUG = true;
+    private MultiCaret _caret;
 
     public EditorGUI(Client client){
         _client = client;
+        //Create a new MultiCaret that is capable of having many positions
+        _caret = new MultiCaret(_client.getController().getUserManager());
     }
 
    /*
-    * Update the frame with the specified docText.
+    * Update the frame with the DocumentController's Document's String.
     */
-    public void update ( Observable observable, Object docText ) {
-        if (docText instanceof String){
-            String docTextString = (String)docText;
+    public void update ( Observable observable, Object objectDocumentController ) {
+        if (objectDocumentController instanceof DocumentController){
+            DocumentController documentController = (DocumentController)objectDocumentController;
+            String docTextString = documentController.getDocument().contents();
+            _caret.setUserManager(documentController.getUserManager());
             _textPane.setText(docTextString);
         }
     }
-
-    private void print ( String message ) { if (DEBUG) { System.out.println(message); } }
-
     
     /*
      * Launch the GUI.
@@ -68,14 +70,12 @@ public class EditorGUI implements Observer {
 
         //Add the text area
         _textPane = new JTextPane();
+        _textPane.setCaret(_caret);
+        
+       
         JScrollPane scrollPane = new JScrollPane(_textPane);
-        /*FIX ME: JTEXTPANE NEEDS CUSTOM CURSORS...
-         * probably need to extend JTextPane... we could then add a
-         * blinking pipe ("|") or something to be the cursor.
-         * As it is right now, there is no cursor showing because I had to make
-         * the editable option false*
-         */
         _textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
+        _caret.setVisible(true);
         _textPane.addKeyListener(new KeystrokeListener());
         _frame.getContentPane().add(scrollPane);
 
@@ -161,7 +161,6 @@ public class EditorGUI implements Observer {
     //Display the dialog to open a file
     private class OpenFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
-            print("Display the open file dialog.");
             //Setup FileChooser
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(_frame);
@@ -181,7 +180,7 @@ public class EditorGUI implements Observer {
                 }
                 catch (Exception ioe) {
                     ioe.printStackTrace();
-                    System.out.println(ioe.getMessage());
+                    if (DEBUG) { System.out.println(ioe.getMessage()); }
                 }
             }
 
@@ -200,17 +199,17 @@ public class EditorGUI implements Observer {
                     out.close();
                 }
                 catch(IOException ioe) {
-                    ioe.printStackTrace();
+                    ioe.printStackTrace();                    
                     System.out.println(ioe.getMessage());
                 }
                 catch(Exception ex) {
                     ex.printStackTrace();
                     System.out.println(ex.getMessage());
                 }
-                print("Saved file as: " + _fileChooser.getSelectedFile().getName());
+                if (DEBUG) { System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName()); }   
             }
-            else { print("Save command cancelled by user."); }
-        }
+            else { if (DEBUG) { System.out.println("Save command cancelled by user.");}}
+            }   
     }
 
     //Exit the application
@@ -222,40 +221,30 @@ public class EditorGUI implements Observer {
     private class KeystrokeListener implements KeyListener {
 
         public void keyPressed(KeyEvent e) {
+            //TODO: implement up and down
             try {
-               
-
                 Command command = null;
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
-                print("Text Position: " + tp);
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    print("Down pressed");
-                    _client.passCommand(command);
-                    
+                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                 
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    print("UP pressed");
-                    
+                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                    
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    print("LEFT pressed");
                     command = new MoveCursorPositionCommand(user, -1);
                     _client.passCommand(command);
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    print("RIGHT pressed");
                     command = new MoveCursorPositionCommand(user, 1);
                     _client.passCommand(command);
                 }
-
                 tp = (TextPosition) user.getPosition().clone();
-                print("Text Position: " + tp);  
-                                
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         }
 
         public void keyReleased ( KeyEvent e ) {
-            print("Key released.");
+            if (DEBUG) { System.out.println("Key released."); }            
         }
 
         /*

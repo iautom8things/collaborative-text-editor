@@ -54,7 +54,9 @@ public class CTEUserManager implements Serializable, Cloneable {
 
     /**
      * Add a new user with the specified userID and IPAddress to the
-     * container.
+     * container. Get the size of the container and the corresponding color
+     * to that size - according to ColorList - and set the CTEUser's color
+     * to that
      *
      * Requires:
      *      userID != null
@@ -62,8 +64,13 @@ public class CTEUserManager implements Serializable, Cloneable {
      *      IPAddress != null
      * Ensures:
      *      user will be added
+     *      user.getCursorColor == ColorList.getColor(_users.size())
      */
-    public synchronized void addUser ( CTEUser user ) { _users.put(user.getUniqueID(), user); }
+    public synchronized void addUser ( CTEUser user ) { 
+        user.setCursorColor(ColorList.getColor(_users.size()));
+        _users.put(user.getUniqueID(), user); 
+        
+    }
 
     /**
      * Remove the user with the specified userID from the collection.
@@ -160,7 +167,6 @@ public class CTEUserManager implements Serializable, Cloneable {
         for (CTEUser user: _users.values()) { result += user + ", "; }
         result = result.substring(0, result.length()-2);
         result += " }";
-
         return result;
     }
 
