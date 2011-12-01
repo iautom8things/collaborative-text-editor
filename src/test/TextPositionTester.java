@@ -38,7 +38,7 @@ public class TextPositionTester extends TestCase {
             _tp19 = new TextPosition(19);
             _tp21 = new TextPosition(21);
         }
-        catch (OutOfBoundsException oobe) { assertFalse(true); } // This test should fail if exception thrown.
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); } // This test should fail if exception thrown.
     }
 
     public void testTextPositionConstructor ( ) {
@@ -56,7 +56,7 @@ public class TextPositionTester extends TestCase {
             _tp19 = new TextPosition(19);
             _tp21 = new TextPosition(21);
         }
-        catch (OutOfBoundsException oobe) { assertFalse(true); } // This test should fail if exception thrown.
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); } // This test should fail if exception thrown.
 
         // Test if a negative initial position properly throws an exception.
         boolean expectedException = false;
@@ -84,7 +84,7 @@ public class TextPositionTester extends TestCase {
             _tp1000.increment();
             _tp2000.increment();
         }
-        catch (OutOfBoundsException oobe) { assertFalse(true); } // This test should fail if an exception is thrown.
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); } // This test should fail if an exception is thrown.
         assertEquals(_tp0.getPosition(), 1);
         assertEquals(_tp10.getPosition(), 11);
         assertEquals(_tp20.getPosition(), 21);
@@ -130,7 +130,7 @@ public class TextPositionTester extends TestCase {
             _tp1000.decrement();
             _tp2000.decrement();
         }
-        catch (OutOfBoundsException oobe) { assertFalse(true); } // This test should fail if an exception is thrown.
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); } // This test should fail if an exception is thrown.
 
         assertEquals(_tp10.getPosition(), 9);
         assertEquals(_tp20.getPosition(), 19);
@@ -159,7 +159,7 @@ public class TextPositionTester extends TestCase {
             _tp50.decrementBy(0);
             assertEquals(_tp50.getPosition(), 50);
         }
-        catch (OutOfBoundsException oobe) { assertFalse(true); } // This test should fail if an exception is thrown.
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); } // This test should fail if an exception is thrown.
 
         // Test if decrementing past the MINPOSITION will properly throw an
         // exception.
@@ -183,7 +183,7 @@ public class TextPositionTester extends TestCase {
             tpB.increment();
             assertFalse(tpA.equals(tpB));
         }
-        catch (OutOfBoundsException oobe) { assertFalse(true); } // This test should fail if an exception is thrown.
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); } // This test should fail if an exception is thrown.
     }
 
     public void testCompareTo ( ) {
