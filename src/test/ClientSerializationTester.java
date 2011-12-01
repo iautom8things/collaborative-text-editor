@@ -19,7 +19,7 @@ import static java.lang.System.out;
  * the CollabTextEditServer uses those. To test, run this first. Then run the
  * CTEApplication
  */
-public class clientSerializationTester {
+public class ClientSerializationTester {
     private static final int PORT = 1234;
     private static final String TEXT_ENCODING = "US-ASCII";
     // instance variables used internally
@@ -27,7 +27,7 @@ public class clientSerializationTester {
     private int _port;
     private Selector _selector;
 
-    public clientSerializationTester ( InetAddress address, int port ) throws ClassNotFoundException, IOException {
+    public ClientSerializationTester ( InetAddress address, int port ) throws ClassNotFoundException, IOException {
         _ip = address;
         _port = port;
 
@@ -79,7 +79,7 @@ public class clientSerializationTester {
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        new clientSerializationTester(null, PORT);
+        new ClientSerializationTester(null, PORT);
         //System.out.println("Receiver Start");
 
         ////Open a socket and start listening to it.

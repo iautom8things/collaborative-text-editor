@@ -20,25 +20,33 @@ import java.rmi.RemoteException;
 
 public class EditorGUI implements Observer {
 
+    
+    
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
     private CollaborateDialog _dialog;
+    private static final boolean DEBUG = true;
+    private MultiCaret _caret;
 
     public EditorGUI(Client client){
         _client = client;
+        //Create a new MultiCaret that is capable of having many positions
+        _caret = new MultiCaret(_client.getController().getUserManager());
     }
 
    /*
-    * Update the frame with the specified docText.
+    * Update the frame with the DocumentController's Document's String.
     */
-    public void update ( Observable observable, Object docText ) {
-        if (docText instanceof String){
-            String docTextString = (String)docText;
+    public void update ( Observable observable, Object objectDocumentController ) {
+        if (objectDocumentController instanceof DocumentController){
+            DocumentController documentController = (DocumentController)objectDocumentController;
+            String docTextString = documentController.getDocument().contents();
+            _caret.setUserManager(documentController.getUserManager());
             _textPane.setText(docTextString);
         }
     }
-
+    
     /*
      * Launch the GUI.
      */
@@ -62,14 +70,12 @@ public class EditorGUI implements Observer {
 
         //Add the text area
         _textPane = new JTextPane();
+        _textPane.setCaret(_caret);
+        
+       
         JScrollPane scrollPane = new JScrollPane(_textPane);
-        /*FIX ME: JTEXTPANE NEEDS CUSTOM CURSORS...
-         * probably need to extend JTextPane... we could then add a
-         * blinking pipe ("|") or something to be the cursor.
-         * As it is right now, there is no cursor showing because I had to make
-         * the editable option false*
-         */
         _textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
+        _caret.setVisible(true);
         _textPane.addKeyListener(new KeystrokeListener());
         _frame.getContentPane().add(scrollPane);
 
@@ -105,7 +111,7 @@ public class EditorGUI implements Observer {
         fileMenu.add(exitApp);
 
         //Register menu items with listeners
-        changeID.addActionListener(new changeClientIDListener());
+        changeID.addActionListener(new ChangeClientIDListener());
         newFile.addActionListener(new NewFileListener());
         open.addActionListener(new OpenFileListener());
         saveAs.addActionListener(new SaveAsListener());
@@ -120,7 +126,7 @@ public class EditorGUI implements Observer {
     * Listeners for specific JMenuItems *
     *************************************/
 
-    private class changeClientIDListener implements ActionListener {
+    private class ChangeClientIDListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             try { _client.changeClientName("OTHER"); }
             catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
@@ -133,6 +139,8 @@ public class EditorGUI implements Observer {
     private class NewFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
             _textPane.setText("");
+            //Also have to reset the model:
+            //After selecting "New File", begin to type and you'll see characters from "last" document
         }
     }
 
@@ -153,7 +161,6 @@ public class EditorGUI implements Observer {
     //Display the dialog to open a file
     private class OpenFileListener implements ActionListener {
         public void actionPerformed ( ActionEvent e ) {
-            System.out.println("Display the open file dialog.");
             //Setup FileChooser
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(_frame);
@@ -168,12 +175,12 @@ public class EditorGUI implements Observer {
                     //_textPane.setText(contents);
                     //update(this, contents);
                     _client.setDocument(contents);
-                    //System.out.println(contents + "\n<<<File has been read");
+                    //print(contents + "\n<<<File has been read");
                     stream.close();
                 }
                 catch (Exception ioe) {
                     ioe.printStackTrace();
-                    System.out.println(ioe.getMessage());
+                    if (DEBUG) { System.out.println(ioe.getMessage()); }
                 }
             }
 
@@ -192,17 +199,17 @@ public class EditorGUI implements Observer {
                     out.close();
                 }
                 catch(IOException ioe) {
-                    ioe.printStackTrace();
+                    ioe.printStackTrace();                    
                     System.out.println(ioe.getMessage());
                 }
                 catch(Exception ex) {
                     ex.printStackTrace();
                     System.out.println(ex.getMessage());
                 }
-                System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName());
+                if (DEBUG) { System.out.println("Saved file as: " + _fileChooser.getSelectedFile().getName()); }   
             }
-            else { System.out.println("Save command cancelled by user."); }
-        }
+            else { if (DEBUG) { System.out.println("Save command cancelled by user.");}}
+            }   
     }
 
     //Exit the application
@@ -211,15 +218,33 @@ public class EditorGUI implements Observer {
     }
 
     /**************************************/
-
     private class KeystrokeListener implements KeyListener {
-        public void keyPressed ( KeyEvent e ) {
-            //System.out.println("Key pressed.");
+
+        public void keyPressed(KeyEvent e) {
+            //TODO: implement up and down
+            try {
+                Command command = null;
+                CTEUser user = _client.getUser();
+                TextPosition tp = (TextPosition) user.getPosition().clone();
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                 
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                    
+                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    command = new MoveCursorPositionCommand(user, -1);
+                    _client.passCommand(command);
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    command = new MoveCursorPositionCommand(user, 1);
+                    _client.passCommand(command);
+                }
+                tp = (TextPosition) user.getPosition().clone();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
 
         public void keyReleased ( KeyEvent e ) {
-            //System.out.println("Key released.");
-            //_client.setDocument(_textPane.getText());
+            if (DEBUG) { System.out.println("Key released."); }            
         }
 
         /*
@@ -241,7 +266,8 @@ public class EditorGUI implements Observer {
             catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
             catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
             catch (Exception ex) { ex.printStackTrace(); }
-        }
+        }//End keyTyped()
+        
     }//End KeystrokeListener
 
-}//End CollaborativeEditorGUI
+}//End EditorGUI

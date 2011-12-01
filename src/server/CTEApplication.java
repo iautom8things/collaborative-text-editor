@@ -1,3 +1,5 @@
+package server;
+
 import network.*;
 import user.*;
 import gui.*;

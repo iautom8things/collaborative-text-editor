@@ -43,6 +43,12 @@ public class Client extends Observable {
      * Queries *
      **********/
 
+    /*
+     * Return the DocumentController
+     */
+    public DocumentController getController() {
+        return _controller;
+    }
 
     /**
      * Return whether this Client is in Collaboration or not.
@@ -154,7 +160,7 @@ public class Client extends Observable {
 
 
     /**
-     * Notifies the observers of the Document that it has changed.
+     * Notifies the observers of the Controller that it has changed.
      * Partially implemented for a GUI observer.
      * TODO: Implement for a Server Observer
      */
@@ -162,7 +168,7 @@ public class Client extends Observable {
         if (DEBUG) { System.out.println("notifyDocumentGotUpdated called"); }
         if (DEBUG) { System.out.println("" + _controller + "\n" + _localUser); }
         setChanged();
-        notifyObservers(_controller.getDocument().toString());
+        notifyObservers(_controller);
     }
 
     /**

@@ -6,8 +6,6 @@ import junit.framework.TestCase;
 import static java.lang.System.out;
 import java.net.*;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.lang.Thread;
 
 public class CTEUserManagerTest extends TestCase {
 

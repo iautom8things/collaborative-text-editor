@@ -55,7 +55,16 @@ public class CTEUser implements Comparable, Serializable, Cloneable {
         _uniqueID = "" + System.currentTimeMillis();
     }
 
-
+    /*
+     * Set the color for this CTEUser.
+     * @Requires
+     * cursorColor != null
+     *  
+     * @Ensures
+     * _cursorColor == cursorColor      
+     */
+    public void setCursorColor ( Color cursorColor ) { _cursorColor = cursorColor; }
+    
     /***********
      * Queries *
      ***********/
