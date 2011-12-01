@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import static java.lang.System.out;
 import java.net.*;
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class CTEUserManagerTest extends TestCase {
 
@@ -18,19 +19,7 @@ public class CTEUserManagerTest extends TestCase {
     private CTEUser bar;
     private CTEUser mbrinle;
 
-    public static void main(String[] args) {
-        out.println("Begin Main");
-        CTEUserManagerTest test = new CTEUserManagerTest();
-        test.setUp();
-        test.testUser();
-        test.testAddUser();
-        test.testCTEUserManager();
-        test.testCTEUserManagerColors();
-        test.testUpdateBeyond();
-        test.testUpdateBetween();
-    }
-
-    protected void setUp() {
+    protected void setUp ( ) {
         _userManager = new CTEUserManager();
         try {
             manuel = new CTEUser("manuel", InetAddress.getLocalHost(), ColorList.getColor(0));
@@ -44,24 +33,25 @@ public class CTEUserManagerTest extends TestCase {
         catch (Exception e) { fail(e.getMessage()); }
     }
 
-    public void testUser() {
+    public void testUser ( ) {
         try {
             Color _inputColor0 = Color.black;
             String _inputUserID0 = "mlbrinle";
             InetAddress _IPAddress0 = null;
             _IPAddress0 = InetAddress.getLocalHost();
             CTEUser testUser0 = new CTEUser(_inputUserID0, _IPAddress0, _inputColor0);
-            assertEquals(testUser0.getCursorColor(), _inputColor0);
-            assertEquals(testUser0.getName(), _inputUserID0);
-            assertEquals(testUser0.getIPAddress(), InetAddress.getLocalHost());
-            assertEquals(testUser0.getPosition().getPosition(), 0);
+            assertEquals(_inputColor0, testUser0.getCursorColor());
+            assertEquals(_inputUserID0, testUser0.getName());
+            assertEquals(InetAddress.getLocalHost(), testUser0.getIPAddress());
+            assertEquals(0, testUser0.getPosition().getPosition());
 
             //Test create user with null userID
             try {
                 CTEUser testUser1 = new CTEUser("", _IPAddress0, _inputColor0);
                 assertEquals(testUser1.getCursorColor(), _inputColor0);
                 assertEquals(testUser1.getName(), "");
-            } catch (InvalidUserIDException e) {
+            }
+            catch (InvalidUserIDException e) {
                 String exceptionMessage = e.getMessage();
                 assertEquals("User ID can not be null", exceptionMessage);
             }
@@ -70,26 +60,37 @@ public class CTEUserManagerTest extends TestCase {
 
     public void testAddUser ( ) {
         try {
-            CTEUser[] array = { manuel, pedro, bonehead, frank, foo, bar };
-            assertEquals(_userManager.getNumberOfUsers(), 0);
+            assertEquals(0, _userManager.getNumberOfUsers());
+
             _userManager.addUser(manuel);
+
             assertTrue(_userManager.contains(manuel));
-            assertEquals(_userManager.getNumberOfUsers(), 1);
+            assertEquals(1, _userManager.getNumberOfUsers());
+
             _userManager.addUser(pedro);
+
             assertTrue(_userManager.contains(pedro));
-            assertEquals(_userManager.getNumberOfUsers(), 2);
+            assertEquals(2, _userManager.getNumberOfUsers());
+
             _userManager.addUser(bonehead);
+
             assertTrue(_userManager.contains(bonehead));
-            assertEquals(_userManager.getNumberOfUsers(), 3);
+            assertEquals(3, _userManager.getNumberOfUsers());
+
             _userManager.addUser(frank);
+
             assertTrue(_userManager.contains(frank));
-            assertEquals(_userManager.getNumberOfUsers(), 4);
+            assertEquals(4, _userManager.getNumberOfUsers());
+
             _userManager.addUser(foo);
+
             assertTrue(_userManager.contains(foo));
-            assertEquals(_userManager.getNumberOfUsers(), 5);
+            assertEquals(5, _userManager.getNumberOfUsers());
+
             _userManager.addUser(bar);
+
             assertTrue(_userManager.contains(bar));
-            assertEquals(_userManager.getNumberOfUsers(), 6);
+            assertEquals(6, _userManager.getNumberOfUsers());
 
             assertTrue(_userManager.contains(manuel));
             assertTrue(_userManager.contains(pedro));
@@ -101,7 +102,7 @@ public class CTEUserManagerTest extends TestCase {
         catch (Exception e) { fail(e.getMessage()); }
     }
 
-    public void testCTEUserManager() {
+    public void testCTEUserManager ( ) {
       out.println("testusermanager");
         try {
             assertEquals(_userManager.getNumberOfUsers(), 0);
@@ -113,7 +114,7 @@ public class CTEUserManagerTest extends TestCase {
         catch (Exception e) { fail(e.getMessage()); }
     }
 
-    public void testCTEUserManagerColors() {
+    public void testCTEUserManagerColors ( ) {
       out.println("testcolors");
         ArrayList<CTEUser> tempUsers = new ArrayList<CTEUser>();
         try {
@@ -131,11 +132,12 @@ public class CTEUserManagerTest extends TestCase {
                 CTEUser temp = tempUsers.get(i);
                 _userManager.removeUser(temp);
             }
-            assertEquals(_userManager.getNumberOfUsers(), 0);
-        } catch (Exception e) { fail(e.getMessage()); }
+            assertEquals(0, _userManager.getNumberOfUsers());
+        }
+        catch (Exception e) { fail(e.getMessage()); }
     }
 
-    public void testUpdateBeyond() {
+    public void testUpdateBeyond ( ) {
       out.println("testupdatebeyond");
         try {
             frank.setPosition(new TextPosition(41));
@@ -149,13 +151,14 @@ public class CTEUserManagerTest extends TestCase {
             TextPosition pivot = new TextPosition(42);
             _userManager.updateBeyond(pivot, 10);
 
-            assertEquals(frank.getPosition(), new TextPosition(41));
-            assertEquals(foo.getPosition(), new TextPosition(42));
-            assertEquals(bar.getPosition(), new TextPosition(53));
-        } catch (Exception e) { fail(e.getMessage()); }
+            assertEquals(new TextPosition(41), frank.getPosition());
+            assertEquals(new TextPosition(42), foo.getPosition());
+            assertEquals(new TextPosition(53), bar.getPosition());
+        }
+        catch (Exception e) { fail(e.getMessage()); }
     }
 
-    public void testUpdateBetween() {
+    public void testUpdateBetween ( ) {
       out.println("testupdatebetween");
         try {
             manuel.setPosition(new TextPosition(21));
@@ -179,12 +182,13 @@ public class CTEUserManagerTest extends TestCase {
             _userManager.updateBetween(front, back);
             System.out.println(_userManager);
 
-            assertEquals(manuel.getPosition(), new TextPosition(21));
-            assertEquals(pedro.getPosition(), new TextPosition(22));
-            assertEquals(bonehead.getPosition(), new TextPosition(22));
-            assertEquals(frank.getPosition(), new TextPosition(22));
-            assertEquals(foo.getPosition(), new TextPosition(22));
-            assertEquals(bar.getPosition(), new TextPosition(43));
-        } catch (Exception e) { fail(e.getMessage()); }
+            assertEquals(new TextPosition(21), manuel.getPosition());
+            assertEquals(new TextPosition(22), pedro.getPosition());
+            assertEquals(new TextPosition(22), bonehead.getPosition());
+            assertEquals(new TextPosition(22), frank.getPosition());
+            assertEquals(new TextPosition(22), foo.getPosition());
+            assertEquals(new TextPosition(43), bar.getPosition());
+        }
+        catch (Exception e) { fail(e.getMessage()); }
     }
 }
