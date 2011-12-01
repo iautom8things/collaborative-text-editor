@@ -6,10 +6,11 @@ import javax.swing.*;
 import handler.Client;
 import handler.DocumentKey;
 import java.lang.Exception;
+import debug.Debug;
 
 public class CollaborateDialog extends JDialog {
   
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = Debug.VERBOSE;
   private GridBagConstraints _gridBagConstraints;
   private JFrame _frame;
   private int _mode; //Type of Collaborative Session to Open

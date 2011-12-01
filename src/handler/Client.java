@@ -8,10 +8,11 @@ import java.rmi.*;
 import user.*;
 import network.*;
 import java.net.*;
+import debug.Debug;
 
 public class Client extends Observable {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = Debug.VERBOSE;
 
     private ClientCommandServerThread _commServerThread;
     private ServerCommandListenerInterface _serverCommandListener;

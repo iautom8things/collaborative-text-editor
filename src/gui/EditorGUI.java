@@ -17,6 +17,7 @@ import commands.*;
 import handler.*;
 import user.*;
 import java.rmi.RemoteException;
+import debug.Debug;
 
 public class EditorGUI implements Observer {
 
@@ -26,7 +27,7 @@ public class EditorGUI implements Observer {
     JFrame _frame;
     protected Client _client;
     private CollaborateDialog _dialog;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = Debug.VERBOSE;
     private MultiCaret _caret;
 
     public EditorGUI(Client client){

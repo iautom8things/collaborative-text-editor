@@ -6,10 +6,11 @@ import handler.*;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.lang.Exception;
+import debug.Debug;
 
 public class ClientCommandListener extends UnicastRemoteObject implements ClientCommandListenerInterface {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = Debug.VERBOSE;
 
     private Client _client;
 

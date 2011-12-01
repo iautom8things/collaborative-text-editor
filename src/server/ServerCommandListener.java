@@ -9,10 +9,11 @@ import java.util.concurrent.*;
 import java.net.InetAddress;
 import java.lang.Exception;
 import java.lang.CloneNotSupportedException;
+import debug.Debug;
 
 public class ServerCommandListener extends UnicastRemoteObject implements ServerCommandListenerInterface {
 
-    private boolean DEBUG = true;
+    private static final boolean DEBUG = Debug.VERBOSE;
 
     private volatile ConcurrentMap<DocumentKey, DocumentController> _documentMap;
     private volatile ConcurrentMap<CTEUser, String> _clientMap;

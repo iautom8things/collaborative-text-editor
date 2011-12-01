@@ -11,12 +11,13 @@ import java.net.InetAddress;
 import java.rmi.ConnectException;
 import java.awt.Color;
 import java.lang.Thread;
+import debug.Debug;
 
 public class ClientCommandServerThread extends Thread {
 
     private static final String HOST = "localhost";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = Debug.VERBOSE;
 
     private Client _client;
     private String _id;
