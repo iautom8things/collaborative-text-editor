@@ -14,8 +14,10 @@ public class DocumentTester extends TestCase {
     private String _addthis;
     private TextPosition _tp0;
     private TextPosition _tp1;
+    private TextPosition _tp3;
     private TextPosition _tp5;
     private TextPosition _tp6;
+    private TextPosition _tp8;
     private TextPosition _tp10;
     private TextPosition _tp15;
     private TextPosition _tp20;
@@ -31,6 +33,8 @@ public class DocumentTester extends TestCase {
         test.testGetLastPosition();
         test.setUp();
         test.testGetNextCarriageReturn();
+        test.setUp();
+        test.testGetLastCarriageReturn();
     }
 
     protected void setUp ( ) {
@@ -41,8 +45,10 @@ public class DocumentTester extends TestCase {
         try {
             _tp0 = new TextPosition();
             _tp1 = new TextPosition(1);
+            _tp3 = new TextPosition(3);
             _tp5 = new TextPosition(5);
             _tp6 = new TextPosition(6);
+            _tp8 = new TextPosition(8);
             _tp10 = new TextPosition(10);
             _tp15 = new TextPosition(15);
             _tp20 = new TextPosition(20);
@@ -84,22 +90,55 @@ public class DocumentTester extends TestCase {
     
     public void testGetNextCarriageReturn ( ) {
         try{
-            String test1 = "hi/n";
-            Document testDoc = new Document(test1);
-            TextPosition next0 = testDoc.getNextCarriageReturn(_tp0);
-            assertEquals(next0.getPosition(), 2);
-            next0 = testDoc.getNextCarriageReturn(_tp1);
-            assertEquals(next0.getPosition(), 2);
-            test1 = "/n";
-            testDoc = new Document(test1);
-            System.out.println(testDoc.getNextCarriageReturn(_tp0));
-            next0 = testDoc.getNextCarriageReturn(_tp0);
-            assertEquals(next0.getPosition(), 0);
-            testDoc = new Document("");
-            next0 = testDoc.getNextCarriageReturn(_tp0);
+            String test1 = "hi\n";
+            Document testDoc0 = new Document(test1);
+            TextPosition testPositionResult0 = testDoc0.getNextCarriageReturn(_tp0);
+            assertEquals(testPositionResult0.getPosition(), 2);
             
-            assertEquals(next0.getPosition(), 0);            
+            TextPosition testPositionResult0b = testDoc0.getNextCarriageReturn(_tp1);
+            assertEquals(testPositionResult0b.getPosition(), 2);
+            
+            Document testDoc1 = new Document("\n");   
+            TextPosition testPositionResult1 = testDoc1.getNextCarriageReturn(_tp0);
+            assertEquals(testPositionResult1.getPosition(), 0);
+
+            Document testDoc2 = new Document("\nabcdefg\nhij");   
+            TextPosition testPositionResult2 = testDoc2.getNextCarriageReturn(_tp0);
+            assertEquals(testPositionResult2.getPosition(), 0);   
+            
+            testPositionResult2 = testDoc2.getNextCarriageReturn(_tp1);
+            assertEquals(testPositionResult2.getPosition(), 8);     
+            
+            testPositionResult2 = testDoc2.getNextCarriageReturn(_tp8);
+            assertEquals(testPositionResult2.getPosition(), 8);    
+            
+            testPositionResult2 = testDoc2.getNextCarriageReturn(_tp10);
+            assertEquals(testPositionResult2.getPosition(), testDoc2.getLastPosition().getPosition());             
+            
         }
         catch ( Exception e ) { e.printStackTrace(); }
     }
+    
+    public void testGetLastCarriageReturn ( ) {
+        try{
+            String test1 = "hi\n";
+            Document testDoc0 = new Document(test1);
+            TextPosition testPositionResult0 = testDoc0.getLastCarriageReturn(_tp0);
+            assertEquals(testPositionResult0.getPosition(), 0);
+            
+            TextPosition testPositionResult0b = testDoc0.getLastCarriageReturn(_tp3);
+            assertEquals(testPositionResult0b.getPosition(), 2);
+            
+            Document testDoc1 = new Document("\n123\n5");   
+            TextPosition testPositionResult1 = testDoc1.getLastCarriageReturn(_tp0);
+            assertEquals(testPositionResult1.getPosition(), 0);
+
+            Document testDoc2 = new Document("\n123\n5");   
+            TextPosition testPositionResult2 = testDoc2.getLastCarriageReturn(_tp6);
+            assertEquals(testPositionResult2.getPosition(), 4);   
+        }
+        catch ( Exception e ) { e.printStackTrace(); }
+    }    
+    
+    
 }
