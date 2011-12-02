@@ -20,7 +20,7 @@ public class DocumentTester extends TestCase {
     private TextPosition _tp15;
     private TextPosition _tp20;
 
-    public static void main(String[] args) {
+    public static void main( String[] args ) {
         DocumentTester test = new DocumentTester();
         test.setUp();
         test.testDocumentConstructor();
@@ -29,6 +29,8 @@ public class DocumentTester extends TestCase {
         test.testDeleteText();
         test.setUp();
         test.testGetLastPosition();
+        test.setUp();
+        test.testGetNextCarriageReturn();
     }
 
     protected void setUp ( ) {
@@ -78,5 +80,26 @@ public class DocumentTester extends TestCase {
             assertEquals(_doc.getLastPosition().getPosition(), _initialStr.length());
         }
         catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
+    }
+    
+    public void testGetNextCarriageReturn ( ) {
+        try{
+            String test1 = "hi/n";
+            Document testDoc = new Document(test1);
+            TextPosition next0 = testDoc.getNextCarriageReturn(_tp0);
+            assertEquals(next0.getPosition(), 2);
+            next0 = testDoc.getNextCarriageReturn(_tp1);
+            assertEquals(next0.getPosition(), 2);
+            test1 = "/n";
+            testDoc = new Document(test1);
+            System.out.println(testDoc.getNextCarriageReturn(_tp0));
+            next0 = testDoc.getNextCarriageReturn(_tp0);
+            assertEquals(next0.getPosition(), 0);
+            testDoc = new Document("");
+            next0 = testDoc.getNextCarriageReturn(_tp0);
+            
+            assertEquals(next0.getPosition(), 0);            
+        }
+        catch ( Exception e ) { e.printStackTrace(); }
     }
 }

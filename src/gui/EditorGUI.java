@@ -228,6 +228,7 @@ public class EditorGUI implements Observer {
         public void keyPressed(KeyEvent e) {
             //TODO: implement up and down
             try {
+                System.out.println(_textPane.getCaret().getDot());
                 Command command = null;
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
@@ -248,8 +249,7 @@ public class EditorGUI implements Observer {
                         command = new MoveCursorPositionCommand(user, 1);
                         _client.passCommand(command);
                     } catch (OutOfBoundsException oobe) {
-                        command = new MoveCursorToEnd(user);
-                        _client.passCommand(command);
+                        //Do Nothing because already at the end of the Document
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_HOME) {
                     if (DEBUG) { System.out.println("***HOME KEY PRESSED"); }
@@ -278,12 +278,24 @@ public class EditorGUI implements Observer {
                 Command command;
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
-                if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) { command = new InsertTextCommand(user, Character.toString(e.getKeyChar())); }
-                else {
-                    tp.decrement();
-                    command = new RemoveTextCommand(user, tp);
+                //Character Key Typed
+                if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) { 
+                    command = new InsertTextCommand(user, Character.toString(e.getKeyChar())); 
+                    _client.passCommand(command);
                 }
-                _client.passCommand(command);
+                //Backspace Key Typed
+                else {
+                    try{
+                        tp.decrement();
+                        command = new RemoveTextCommand(user, tp);
+                        if (DEBUG) {System.out.println("Remove Text Command remove to: " + tp.getPosition());}
+                        _client.passCommand(command);
+                    }
+                    catch(OutOfBoundsException oobe){
+                        //Do nothing because already at the beginning of the Document
+                    }
+                }
+
             }
             catch (UserNotFoundException iue) { iue.printStackTrace(); }
             catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
