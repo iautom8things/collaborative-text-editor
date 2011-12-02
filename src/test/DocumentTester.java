@@ -4,8 +4,6 @@ import handler.TextPosition;
 import handler.Document;
 import handler.OutOfBoundsException;
 import junit.framework.TestCase;
-import static java.lang.System.out;
-import java.lang.Exception;
 
 public class DocumentTester extends TestCase {
     private Document _doc;
