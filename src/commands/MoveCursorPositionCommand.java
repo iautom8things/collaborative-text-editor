@@ -47,13 +47,20 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
         if (Integer.parseInt(_offset) > 0){
             TextPosition currentPosition = _user.getPosition();
             print("**currentPosition: " + currentPosition);
-            if((currentPosition.isBeyond(lastPosition)||(currentPosition.compareTo(lastPosition)==0))) {
+            print("***offset: " + _offset);
+            System.out.println("compare: " + lastPosition.compareTo(currentPosition));
+            if(Integer.parseInt(_offset) > lastPosition.compareTo(currentPosition)) {
                 print("trying to go beyond end of document");
                 throw new OutOfBoundsException("Position is beyond end of document.");
             }
             print("Executing command right arrow with " + _offset);
             userManager.getUser(_user.getUniqueID()).getPosition().incrementBy(Integer.parseInt(_offset));
         }
+        
+        
+        
+        
+        
         //Moving backward
         else if (Integer.parseInt(_offset) < 0){
             print("Executing command left arrow with " + _offset);
@@ -61,6 +68,22 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
         }
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * For serialization of this Command.
      */

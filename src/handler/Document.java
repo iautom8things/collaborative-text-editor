@@ -30,43 +30,6 @@ public class Document implements Serializable, Cloneable {
     public synchronized int getLength ( ) { return _buffer.length(); }
 
     /**
-     * Get a TextPosition representing the position of the next carriage return ("\n")
-     * when given the starting TextPosition. If none are after the position, return
-     * the end position of the Document
-     */
-    public synchronized TextPosition getNextCarriageReturn ( TextPosition position ) throws OutOfBoundsException { 
-        if ( DEBUG ){ System.out.println("getNextCarriageReturn{" + position.getPosition() + ", " + contents() + "}");}
-        int nextCR = _buffer.toString().indexOf("\n", position.getPosition());
-        if ( DEBUG ){ System.out.println("nextCR: " + nextCR);}
-        //There are no more carriage returns in the document
-        if ( nextCR < 0 ){
-            return this.getLastPosition();
-        }
-        TextPosition nextCarriageReturn = new TextPosition(nextCR);
-        if ( DEBUG ){ System.out.println("nextCarriageReturn: " + nextCarriageReturn);}
-        return nextCarriageReturn; 
-    }
-    
-    /**
-     * Get a TextPosition representing the position of the last carriage return ("\n")
-     * when given the starting TextPosition. If none are before the position, return
-     * the first position of the Document
-     */
-    public synchronized TextPosition getLastCarriageReturn ( TextPosition position ) throws OutOfBoundsException { 
-        if ( DEBUG ){ System.out.println("getLastCarriageReturn{" + position.getPosition() + ", " + contents() + "}");}
-        int lastCR = _buffer.toString().lastIndexOf("\n", position.getPosition());
-        if ( DEBUG ){ System.out.println("nextCR: " + lastCR);}
-        //There are no previous carriage returns in the document
-        if ( lastCR < 0 ){
-            return new TextPosition();
-        }
-        TextPosition lastCarriageReturn = new TextPosition(lastCR);
-        if ( DEBUG ){ System.out.println("nextCarriageReturn: " + lastCarriageReturn);}
-        return lastCarriageReturn; 
-    }
-        
-    
-    /**
      * Get a TextPosition representing the end of the Document.
      */
     public synchronized TextPosition getLastPosition ( ) throws OutOfBoundsException { return new TextPosition(_buffer.length()); }    

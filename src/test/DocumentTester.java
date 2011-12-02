@@ -4,141 +4,237 @@ import handler.TextPosition;
 import handler.Document;
 import handler.OutOfBoundsException;
 import junit.framework.TestCase;
-import static java.lang.System.out;
-import java.lang.Exception;
 
 public class DocumentTester extends TestCase {
     private Document _doc;
-    private String _initialStr;
-    private String _foobar;
-    private String _addthis;
+    private static final String _initialStr = "This is only a test";
+    private static final String _foobarStr = "foobar";
+    private static final String _addthisStr = "addthis";
+    private static final String _emptyStr = "";
+    private static final String _newLine = "\n";
     private TextPosition _tp0;
     private TextPosition _tp1;
-    private TextPosition _tp3;
     private TextPosition _tp5;
     private TextPosition _tp6;
-    private TextPosition _tp8;
+    private TextPosition _tp7;
     private TextPosition _tp10;
     private TextPosition _tp15;
     private TextPosition _tp20;
 
-    public static void main( String[] args ) {
-        DocumentTester test = new DocumentTester();
-        test.setUp();
-        test.testDocumentConstructor();
-        test.testInsertText();
-        test.setUp();
-        test.testDeleteText();
-        test.setUp();
-        test.testGetLastPosition();
-        test.setUp();
-        test.testGetNextCarriageReturn();
-        test.setUp();
-        test.testGetLastCarriageReturn();
-    }
-
-    protected void setUp ( ) {
-        _initialStr = "This is only a test!";
-        _foobar = "foobar";
-        _addthis = "addthis";
+    @Override
+    public void setUp ( ) {
         _doc = new Document(_initialStr);
         try {
             _tp0 = new TextPosition();
             _tp1 = new TextPosition(1);
-            _tp3 = new TextPosition(3);
             _tp5 = new TextPosition(5);
             _tp6 = new TextPosition(6);
-            _tp8 = new TextPosition(8);
-            _tp10 = new TextPosition(10);
-            _tp15 = new TextPosition(15);
+            _tp7 = new TextPosition(7);
             _tp20 = new TextPosition(20);
         }
-        catch (Exception e) { out.println(e.getMessage()); }
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); }
     }
 
     public void testDocumentConstructor ( ) {
-        assertEquals(_doc.contents(), _initialStr);
-        assertEquals(_doc.getLength(), _initialStr.length());
-    }
-
-    public void testInsertText ( ) {
         try {
-            _doc.insertText(_tp0, _foobar);
-            assertEquals(_doc.contents(), _foobar + _initialStr);
-            _doc.insertText(_tp6, _addthis);
-            assertEquals(_doc.contents(), _foobar + _addthis + _initialStr);
+            // Test Default Constructor
+            _doc = new Document();
+            assertEquals(0, _doc.getLength());
+            assertEquals(_emptyStr, _doc.contents());
+            assertEquals(0, _doc.getLastPosition().getPosition());
+
+            // Test initialized Constructor with Empty String
+            _doc = new Document(_emptyStr);
+            assertEquals(0, _doc.getLength());
+            assertEquals(_emptyStr, _doc.contents());
+            assertEquals(0, _doc.getLastPosition().getPosition());
+
+            // Test initialized Constructor
+            _doc = new Document(_initialStr);
+            assertEquals(_initialStr, _doc.contents());
+            assertEquals(_initialStr.length(), _doc.getLength());
+            assertEquals(_initialStr.length(), _doc.getLastPosition().getPosition());
         }
-        catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); }
     }
-
-    public void testDeleteText ( ) {
+    public void testGetLength ( ) {
+        // Test initialized Document
+        assertEquals(_initialStr.length(), _doc.getLength());
+        // Test Empty Document
+        _doc = new Document();
+        assertEquals(0, _doc.getLength());
         try {
+            // Test Insert text
+            _doc.insertText(_tp0, _addthisStr);
+            assertEquals(_addthisStr.length(), _doc.getLength());
+            // Test Insert Empty String
+            _doc.insertText(_tp0, _emptyStr);
+            assertEquals(_addthisStr.length(), _doc.getLength());
+            // Test Delete Nothing
             _doc.deleteText(_tp0, _tp0);
-            assertEquals(_doc.contents(), _initialStr);
-            _doc.deleteText(_tp0, _tp5);
-            assertEquals(_doc.contents(), _initialStr.substring(5));
+            assertEquals(_addthisStr.length(), _doc.getLength());
         }
-        catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); }
     }
 
     public void testGetLastPosition ( ) {
         try {
-            assertEquals(_doc.getLastPosition().getPosition(), _initialStr.length());
-        }
-        catch (OutOfBoundsException oobe) { out.println(oobe.getMessage()); }
-    }
-    
-    public void testGetNextCarriageReturn ( ) {
-        try{
-            String test1 = "hi\n";
-            Document testDoc0 = new Document(test1);
-            TextPosition testPositionResult0 = testDoc0.getNextCarriageReturn(_tp0);
-            assertEquals(testPositionResult0.getPosition(), 2);
-            
-            TextPosition testPositionResult0b = testDoc0.getNextCarriageReturn(_tp1);
-            assertEquals(testPositionResult0b.getPosition(), 2);
-            
-            Document testDoc1 = new Document("\n");   
-            TextPosition testPositionResult1 = testDoc1.getNextCarriageReturn(_tp0);
-            assertEquals(testPositionResult1.getPosition(), 0);
+            // Test Initialized Document
+            assertEquals(_initialStr.length(), _doc.getLastPosition().getPosition());
 
-            Document testDoc2 = new Document("\nabcdefg\nhij");   
-            TextPosition testPositionResult2 = testDoc2.getNextCarriageReturn(_tp0);
-            assertEquals(testPositionResult2.getPosition(), 0);   
-            
-            testPositionResult2 = testDoc2.getNextCarriageReturn(_tp1);
-            assertEquals(testPositionResult2.getPosition(), 8);     
-            
-            testPositionResult2 = testDoc2.getNextCarriageReturn(_tp8);
-            assertEquals(testPositionResult2.getPosition(), 8);    
-            
-            testPositionResult2 = testDoc2.getNextCarriageReturn(_tp10);
-            assertEquals(testPositionResult2.getPosition(), testDoc2.getLastPosition().getPosition());             
-            
-        }
-        catch ( Exception e ) { e.printStackTrace(); }
-    }
-    
-    public void testGetLastCarriageReturn ( ) {
-        try{
-            String test1 = "hi\n";
-            Document testDoc0 = new Document(test1);
-            TextPosition testPositionResult0 = testDoc0.getLastCarriageReturn(_tp0);
-            assertEquals(testPositionResult0.getPosition(), 0);
-            
-            TextPosition testPositionResult0b = testDoc0.getLastCarriageReturn(_tp3);
-            assertEquals(testPositionResult0b.getPosition(), 2);
-            
-            Document testDoc1 = new Document("\n123\n5");   
-            TextPosition testPositionResult1 = testDoc1.getLastCarriageReturn(_tp0);
-            assertEquals(testPositionResult1.getPosition(), 0);
+            // Test empty Document
+            _doc = new Document();
+            assertEquals(0, _doc.getLastPosition().getPosition());
+            _doc.insertText(_tp0, _emptyStr);
+            assertEquals(0, _doc.getLastPosition().getPosition());
+            _doc.deleteText(_tp0, _tp0);
+            assertEquals(0, _doc.getLastPosition().getPosition());
 
-            Document testDoc2 = new Document("\n123\n5");   
-            TextPosition testPositionResult2 = testDoc2.getLastCarriageReturn(_tp6);
-            assertEquals(testPositionResult2.getPosition(), 4);   
         }
-        catch ( Exception e ) { e.printStackTrace(); }
-    }    
-    
-    
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); }
+    }
+
+    public void testInsertText ( ) {
+            TextPosition endTP;
+        try {
+            String expectedContents;
+
+            // Test initialized Document
+            expectedContents = _initialStr;
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting empty text at the beginning
+            _doc.insertText(_tp0, _emptyStr);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting empty text in the middle of the Document
+            _doc.insertText(_tp5, _emptyStr);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting empty text at the end of the Document
+            endTP = _doc.getLastPosition();
+            _doc.insertText(endTP, _emptyStr);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting text at beginning
+            expectedContents = _foobarStr + expectedContents;
+            _doc.insertText(_tp0, _foobarStr);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting new line character "\n" at beginning
+            expectedContents = _newLine + expectedContents;
+            _doc.insertText(_tp0, _newLine);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting in the middle of the document
+            expectedContents = _newLine + _foobarStr + _addthisStr + _initialStr;
+            _doc.insertText(_tp7, _addthisStr);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting new line character "\n" in the middle of the document
+            expectedContents = _newLine + _foobarStr + _newLine + _addthisStr + _initialStr;
+            _doc.insertText(_tp7, _newLine);
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting at the end of the document
+            endTP = _doc.getLastPosition();
+            _doc.insertText(endTP, _foobarStr);
+            expectedContents = expectedContents + _foobarStr;
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test inserting new line character, "\n" at end of the document
+            endTP = _doc.getLastPosition();
+            _doc.insertText(endTP, _newLine);
+            expectedContents = expectedContents + _newLine;
+
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+        }
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); }
+
+        // Test that exception is properly thrown for out of bounds insertion
+        boolean expectedException = false;
+        try {
+            endTP = _doc.getLastPosition();
+            // Increment Beyond End of document
+            endTP.increment();
+            _doc.insertText(endTP, _foobarStr);
+        }
+        catch (OutOfBoundsException oobe) { expectedException = true; }
+        assertTrue(expectedException);
+    }
+
+    public void testDeleteText ( ) {
+        String expectedContents;
+        try {
+            assertEquals(_doc.contents(), _initialStr);
+
+            // Test deleting nothing
+            _doc.deleteText(_tp0, _tp0);
+            assertEquals(_initialStr, _doc.contents());
+            assertEquals(_initialStr.length(), _doc.getLength());
+            assertEquals(_initialStr.length(), _doc.getLastPosition().getPosition());
+
+            // Test deleting beginning of Document
+            _doc.deleteText(_tp0, _tp5);
+            expectedContents = _initialStr.substring(5);
+            assertEquals(expectedContents, _doc.contents());
+            assertEquals(expectedContents.length(), _doc.getLength());
+            assertEquals(expectedContents.length(), _doc.getLastPosition().getPosition());
+
+            // Test deleting all of Document
+            TextPosition endTP = _doc.getLastPosition();
+            _doc.deleteText(_tp0, endTP);
+            assertEquals(_emptyStr, _doc.contents());
+            assertEquals(0, _doc.getLength());
+            assertEquals(_tp0, _doc.getLastPosition());
+        }
+        catch (OutOfBoundsException oobe) { fail(oobe.getMessage()); }
+
+        // Test that exception is properly thrown when TextPositions are
+        // given out of order.
+        boolean expectedException = false;
+        try { _doc.deleteText(_tp1, _tp0); }
+        catch (OutOfBoundsException oobe) { expectedException = true; }
+        assertTrue(expectedException);
+
+        // Test that deleting beyond the end of the Document properly
+        // throws an exception.
+        expectedException = false;
+        try { _doc.deleteText(_tp0, _tp20); }
+        catch (OutOfBoundsException oobe) { expectedException = true; }
+        assertTrue(expectedException);
+    }
+
+
+    public void testClone ( ) {
+    }
 }
