@@ -72,6 +72,6 @@ public class AddUserCommandTest extends TestCase {
       assertTrue(_docController.getUsers().contains(_sixthUser));
     }
     catch (Exception e) { fail(e.getMessage()); }
-  }
+  }//End testAddUserExecute()
 
 }//End class AddUserCommandTest

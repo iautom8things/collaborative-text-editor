@@ -108,9 +108,7 @@ public class RemoveUserCommandTest extends TestCase{
       assertEquals(0, _docController.getUsers().size());
       assertFalse(_docController.getUsers().contains(_sixthUser));
     }
-    catch (Exception e){
-      System.out.println(e.getMessage());
-    }
-  }
+    catch (Exception e){fail(e.getMessage());}
+  }//End testUserRemoveExecute()
   
 }//End class RemoveUserCommandTest
