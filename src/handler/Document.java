@@ -71,7 +71,8 @@ public class Document implements Serializable, Cloneable {
      */
     public synchronized void deleteText ( TextPosition from, TextPosition to) throws OutOfBoundsException {
         TextPosition end = this.getLastPosition();
-        if (from.isBeyond(end) || to.isBeyond(to)) { throw new OutOfBoundsException("Neither position can go beyond the end of the Document."); }
+        if (from.isBeyond(end) || to.isBeyond(end)) { throw new OutOfBoundsException("Neither position can go beyond the end of the Document."); }
+        if (from.isBeyond(to)) { throw new OutOfBoundsException("When deleting, From position must not be beyond To position."); }
 
         int fromIndex = from.getPosition();
         int toIndex = to.getPosition();
