@@ -120,7 +120,6 @@ public class CTEUserManagerTest extends TestCase {
         try {
             String baseName = "user";
             for (int i = 0; i < 15 ; i ++) {
-                Thread.sleep(1); // Ensures users aren't created fast enough they have the same uniqueID
                 String userName = baseName + i;
                 CTEUser temp = new CTEUser(userName, InetAddress.getLocalHost(), ColorList.getColor(i));
 

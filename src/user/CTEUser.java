@@ -52,7 +52,7 @@ public class CTEUser implements Comparable, Serializable, Cloneable {
         _name = name;
         _cursorColor = cursorColor;
         _IPAddress = IPAddress;
-        _uniqueID = "" + System.currentTimeMillis();
+        _uniqueID = "" + System.nanoTime();
     }
 
     /*

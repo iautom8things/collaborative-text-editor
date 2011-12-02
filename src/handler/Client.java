@@ -35,7 +35,7 @@ public class Client extends Observable {
         _controller = new DocumentController();
         try { _controller.executeCommand(new AddUserCommand(_localUser)); }
         catch (Exception e) { e.printStackTrace(); }
-        _pid = "" + System.currentTimeMillis();
+        _pid = "" + System.nanoTime();
         _commServerThread = new ClientCommandServerThread(this, _pid);
     }
 
