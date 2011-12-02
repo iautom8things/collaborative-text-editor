@@ -57,9 +57,12 @@ public class EditorGUI implements Observer {
         createAndShow();
         _dialog = new CollaborateDialog(_frame, _client);
         _dialog.hideDialog();
+      
     }
 
     private void createAndShow ( ) {
+        // Set this property to a non beeping kind
+        System.setProperty("awt.toolkit", "gui.NonBeepingToolkit");          
         _frame = new JFrame("Collaborative Text Editor");
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
