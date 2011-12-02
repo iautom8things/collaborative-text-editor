@@ -232,19 +232,15 @@ public class EditorGUI implements Observer {
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if (DEBUG) {
-                        System.out.println("***DOWN KEY PRESSED. Not Implemented yet.");
-                    }
+                    if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if (DEBUG) {
-                        System.out.println("***DOWN KEY PRESSED. Not Implemented yet.");
-                    }
+                    if (DEBUG) { System.out.println("***UP KEY PRESSED. Not Implemented yet."); }
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     try {
                         command = new MoveCursorPositionCommand(user, -1);
                         _client.passCommand(command);
                     } catch (OutOfBoundsException oobe) {
-                        command = new MoveCursorTotHome(user);
+                        command = new MoveCursorToHome(user);
                         _client.passCommand(command);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -256,12 +252,13 @@ public class EditorGUI implements Observer {
                         _client.passCommand(command);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_HOME) {
-                    if (DEBUG) {
-                        System.out.println("***HOME KEY PRESSED");
-                    }
-                    command = new MoveCursorTotHome(user);
+                    if (DEBUG) { System.out.println("***HOME KEY PRESSED"); }
+                    command = new MoveCursorToHome(user);
                     _client.passCommand(command);
-
+                } else if (e.getKeyCode() == KeyEvent.VK_END) {
+                    if (DEBUG) { System.out.println("***END KEY PRESSED"); }
+                    command = new MoveCursorToEnd(user);
+                    _client.passCommand(command);
                 }
                 tp = (TextPosition) user.getPosition().clone();
             } catch (Exception exception) {

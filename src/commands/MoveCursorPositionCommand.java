@@ -39,16 +39,25 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
      */
     public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         CTEUserManager userManager = controller.getUserManager();
-        Document doc = controller.getDocument();
-        TextPosition currentPosition = _user.getPosition();
+        TextPosition lastPosition = controller.getDocument().getLastPosition();
+        print("**last position: " + lastPosition);
+        
+        
+        //Moving forward
         if (Integer.parseInt(_offset) > 0){
+            TextPosition currentPosition = _user.getPosition();
+            print("**currentPosition: " + currentPosition);
+            if((currentPosition.isBeyond(lastPosition)||(currentPosition.compareTo(lastPosition)==0))) {
+                print("trying to go beyond end of document");
+                throw new OutOfBoundsException("Position is beyond end of document.");
+            }
             print("Executing command right arrow with " + _offset);
             userManager.getUser(_user.getUniqueID()).getPosition().incrementBy(Integer.parseInt(_offset));
         }
+        //Moving backward
         else if (Integer.parseInt(_offset) < 0){
             print("Executing command left arrow with " + _offset);
             userManager.getUser(_user.getUniqueID()).getPosition().decrementBy(Math.abs(Integer.parseInt(_offset)));
-            print("Executing command right arrow with " + _offset);
         }
     }
 

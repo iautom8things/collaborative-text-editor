@@ -9,7 +9,7 @@ import user.*;
 /**
  * A command to move the cursor to the Home position in the Document.
  */
-public class MoveCursorTotHome implements Command, Serializable, Cloneable {
+public class MoveCursorToHome implements Command, Serializable, Cloneable {
 
     private CTEUser _user;
     private static final boolean DEBUG = true;
@@ -17,7 +17,7 @@ public class MoveCursorTotHome implements Command, Serializable, Cloneable {
     /*
      * Move the Cursor to the Document Home (Position 0)
      */
-    public MoveCursorTotHome ( CTEUser user ) {
+    public MoveCursorToHome ( CTEUser user ) {
         _user = user;
     }
 
@@ -71,7 +71,7 @@ public class MoveCursorTotHome implements Command, Serializable, Cloneable {
     @Override
     public Object clone ( ) throws CloneNotSupportedException {
         CTEUser clonedUser = (CTEUser) _user.clone();
-        MoveCursorTotHome clone = new MoveCursorTotHome(clonedUser);
+        MoveCursorToHome clone = new MoveCursorToHome(clonedUser);
         return clone;
     }
 }
