@@ -5,8 +5,8 @@ import junit.framework.*;
 
 /**
  * AUTHOR: Kyle Whittington
- * CREATION DATE: 12/12/11
- * UPDATED: n/a
+ * CREATION DATE: 12/2/11
+ * UPDATED:  12/2/11 By Manuel
  *
  * This is a class to test DocumentKey.java
  */
