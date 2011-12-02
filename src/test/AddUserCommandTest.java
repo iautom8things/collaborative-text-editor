@@ -1,3 +1,5 @@
+package test;
+
 import junit.framework.TestCase;
 import handler.DocumentController;
 import user.CTEUser;
