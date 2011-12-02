@@ -19,16 +19,20 @@ public class CTEUserTester extends TestCase {
      * These are the what a default CTEUser's
      * instance variables should equal.
      */
-    //defaultUser._name = "Bob"
-    private static final String defaultUser_NAME = "Bob";
-    //defaultUser._IPAddress = www.uno.edu
-    private InetAddress defaultUser_IP;
-    //defaultUser._cursorColor = Color.red
-    private static final Color defaultUser_COLOR = Color.red;
-    //defaultUser._uniqueID = "808"
-    private static final String defaultUser_ID = "808";
 
     /*UNIQUEUSERONE's INSTANCE VARIABLES*/
+    //defaultUser._name = "DefaultUserName"
+    private static final String defaultUser_NAME = "DefaultUserName";
+    //defaulUser._IPAddress = localhost
+    private InetAddress defaultUser_IP;
+    //defaultUser._cursorColor = Color.black
+    private static final Color defaultUser_COLOR = Color.black;
+    //defaultUserWithName._name = "Bob"
+    private static final String defaultUserWithName_NAME = "Bob";
+    //defaulUserWithName._IPAddress = localhost
+    private InetAddress defaultUserWithName_IP;
+    //defaultUserWithName._cursorColor = Color.black
+    private static final Color defaultUserWithName_COLOR = Color.black;
     //uniqueUserOne._name = George
     private static final String uniqueUserOne_NAME = "George";
     //uniqueUserOne._IPAddress = www.google.com
@@ -58,6 +62,8 @@ public class CTEUserTester extends TestCase {
 
     //will hold the default values for a CTEUser
     private CTEUser defaultUser;
+    //will hold the default values for a CTEUser, except for the name
+    private CTEUser defaultUserWithName;
     //will hold unique values to the other CTEUsers
     private CTEUser uniqueUserOne;
     //will hold unique values to the other CTEUsers
@@ -67,13 +73,17 @@ public class CTEUserTester extends TestCase {
     //will hold similar values to likeUserOne
     private CTEUser likeUserTwo;
 
+    private String defaultUser_ID;
+    private String defaultUserWithName_ID;
+
     //will be run before any other method, establishing
     //the users' values for each subsequent test
     @Override
     public void setUp ( ) {
         /*INITIALIZE IP ADDRESSES*/
         try {
-            defaultUser_IP = InetAddress.getByName("www.uno.edu");
+            defaultUser_IP = InetAddress.getLocalHost();
+            defaultUserWithName_IP = InetAddress.getLocalHost();
             uniqueUserOne_IP = InetAddress.getByName("www.google.com");
             uniqueUserTwo_IP = InetAddress.getByName("www.yahoo.com");
             likeUser_IP = InetAddress.getByName("www.uno.edu");
@@ -85,10 +95,12 @@ public class CTEUserTester extends TestCase {
         //NOTE: Default constructor not written yet
         //until written, use this initialization
         try {
-            defaultUser = new CTEUser(defaultUser_NAME, defaultUser_IP,
-                    defaultUser_COLOR, defaultUser_ID);
+            defaultUser = new CTEUser();
+            defaultUserWithName = new CTEUser(defaultUserWithName_NAME);
+            defaultUser_ID = defaultUser.getUniqueID();
+            defaultUserWithName_ID = defaultUserWithName.getUniqueID();
         }
-        catch (InvalidUserIDException e) { fail("defaultUser Name Invalid"); }
+        catch (UnknownHostException e) { fail(e.getMessage()); }
         try {
             //uses the uniqueUserOne static variables
             uniqueUserOne = new CTEUser(uniqueUserOne_NAME, uniqueUserOne_IP,
@@ -119,10 +131,6 @@ public class CTEUserTester extends TestCase {
      * Tests getUniqueID()
      */
     public void testGetUniqueID ( ) {
-        //test default user id
-        assertEquals(defaultUser_ID, defaultUser.getUniqueID());
-        //NOTE default constructor not written
-
         //test unique user id
         assertEquals(uniqueUserOne_ID, uniqueUserOne.getUniqueID());
         assertEquals(uniqueUserTwo_ID, uniqueUserTwo.getUniqueID());
@@ -138,7 +146,7 @@ public class CTEUserTester extends TestCase {
     public void testGetIPAddress ( ) {
         //test default user IP
         assertEquals(defaultUser_IP, defaultUser.getIPAddress());
-        //NOTE: default constructor not written
+        assertEquals(defaultUserWithName_IP, defaultUser.getIPAddress());
 
         //test unique user ip
         assertEquals(uniqueUserOne_IP, uniqueUserOne.getIPAddress());
@@ -155,7 +163,7 @@ public class CTEUserTester extends TestCase {
     public void testGetName ( ) {
         //test default user name
         assertEquals(defaultUser_NAME, defaultUser.getName());
-        //NOTE: default constructor not written
+        assertEquals(defaultUserWithName_NAME, defaultUserWithName.getName());
 
         //test unique user name
         assertEquals(uniqueUserOne_NAME, uniqueUserOne.getName());
@@ -172,7 +180,7 @@ public class CTEUserTester extends TestCase {
     public void testGetCursorColor ( ) {
         //test default user cursor
         assertEquals(defaultUser_COLOR, defaultUser.getCursorColor());
-        //NOTE: default constructor not written
+        assertEquals(defaultUserWithName_COLOR, defaultUser.getCursorColor());
 
         //test unique user color
         assertEquals(uniqueUserOne_COLOR, uniqueUserOne.getCursorColor());
@@ -189,7 +197,7 @@ public class CTEUserTester extends TestCase {
     public void testInitialGetPosition ( ) {
         //test default user cursor
         assertEquals(0, defaultUser.getPosition().getPosition());
-        //NOTE: default constructor not written
+        assertEquals(0, defaultUserWithName.getPosition().getPosition());
 
         //test unique user position
         assertEquals(0, uniqueUserOne.getPosition().getPosition());
@@ -217,7 +225,20 @@ public class CTEUserTester extends TestCase {
             assertEquals(true, defaultClone.equals(defaultUser));
             assertEquals(defaultUser.toString(), defaultClone.toString());
             assertEquals(defaultUser.hashCode(), defaultClone.hashCode());
-            //NOTE: default constructor not written
+        }
+        catch (CloneNotSupportedException e) { fail("defaultClone not Support"); }
+        try{
+            CTEUser defaultCloneWithName = (CTEUser) defaultUserWithName.clone();
+            //test defaultUserWithName clone
+            assertEquals(defaultUserWithName.getUniqueID(), defaultCloneWithName.getUniqueID());
+            assertEquals(defaultUserWithName.getIPAddress(), defaultCloneWithName.getIPAddress());
+            assertEquals(defaultUserWithName.getName(), defaultCloneWithName.getName());
+            assertEquals(defaultUserWithName.getCursorColor(), defaultCloneWithName.getCursorColor());
+            assertEquals(defaultUserWithName.getPosition(), defaultCloneWithName.getPosition());
+            assertEquals(0, defaultCloneWithName.compareTo(defaultUser));
+            assertEquals(true, defaultCloneWithName.equals(defaultUserWithName));
+            assertEquals(defaultUserWithName.toString(), defaultCloneWithName.toString());
+            assertEquals(defaultUserWithName.hashCode(), defaultCloneWithName.hashCode());
         }
         catch (CloneNotSupportedException e) { fail("defaultClone Not Supported"); }
         try {
@@ -278,7 +299,7 @@ public class CTEUserTester extends TestCase {
     public void testCompareTo ( ) {
         //test default user compareTo
         assertEquals(0, defaultUser.compareTo(defaultUser));
-        //NOTE: default constructor not written
+        assertEquals(0, defaultUserWithName.compareTo(defaultUser));
 
         //test unique user compareTo
         //uniqueUserOne.getPosition() == 10
@@ -300,10 +321,6 @@ public class CTEUserTester extends TestCase {
      * Tests equals()
      */
     public void testEquals ( ) {
-        //test default user equals
-        //assertTrue(defaultUser.equals(new CTEUser()));
-        //NOTE: default constructor not initialized
-
         //test unique user equals
         assertFalse(uniqueUserOne.equals(uniqueUserTwo));
         assertFalse(uniqueUserTwo.equals(uniqueUserOne));
@@ -320,12 +337,13 @@ public class CTEUserTester extends TestCase {
         //String Variable Set Up
         //all positions should be zero at this point
         String defaultString = defaultUser_NAME + "{ id: " + defaultUser_ID + " pos: [" + 0 + "] }";
+        String defaultWithNameString = defaultUserWithName_NAME + "{ id: " + defaultUserWithName_ID + " pos: [" + 0 + "] }";
         String uniqueStringOne = uniqueUserOne_NAME + "{ id: " + uniqueUserOne_ID + " pos: [" + 0 + "] }";
         String uniqueStringTwo = uniqueUserTwo_NAME + "{ id: " + uniqueUserTwo_ID + " pos: [" + 0 + "] }";
         String likeString = likeUser_NAME + "{ id: " + likeUser_ID + " pos: [" + 0 + "] }";
         //test default user toString
         assertEquals(defaultString, defaultUser.toString());
-        //NOTE: default constructor not written
+        assertEquals(defaultWithNameString, defaultUserWithName.toString());
 
         //test unique users toString
         assertEquals(uniqueStringOne, uniqueUserOne.toString());
@@ -343,7 +361,7 @@ public class CTEUserTester extends TestCase {
     public void testHashCode ( ) {
         //test default user hashCode
         assertEquals(defaultUser.hashCode(), defaultUser.hashCode());
-        //NOTE: default constructor not written
+        assertEquals(defaultUserWithName.hashCode(), defaultUserWithName.hashCode());
 
         //test unique user hashCode
         assertEquals(uniqueUserOne.hashCode(), uniqueUserOne.hashCode());
@@ -363,6 +381,9 @@ public class CTEUserTester extends TestCase {
         try {
             defaultUser.setPosition(new TextPosition(10));
             assertEquals(new TextPosition(10), defaultUser.getPosition());
+
+            defaultUserWithName.setPosition(new TextPosition(10));
+            assertEquals(new TextPosition(10), defaultUserWithName.getPosition());
 
             defaultUser.setPosition(new TextPosition(20));
             assertEquals(new TextPosition(20), defaultUser.getPosition());

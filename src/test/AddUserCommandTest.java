@@ -7,8 +7,8 @@ import commands.AddUserCommand;
 import java.awt.Color;
 import java.net.InetAddress;
 
-public class AddUserCommandTest extends TestCase{
-  
+public class AddUserCommandTest extends TestCase {
+
   private DocumentController _docController;
   private CTEUser _firstUser;
   private CTEUser _secondUser;
@@ -22,12 +22,9 @@ public class AddUserCommandTest extends TestCase{
   private AddUserCommand _fourthCommand;
   private AddUserCommand _fifthCommand;
   private AddUserCommand _sixthCommand;
-  
-  public static void main(String[] args) {
-    
-  }
-  
-  protected void setUp ( ) {
+
+  @Override
+  public void setUp ( ) {
     _docController = new DocumentController();
     try {
       _firstUser = new CTEUser("firstUser", InetAddress.getLocalHost(), Color.BLACK);
@@ -43,40 +40,38 @@ public class AddUserCommandTest extends TestCase{
       _sixthUser = new CTEUser("sixthUser", InetAddress.getLocalHost(), Color.BLACK);
       _sixthCommand = new AddUserCommand(_sixthUser);
     }
-    catch (Exception e) { System.out.println(e.getMessage()); }
+    catch (Exception e) { fail(e.getMessage()); }
   }
-  
-  public void testAddUserExecute(){
-    try{
+
+  public void testAddUserExecute ( ) {
+    try {
       assertEquals(0, _docController.getUsers().size());
-      
+
       _firstCommand.execute(_docController);
       assertEquals(1, _docController.getUsers().size());
       assertTrue(_docController.getUsers().contains(_firstUser));
-      
+
       _secondCommand.execute(_docController);
       assertEquals(2, _docController.getUsers().size());
       assertTrue(_docController.getUsers().contains(_secondUser));
-      
+
       _thirdCommand.execute(_docController);
       assertEquals(3, _docController.getUsers().size());
       assertTrue(_docController.getUsers().contains(_thirdUser));
-      
+
       _fourthCommand.execute(_docController);
       assertEquals(4, _docController.getUsers().size());
       assertTrue(_docController.getUsers().contains(_fourthUser));
-      
+
       _fifthCommand.execute(_docController);
       assertEquals(5, _docController.getUsers().size());
       assertTrue(_docController.getUsers().contains(_fifthUser));
-      
+
       _sixthCommand.execute(_docController);
       assertEquals(6, _docController.getUsers().size());
       assertTrue(_docController.getUsers().contains(_sixthUser));
     }
-    catch (Exception e){
-      System.out.println(e.getMessage());
-    }
+    catch (Exception e) { fail(e.getMessage()); }
   }
-  
+
 }//End class AddUserCommandTest

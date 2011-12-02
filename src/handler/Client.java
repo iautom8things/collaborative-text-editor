@@ -68,6 +68,10 @@ public class Client extends Observable {
      */
     public CTEUser getUser ( ) { return _localUser; }
 
+    /**
+     * Return the DocumentKey.
+     */
+    public DocumentKey getDocumentKey ( ) { return _docKey; }
 
     /************
      * Commands *
