@@ -16,7 +16,7 @@ import junit.framework.*;
 public class CTEUserTester extends TestCase {
     /*
      * DEFAULTUSER's INSTANCE VARIABLES
-     * These are the what a default CTEUser's
+     * These are what a default CTEUser's
      * instance variables should equal.
      */
     //defaultUser._name = "Bob"
@@ -46,7 +46,7 @@ public class CTEUserTester extends TestCase {
     private static final Color uniqueUserTwo_COLOR = Color.white;
     //uniqueUserTwo._uniqueID = un1qu3us3rtw0
     private static final String uniqueUserTwo_ID = "un1qu3us3rtw0";
-    /*UNIQUEUSERTWO's INSTANCE VARIABLES*/
+    /*LIKEUSERS' INSTANCE VARIABLES*/
     //likeUserXXX._name = "Gob"
     private static final String likeUser_NAME = "Gob";
     //likeUserXXX._IPAddress = www.uno.edu
