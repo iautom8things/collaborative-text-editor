@@ -4,6 +4,7 @@ import java.lang.Comparable;
 import java.lang.ClassCastException;
 import java.awt.Color;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import handler.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -22,6 +23,28 @@ public class CTEUser implements Comparable, Serializable, Cloneable {
     private TextPosition _cursorPosition;
     private InetAddress _IPAddress;
     private String _uniqueID;
+
+    /**
+     * Default Constructor.
+     */
+    public CTEUser ( ) throws UnknownHostException {
+        _name = "DefaultUserName";
+        _cursorColor = Color.BLACK;
+        _cursorPosition= new TextPosition();
+        _IPAddress = InetAddress.getLocalHost();
+        _uniqueID = "" + System.nanoTime();
+    }
+
+    /**
+     * Create a new Use with just a name.
+     */
+    public CTEUser (String name) throws UnknownHostException {
+        _name = name;
+        _cursorColor = Color.BLACK;
+        _cursorPosition= new TextPosition();
+        _IPAddress = InetAddress.getLocalHost();
+        _uniqueID = "" + System.nanoTime();
+    }
 
     /**
      * Constructor for clone.
@@ -59,12 +82,12 @@ public class CTEUser implements Comparable, Serializable, Cloneable {
      * Set the color for this CTEUser.
      * @Requires
      * cursorColor != null
-     *  
+     *
      * @Ensures
-     * _cursorColor == cursorColor      
+     * _cursorColor == cursorColor
      */
     public void setCursorColor ( Color cursorColor ) { _cursorColor = cursorColor; }
-    
+
     /***********
      * Queries *
      ***********/
