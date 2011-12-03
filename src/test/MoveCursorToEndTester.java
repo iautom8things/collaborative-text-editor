@@ -17,24 +17,7 @@ public class MoveCursorToEndTester extends TestCase {
     private DocumentController _controller;
     private CTEUserManager _userManager = new CTEUserManager();
 
-    public static void main(String[] args) {
-        MoveCursorToEndTester test = new MoveCursorToEndTester();
-        test.setUp();
-        test.test0();
-        test.setUp();
-        test.test1();
-        test.setUp();
-        test.test2();
-        test.setUp();
-        test.test3();
-        test.setUp();
-        test.test4();
-        test.setUp();
-        test.test5();
-        test.setUp();
-        test.test6();
-    }
- 
+    @Override
     protected void setUp() {
         try{
             _document = new Document("hello");
@@ -50,12 +33,12 @@ public class MoveCursorToEndTester extends TestCase {
         catch(Exception e){e.printStackTrace();}
     }
     
+    //Set the position of _user0 to the specified int from the beginning.
     private void moveCursorThenTest(int position){
         try{
             //set the user position
             _user0.setPosition(new TextPosition(position));
             
-            //run the move cursor to end command
             MoveCursorToEnd command0 = new MoveCursorToEnd(_user0);
             command0.execute(_controller);
             assertEquals(_user0.getPosition().getPosition(), 5);
