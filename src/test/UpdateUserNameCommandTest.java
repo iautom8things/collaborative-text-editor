@@ -25,11 +25,11 @@ public class UpdateUserNameCommandTest extends TestCase {
     try {
       _firstUser = new CTEUser("firstUser", InetAddress.getLocalHost(), Color.BLACK);
       _addFirstUserCommand = new AddUserCommand(_firstUser);
-      _changeFirstUserCommand = new UpdateUserNameCommand(_firstUser, "firstUserChanged");
+      _changeFirstUserCommand = new UpdateUserNameCommand(_firstUser, "changedFirstUser");
       
       _secondUser = new CTEUser("secondUser", InetAddress.getLocalHost(), Color.BLACK);
       _addSecondUserCommand = new AddUserCommand(_secondUser);
-      _changeSecondUserCommand = new UpdateUserNameCommand(_secondUser, "secondUserChanged");
+      _changeSecondUserCommand = new UpdateUserNameCommand(_secondUser, "changedSecondUser");
     }
     catch (Exception e) { fail(e.getMessage()); }
   }
@@ -49,7 +49,9 @@ public class UpdateUserNameCommandTest extends TestCase {
       //Change first user's name and perform "appropriate" assertion(s)
       _changeFirstUserCommand.execute(_docController);
       assertEquals(1, _docController.getUsers().size());
-      assertEquals(userManager.getUser(_firstUser.getUniqueID()), _firstUser);
+      CTEUser changedFirstUser = userManager.getUser(_firstUser.getUniqueID());
+      assertEquals(changedFirstUser, _firstUser);  //referential equality
+      assertEquals("changedFirstUser", changedFirstUser.getName());  //state equality
       
       //Add second user
       _addSecondUserCommand.execute(_docController);
@@ -59,7 +61,9 @@ public class UpdateUserNameCommandTest extends TestCase {
       //Change second user's name and perform "appropriate" assertion(s)
       _changeSecondUserCommand.execute(_docController);
       assertEquals(2, _docController.getUsers().size());
-      assertEquals(userManager.getUser(_secondUser.getUniqueID()), _secondUser);
+      CTEUser changedSecondUser = userManager.getUser(_secondUser.getUniqueID());
+      assertEquals(changedSecondUser, _secondUser);  //referential equality
+      assertEquals("changedSecondUser", changedSecondUser.getName());  //state equality
     }
     catch (Exception e) { fail(e.getMessage()); }
   }//End testUpdateUserNameExecute()
