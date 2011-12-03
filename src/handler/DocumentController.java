@@ -22,14 +22,27 @@ public class DocumentController implements Serializable, Cloneable {
     private volatile Document _document;
 
     /**
-     * Constructs a DocumentController.
+     * DEFAULT CONSTRUCTOR
+     * Constructs a DocumentController with default variable values.
+     * @Ensures  
+     *  this.getDocument().equals(new Document())
+     *  && this.getUserManager().equals(new CTEUserManager())
      */
     public DocumentController ( ) {
         _document = new Document();
         _userManager = new CTEUserManager();
 
     }
-
+    
+    /* 
+     * Constructs a DocumentController with the given
+     * CTEUSerManager and Document variables. 
+     * @Requires
+     *  given.manager && given.doc != null
+     * @Ensures
+     *  this.getDocument().equals(manager)
+     *  && this.getUserManager().equals(doc)
+     */
     public DocumentController (CTEUserManager manager, Document doc ) {
         _document = doc;
         _userManager = manager;
@@ -37,16 +50,24 @@ public class DocumentController implements Serializable, Cloneable {
 
     /**
      * Set the Document.
+     * @Requires
+     *  given.document != null
+     * @Ensures
+     *  this.new.getDocument().equals(document)
      */
     public void setDocument (Document document ) { _document = document; }
 
     /**
      * Get the Document.
+     * @Ensures
+     *  returns this._document
      */
     public Document getDocument ( ) { return _document; }
 
     /**
      * Get the UserManager.
+     * @Ensures
+     *  returns this._userManager
      */
     public CTEUserManager getUserManager ( ) { return _userManager; }
 
@@ -68,6 +89,12 @@ public class DocumentController implements Serializable, Cloneable {
         command.execute(this);
     }
 
+    /*
+     * Returns a Collection of CTEUsers currently 
+     * being processed by this._userManager.
+     * @Ensures
+     *  returns this._userManager.getUsers()
+     */
     public Collection<CTEUser> getUsers ( ) { return _userManager.getUsers(); }
 
     private void writeObject ( ObjectOutputStream out ) throws IOException {
