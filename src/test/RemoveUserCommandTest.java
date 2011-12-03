@@ -3,10 +3,7 @@ package test;
 import junit.framework.TestCase;
 import handler.DocumentController;
 import user.CTEUser;
-<<<<<<< HEAD
 import user.UserNotFoundException;
-=======
->>>>>>> 50182a8a48aa89adbb10d2877844c665d7e6fbaa
 import commands.*;  //AddUserCommand and RemoveUserCommand
 import java.awt.Color;
 import java.net.InetAddress;
@@ -32,13 +29,9 @@ public class RemoveUserCommandTest extends TestCase{
   private RemoveUserCommand _removeFourth;
   private RemoveUserCommand _removeFifth;
   private RemoveUserCommand _removeSixth;
-<<<<<<< HEAD
   private RemoveUserCommand _removeNonExistent;
   
   @Override
-=======
-  
->>>>>>> 50182a8a48aa89adbb10d2877844c665d7e6fbaa
   protected void setUp ( ) {
     _docController = new DocumentController();
     try {
@@ -60,10 +53,7 @@ public class RemoveUserCommandTest extends TestCase{
       _sixthUser = new CTEUser("sixthUser", InetAddress.getLocalHost(), Color.BLACK);
       _addSixth = new AddUserCommand(_sixthUser);
       _removeSixth = new RemoveUserCommand(_sixthUser);
-<<<<<<< HEAD
       _removeNonExistent = new RemoveUserCommand(new CTEUser("nonExistent", InetAddress.getLocalHost(), Color.BLACK));
-=======
->>>>>>> 50182a8a48aa89adbb10d2877844c665d7e6fbaa
     }
     catch (Exception e) { System.out.println(e.getMessage()); }
   }
@@ -121,11 +111,8 @@ public class RemoveUserCommandTest extends TestCase{
       _removeSixth.execute(_docController);
       assertEquals(0, _docController.getUsers().size());
       assertFalse(_docController.getUsers().contains(_sixthUser));
-<<<<<<< HEAD
-      
+
       //Test ideas: Remove a non-existent user / Remove from an empty CTEUserManager
-=======
->>>>>>> 50182a8a48aa89adbb10d2877844c665d7e6fbaa
     }
     catch (Exception e){fail(e.getMessage());}
   }//End testUserRemoveExecute()
