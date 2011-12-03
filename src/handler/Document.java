@@ -16,21 +16,33 @@ public class Document implements Serializable, Cloneable {
 
     /**
      * Create an empty SharedDocuemnt.
+     * @Ensures
+     *  this.contents() == ""
+     *  this.getLength() == 0
      */
     public Document ( ) { _buffer = new StringBuffer(); }
 
     /**
      * Create a new SharedDocument with the given string.
+     * @Require
+     *  given.string != null
+     * @Ensures
+     *  this.contents().equals(given.string)
+     *  this.getLength().equals(given.string.length())
      */
     public Document ( String str ) { _buffer = new StringBuffer(str); }
 
     /**
      * Return the length of the Document.
+     * @Ensures
+     *  returns this._buffer.length()
      */
     public synchronized int getLength ( ) { return _buffer.length(); }
 
     /**
      * Get a TextPosition representing the end of the Document.
+     * @Ensures
+     *  returns a new Textposition made with this._buffer.length()
      */
     public synchronized TextPosition getLastPosition ( ) throws OutOfBoundsException { return new TextPosition(_buffer.length()); }    
 
@@ -87,6 +99,8 @@ public class Document implements Serializable, Cloneable {
 
     /**
      * Return the contents of the Document's StringBuffer.
+     * @Ensures
+     *  returns this._buffer.toString()
      */
     public synchronized String contents ( ) { return _buffer.toString(); }
 

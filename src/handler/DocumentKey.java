@@ -13,6 +13,19 @@ public class DocumentKey implements Serializable, Cloneable {
 
     private String _documentName; //Name of the Document
     private String _pass; //Password to connect to the Document
+    
+    /*
+     * DEFAULT CONSTRUCTOR
+     * Will create a new DocumentKey with default variable values.
+     * @Ensures
+     *  this.getName() == "default_document"
+     *  this.getPass() == "default_password"
+     */
+    public DocumentKey () {
+      this._documentName = "deafult_document";
+      this._pass = "default_password";
+    }
+    
     /*
      * Create a new DocumentKey.
      *  @Requires
@@ -27,13 +40,20 @@ public class DocumentKey implements Serializable, Cloneable {
         _pass = pass;
     }
 
+    /*
+     * Will return the name of the document of this key.
+     * @Ensures
+     *  returns this._documentName
+     */
     public String getName ( ) { return _documentName; }
 
+    /*
+     * Will return this key's password.
+     * @Ensures
+     *  returns this._pass
+     */
     public String getPass ( ) { return _pass; }
 
-    /*
-     *
-     */
     private void writeObject ( ObjectOutputStream out ) throws IOException {
         ObjectOutputStream.PutField fields = out.putFields();
         fields.put("_documentName", _documentName);

@@ -17,9 +17,9 @@ public class DocumentKeyTester extends TestCase {
      * instance variables should equal.
      */
     //defaultDocKey._documentName = "default.txt"
-    private static final String defaultDocKey_DOCNAME = "default.txt";
+    private static final String defaultDocKey_DOCNAME = "default_document";
     //defaultDocKey._pass = "default"
-    private static final String defaultDocKey_PASS = "default";
+    private static final String defaultDocKey_PASS = "default_password";
 
     /*UNIQUEDOCKEYONE's INSTANCE VARIABLES*/
     //uniqueDocKeyOne._documentName = "grades.txt"
@@ -55,11 +55,8 @@ public class DocumentKeyTester extends TestCase {
     @Override
     public void setUp ( ) {
         //uses the default constructor to initialize
-        //defaultDocKey = new DocumentKey();
-        //NOTE: default constructor not written yet
-        //until written, use this initialization:
-        defaultDocKey = new DocumentKey(defaultDocKey_DOCNAME,
-                                        defaultDocKey_PASS);
+        defaultDocKey = new DocumentKey();
+       
         //uses the uniqueDocKeyOne static variables
         uniqueDocKeyOne = new DocumentKey(uniqueDocKeyOne_DOCNAME,
                                         uniqueDocKeyOne_PASS);
@@ -230,11 +227,12 @@ public class DocumentKeyTester extends TestCase {
      */
     public void testEquals ( ) {
         //test default user equals
-        //assertTrue(defaultDocKey.equals(new DocumentKey());
-        //NOTE: default constructor not initialized
-        //Until written, use this assert:
+        assertTrue(defaultDocKey.equals(new DocumentKey()));
+        
+        //test default user values with a new document of equal values
         assertTrue(defaultDocKey.equals(new DocumentKey(defaultDocKey_DOCNAME,
                 defaultDocKey_PASS)));
+        
         //test unique document key equals
         //test for equality with self
         assertTrue(uniqueDocKeyOne.equals(uniqueDocKeyOne));
