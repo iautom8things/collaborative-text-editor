@@ -153,6 +153,29 @@ public class Client extends Observable {
         }
     }
 
+    public void initiateCollaboration ( String serverURL ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException, NotBoundException, MalformedURLException, RemoteException {
+        _isCollaborating = true;
+        if (DEBUG) { System.out.println("initiateCollaboration called"); }
+        _commServerThread.start();
+        _serverCommandListener = (ServerCommandListenerInterface) Naming.lookup("rmi://" + serverURL + "/CommandListener");
+        _serverCommandListener.initializeClient(_localUser, _pid);
+        boolean initSuccessful = _serverCommandListener.initializeDocument(_docKey, _controller);
+
+        if (initSuccessful) {
+            if (DEBUG) { System.out.println("Successfully initialized a new document on the server."); }
+        }
+        else {
+            if (DEBUG) { System.out.println("Document already initialized; Attempted to join document in-progress."); }
+            if (DEBUG) { System.out.println(_controller); }
+            _controller = _serverCommandListener.joinDocument(_localUser, _docKey);
+            if (DEBUG) { System.out.println(_controller); }
+            //_serverCommandListener.registerClient(_localUser, _docKey, _pid);
+            AddUserCommand addUser = new AddUserCommand(_localUser);
+            _executeCommand(addUser);
+            passCommand(addUser);
+        }
+
+    }
     /**
      * Sets the DocumentKey.
      */
