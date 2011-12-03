@@ -126,9 +126,11 @@ public class CTEUser implements Comparable, Serializable, Cloneable {
     /**
      * Set the position of this User.
      * @Requires
-     *      Tex)Position != null
+     *      TextPosition != null
      */
-    public void setPosition ( TextPosition position ) throws OutOfBoundsException { _cursorPosition = position; }
+    public void setPosition ( TextPosition position ) throws OutOfBoundsException {
+        _cursorPosition = position;
+    }
 
     /**
      * Set the name of this User.

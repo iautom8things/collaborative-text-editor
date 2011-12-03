@@ -12,6 +12,7 @@ import java.lang.CloneNotSupportedException;
 public class Document implements Serializable, Cloneable {
 
     private volatile StringBuffer _buffer;
+    private static final boolean DEBUG = true;
 
     /**
      * Create an empty SharedDocuemnt.
@@ -31,7 +32,7 @@ public class Document implements Serializable, Cloneable {
     /**
      * Get a TextPosition representing the end of the Document.
      */
-    public synchronized TextPosition getLastPosition ( ) throws OutOfBoundsException { return new TextPosition(_buffer.length()); }
+    public synchronized TextPosition getLastPosition ( ) throws OutOfBoundsException { return new TextPosition(_buffer.length()); }    
 
     /**
      * Given a writer and a string, insert the string at the writer's

@@ -15,14 +15,14 @@ import java.util.Observer;
 import java.util.Observable;
 import commands.*;
 import handler.*;
+import java.awt.Rectangle;
 import user.*;
 import java.rmi.RemoteException;
+import javax.swing.text.BadLocationException;
 import debug.Debug;
 
 public class EditorGUI implements Observer {
 
-    
-    
     JTextPane _textPane;
     JFrame _frame;
     protected Client _client;
@@ -30,7 +30,7 @@ public class EditorGUI implements Observer {
     private static final boolean DEBUG = Debug.VERBOSE;
     private MultiCaret _caret;
 
-    public EditorGUI(Client client){
+    public EditorGUI(Client client) {
         _client = client;
         //Create a new MultiCaret that is capable of having many positions
         _caret = new MultiCaret(_client.getController().getUserManager());
@@ -47,14 +47,14 @@ public class EditorGUI implements Observer {
             _textPane.setText(docTextString);
         }
     }
-    
+
     /*
      * Launch the GUI.
      */
     public void launch ( ) {
         /*
         javax.swing.SwingUtilities.invokeLater(new Runnable ( ) {
-            public void run ( ) { createAndShow(); }
+        public void run ( ) { createAndShow(); }
         });
          */
         createAndShow();
@@ -72,8 +72,8 @@ public class EditorGUI implements Observer {
         //Add the text area
         _textPane = new JTextPane();
         _textPane.setCaret(_caret);
-        
-       
+
+
         JScrollPane scrollPane = new JScrollPane(_textPane);
         _textPane.setEditable(false); // This might end up being set so we can manually keep track of what is displayed
         _caret.setVisible(true);
@@ -87,7 +87,7 @@ public class EditorGUI implements Observer {
     }
 
     //Creates and returns a JMenuBar with the appropriate JMenu items
-    private JMenuBar createMenuBar(){
+    private JMenuBar createMenuBar() {
         JMenuBar result = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
 
@@ -165,7 +165,7 @@ public class EditorGUI implements Observer {
             //Setup FileChooser
             JFileChooser chooser = new JFileChooser();
             int returnVal = chooser.showOpenDialog(_frame);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File f = chooser.getSelectedFile();
                 try {
                     FileInputStream stream = new FileInputStream(f);
@@ -192,7 +192,7 @@ public class EditorGUI implements Observer {
         public void actionPerformed ( ActionEvent e) {
             JFileChooser _fileChooser = new JFileChooser();
             int returnVal = _fileChooser.showSaveDialog(_frame);
-            if (returnVal == JFileChooser.APPROVE_OPTION){
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
                 try {
                     File f = _fileChooser.getSelectedFile();
                     Writer out = new OutputStreamWriter(new FileOutputStream(f));
@@ -221,9 +221,25 @@ public class EditorGUI implements Observer {
     /**************************************/
     private class KeystrokeListener implements KeyListener {
 
+        public int getLineNumber(JTextPane component, int pos) {
+            int posLine;
+            int y = 0;
+
+            try {
+                Rectangle caretCoords = component.modelToView(pos);
+                y = (int) caretCoords.getY();
+            } catch (BadLocationException ex) {
+            }
+
+            int lineHeight = component.getFontMetrics(component.getFont()).getHeight();
+            posLine = (y / lineHeight) + 1;
+            return posLine;
+        }
+
         public void keyPressed(KeyEvent e) {
             //TODO: implement up and down
             try {
+                System.out.println(_textPane.getCaret().getDot());
                 Command command = null;
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
@@ -232,10 +248,31 @@ public class EditorGUI implements Observer {
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                     if (DEBUG) { System.out.println("***DOWN KEY PRESSED. Not Implemented yet."); }                    
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    command = new MoveCursorPositionCommand(user, -1);
-                    _client.passCommand(command);
+                    try {
+                        command = new MoveCursorPositionCommand(user, -1);
+                        _client.passCommand(command);
+                    } catch (OutOfBoundsException oobe) {
+                        command = new MoveCursorToHome(user);
+                        _client.passCommand(command);
+                    }
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    command = new MoveCursorPositionCommand(user, 1);
+                    try {
+                        command = new MoveCursorPositionCommand(user, 1);
+                        _client.passCommand(command);
+                    } catch (OutOfBoundsException oobe) {
+                        //Do Nothing because already at the end of the Document
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_HOME) {
+                    if (DEBUG) {
+                        System.out.println("***HOME KEY PRESSED");
+                    }
+                    command = new MoveCursorToHome(user);
+                    _client.passCommand(command);
+                } else if (e.getKeyCode() == KeyEvent.VK_END) {
+                    if (DEBUG) {
+                        System.out.println("***END KEY PRESSED");
+                    }
+                    command = new MoveCursorToEnd(user);
                     _client.passCommand(command);
                 }
                 tp = (TextPosition) user.getPosition().clone();
@@ -256,19 +293,33 @@ public class EditorGUI implements Observer {
                 Command command;
                 CTEUser user = _client.getUser();
                 TextPosition tp = (TextPosition) user.getPosition().clone();
-                if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) { command = new InsertTextCommand(user, Character.toString(e.getKeyChar())); }
+                //Character Key Typed
+                if (e.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
+                    command = new InsertTextCommand(user, Character.toString(e.getKeyChar()));
+                    _client.passCommand(command);
+                } //Backspace Key Typed
                 else {
-                    tp.decrement();
-                    command = new RemoveTextCommand(user, tp);
+                    try {
+                        tp.decrement();
+                        command = new RemoveTextCommand(user, tp);
+                        if (DEBUG) {
+                            System.out.println("Remove Text Command remove to: " + tp.getPosition());
+                        }
+                        _client.passCommand(command);
+                    } catch (OutOfBoundsException oobe) {
+                        //Do nothing because already at the beginning of the Document
+                    }
                 }
-                _client.passCommand(command);
-            }
-            catch (UserNotFoundException iue) { iue.printStackTrace(); }
-            catch (InvalidUserIDException iuide) { iuide.printStackTrace(); }
-            catch (OutOfBoundsException oobe) { oobe.printStackTrace(); }
-            catch (Exception ex) { ex.printStackTrace(); }
-        }//End keyTyped()
-        
-    }//End KeystrokeListener
 
+            } catch (UserNotFoundException iue) {
+                iue.printStackTrace();
+            } catch (InvalidUserIDException iuide) {
+                iuide.printStackTrace();
+            } catch (OutOfBoundsException oobe) {
+                oobe.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }//End keyTyped()
+    }//End KeystrokeListener
 }//End EditorGUI
