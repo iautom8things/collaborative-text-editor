@@ -1,8 +1,6 @@
 package handler;
-import user.*;
+
 import java.io.Serializable;
-import java.lang.Cloneable;
-import java.lang.CloneNotSupportedException;
 
 /**
  * The model of a Text Document.

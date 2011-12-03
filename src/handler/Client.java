@@ -3,13 +3,14 @@ package handler;
 import commands.*;
 import server.*;
 import java.util.Observable;
-import java.awt.event.KeyEvent;
 import java.rmi.*;
 import user.*;
-import network.*;
 import java.net.*;
 import debug.Debug;
 
+/*
+ * The model of a Client.
+ */
 public class Client extends Observable {
 
     private static final boolean DEBUG = Debug.VERBOSE;
@@ -77,7 +78,11 @@ public class Client extends Observable {
      * Commands *
      ***********/
 
-
+    /*
+     * Change the name of the Client.
+     *  @Ensures
+     *      this.getName() == name
+     */
     public void changeClientName ( String name ) throws OutOfBoundsException, UserNotFoundException, RemoteException, InvalidUserIDException {
         passCommand(new UpdateUserNameCommand(_localUser, name));
         _localUser.setName(name);
@@ -86,9 +91,9 @@ public class Client extends Observable {
     /**
      * Creates a new Document with the given String.
      *
-     * Requires:
+     *  @Requires:
      *      text != null
-     * Ensures:
+     *  @Ensures:
      *      this.toString() == text
      */
     public void setDocument ( String text ) {
@@ -101,26 +106,35 @@ public class Client extends Observable {
 
     /**
      * Given a command if this Client IS NOT collaborating, execute it on this._controller,
-     *                  if this Client IS collaborating, wrap it with a
-     *                  NetworkCommand and Forward it to the Server.
-     *
+     * if this Client IS collaborating, wrap it with a NetworkCommand and Forward it to the Server.
+     *  @Requires
+     *      command != null
+     *  @Ensures
+     *      command is forwarded to the appropriate place
+     *      if (_isCollaborated) command is sent to Server
+     *      else command is sent to local DocumentController
      */
     public void passCommand ( Command command ) throws RemoteException, InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         if (DEBUG) { System.out.println("passCommand called"); }
+
+        //If in collaboration mode, wrap the command as a NetworkCommand and
+        //forward it to the server
         if (_isCollaborating) { _wrapAndForward(command); }
         else {
+            //send the command to the local DocumentController
             _controller.executeCommand(command);
 
-            //since command execution was successful, update everyone's text pane
+            //since command execution was successful, update text panes
             notifyDocumentGotUpdated();
         }
     }
 
     /**
      * Given the Network Command, execute it.
+     *  @Requires
+     *      netCommand != null
      */
     public void executeNetworkCommand ( NetworkCommand netCommand ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
-        // TODO Actually execute the command and notify the GUI
         if (DEBUG) { System.out.println("executeNetworkCommand called with Command: " + netCommand); }
 
         Command command = netCommand.getCommand();
@@ -185,6 +199,9 @@ public class Client extends Observable {
         _serverCommandListener.execute(netCommand);
     }
 
+    /*
+     * Execute the given Command.
+     */
     private void _executeCommand ( Command command ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         if (DEBUG) { System.out.println("_executeCommand called"); }
 
