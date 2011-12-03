@@ -2,19 +2,14 @@ package handler;
 
 import commands.*;
 import user.*;
-import java.net.*;
 import java.util.Collection;
 import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
-import java.lang.Cloneable;
-import java.lang.CloneNotSupportedException;
 
 /**
  * Controller for the Document Model.
- *
- * @author Manuel
  */
 public class DocumentController implements Serializable, Cloneable {
 
@@ -23,6 +18,9 @@ public class DocumentController implements Serializable, Cloneable {
 
     /**
      * Constructs a DocumentController.
+     *  @Ensures
+     *      this.getDocument().getContents == ""
+     *      this.getUserManager().getNumberOfUsers == 0
      */
     public DocumentController ( ) {
         _document = new Document();
@@ -30,6 +28,13 @@ public class DocumentController implements Serializable, Cloneable {
 
     }
 
+    /*
+     * Constructs a DocumentController with the specified CTEUserManager and
+     * Document. 
+     *  @Ensures
+     *      this.getDocument() = doc
+     *      this.getUserManager() = manager
+     */
     public DocumentController (CTEUserManager manager, Document doc ) {
         _document = doc;
         _userManager = manager;
@@ -37,6 +42,10 @@ public class DocumentController implements Serializable, Cloneable {
 
     /**
      * Set the Document.
+     *  @Requires
+     *      document != null
+     *  @Ensures
+     *      this.getDocument() = document
      */
     public void setDocument (Document document ) { _document = document; }
 
