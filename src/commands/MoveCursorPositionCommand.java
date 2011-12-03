@@ -39,26 +39,57 @@ public class MoveCursorPositionCommand implements Command, Serializable, Cloneab
      */
     public void execute ( DocumentController controller ) throws InvalidUserIDException, UserNotFoundException, OutOfBoundsException {
         CTEUserManager userManager = controller.getUserManager();
-        Document doc = controller.getDocument();
-        TextPosition currentPosition = _user.getPosition();
+        TextPosition lastPosition = controller.getDocument().getLastPosition();
+        print("**last position: " + lastPosition);
+        
+        
+        //Moving forward
         if (Integer.parseInt(_offset) > 0){
+            TextPosition currentPosition = _user.getPosition();
+            print("**currentPosition: " + currentPosition);
+            print("***offset: " + _offset);
+            System.out.println("compare: " + lastPosition.compareTo(currentPosition));
+            if(Integer.parseInt(_offset) > lastPosition.compareTo(currentPosition)) {
+                print("trying to go beyond end of document");
+                throw new OutOfBoundsException("Position is beyond end of document.");
+            }
             print("Executing command right arrow with " + _offset);
             userManager.getUser(_user.getUniqueID()).getPosition().incrementBy(Integer.parseInt(_offset));
         }
+        
+        
+        
+        
+        
+        //Moving backward
         else if (Integer.parseInt(_offset) < 0){
             print("Executing command left arrow with " + _offset);
             userManager.getUser(_user.getUniqueID()).getPosition().decrementBy(Math.abs(Integer.parseInt(_offset)));
-            print("Executing command right arrow with " + _offset);
         }
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * For serialization of this Command.
      */
     private void writeObject ( ObjectOutputStream out ) throws IOException {
         ObjectOutputStream.PutField fields = out.putFields();
         fields.put("_user", _user);
-        //fields.put("_offset", new Integer(_offset).toString());
         fields.put("_offset", _offset);
         out.writeFields();
     }
