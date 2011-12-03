@@ -3,6 +3,7 @@ package test;
 import junit.framework.TestCase;
 import handler.DocumentController;
 import user.CTEUser;
+import user.UserNotFoundException;
 import commands.*;  //AddUserCommand and RemoveUserCommand
 import java.awt.Color;
 import java.net.InetAddress;
@@ -28,7 +29,9 @@ public class RemoveUserCommandTest extends TestCase{
   private RemoveUserCommand _removeFourth;
   private RemoveUserCommand _removeFifth;
   private RemoveUserCommand _removeSixth;
+  private RemoveUserCommand _removeNonExistent;
   
+  @Override
   protected void setUp ( ) {
     _docController = new DocumentController();
     try {
@@ -50,6 +53,7 @@ public class RemoveUserCommandTest extends TestCase{
       _sixthUser = new CTEUser("sixthUser", InetAddress.getLocalHost(), Color.BLACK);
       _addSixth = new AddUserCommand(_sixthUser);
       _removeSixth = new RemoveUserCommand(_sixthUser);
+      _removeNonExistent = new RemoveUserCommand(new CTEUser("nonExistent", InetAddress.getLocalHost(), Color.BLACK));
     }
     catch (Exception e) { System.out.println(e.getMessage()); }
   }
@@ -107,6 +111,8 @@ public class RemoveUserCommandTest extends TestCase{
       _removeSixth.execute(_docController);
       assertEquals(0, _docController.getUsers().size());
       assertFalse(_docController.getUsers().contains(_sixthUser));
+      
+      //Test ideas: Remove a non-existent user / Remove from an empty CTEUserManager
     }
     catch (Exception e){fail(e.getMessage());}
   }//End testUserRemoveExecute()
