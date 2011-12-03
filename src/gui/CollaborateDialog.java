@@ -55,23 +55,26 @@ public class CollaborateDialog extends JDialog {
     _frame.add(component, _gridBagConstraints);
   }
   
-  public void clearTextFields ( ) {
-    _documentPasswordField.setText("");
-    _confirmDocumentPasswordField.setText("");
-    _documentNameField.setText("");
-    _serverURLField.setText("");
-    _serverPortField.setText("");
-  }
-  
+  /*
+   * Show the dialog.
+   */
   public void showDialog ( ) { _frame.setVisible(true); }
   
+  /*
+   * Hide the dialog.
+   */
   public void hideDialog ( ) { _frame.setVisible(false); }
   
+  /*
+   * Print the message for debug purposes.
+   */
   private void print ( String message ) { if (DEBUG) { System.out.println(message); } }
   
   /*
    * Make sure that the password and the confirm password are the same.
-   *
+   *    @Ensures
+   *        if confirmPassword and password are same, returns ""
+   *        if not the same, returns an error message
    */
   private String validatePassword ( ) {
     String errorMessage = "";
@@ -86,6 +89,10 @@ public class CollaborateDialog extends JDialog {
     return errorMessage;
   }
   
+  /*
+   * Make sure that all text fields have appropriate content to send to the server.
+   * If not, append an error message about why not appropriate.
+   */
   private String validateComponents ( ) {
     String errorMessage = "";
     errorMessage = errorMessage + validateTextComponent("Server URL", _serverURLField);
@@ -97,6 +104,10 @@ public class CollaborateDialog extends JDialog {
     return errorMessage;
   }
   
+  /*
+   * Validate the testField. Returns "" if textField is valid. If not valid, returns 
+   * errorMessage.
+   */
   private String validateTextComponent ( String fieldName, JTextField textField ) {
     String componentText = textField.getText();
     String result;
@@ -107,13 +118,19 @@ public class CollaborateDialog extends JDialog {
     return result;
   }
   
+  /*
+   * Display a popup window with the errorMessage
+   */
   private void popUpMessage ( String message ) {
     JOptionPane.showMessageDialog(new JFrame(), message, "Error", JOptionPane.ERROR_MESSAGE);
   }
   
+  /*
+   * Create a Dialog to get input from the user.
+   */
   public CollaborateDialog ( Frame parent, Client model ) {
     _client = model;
-    _mode = SHARE_NEW;
+    _mode = SHARE_NEW; //Default mode is to host a new document to server
     _frame = new JFrame("Collaborate");
     _gridBagConstraints = new GridBagConstraints();
     _gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
@@ -173,19 +190,28 @@ public class CollaborateDialog extends JDialog {
     _frame.setSize(600, 300);
     //_frame.setVisible(true);
     
+    //When OK button is pressed, attempt a connection with server
     _okButton.addActionListener(new ActionListener ( ) {
       public void actionPerformed(ActionEvent e) {
         String errorMessage = validateComponents();
         if (errorMessage.length() > 0) { popUpMessage(errorMessage); }
         else {
           try {
-            _client.changeClientName(_userIDField.getText());
+            _client.changeClientName(_userIDField.getText()); //Change the user name
             _client.setDocumentKey(new DocumentKey(_documentNameField.getText(),new String(_documentPasswordField.getPassword())));
             _client.initiateCollaboration();
           }
           catch (Exception ex) { ex.printStackTrace(); }
           hideDialog();
         }
+      }
+    });
+    
+
+    //Hide the dialog when the cancel button is pressed
+    _cancelButton.addActionListener(new ActionListener ( ) {
+      public void actionPerformed(ActionEvent e) {
+          hideDialog();
       }
     });
     
