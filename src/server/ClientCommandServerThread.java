@@ -30,6 +30,7 @@ public class ClientCommandServerThread extends Thread {
 
     public void run ( ) {
         if (DEBUG) { System.out.println("thread.run called."); }
+        if (System.getSecurityManager() == null) {System.setSecurityManager(new SecurityManager());}
         try {
             // Set up the local Command Listener for the client
             ClientCommandListener cCommListener = new ClientCommandListener(_client);
