@@ -6,7 +6,6 @@ import java.util.Observable;
 import java.awt.event.KeyEvent;
 import java.rmi.*;
 import user.*;
-import network.*;
 import java.net.*;
 import debug.Debug;
 
