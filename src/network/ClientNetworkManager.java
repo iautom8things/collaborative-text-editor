@@ -18,6 +18,17 @@ public class ClientNetworkManager {
     private BufferedReader _input; //listener for messages from the client
     private ObjectOutputStream _output;
 
+    /*
+     * DEFAULT CONSTRUCTOR
+     * Will create a new instance of this ClientNetworkManager
+     * with default variable values.
+     * @Ensures
+     *  this._host == InectAddress.getLocalHost()
+     *  this._port == 1234
+     *  this._socket == null
+     *  this._input == null
+     *  this._output == null
+     */
     public ClientNetworkManager ( ) {
         try {
             _host = InetAddress.getLocalHost();
@@ -33,6 +44,17 @@ public class ClientNetworkManager {
         }
     }
 
+    /*
+     * Will connect this ClientNetworkManager to a socket,
+     * input and output stream system.
+     * @Ensure
+     * the socket established with connection to the host on a particular port
+     *  this._socket.equals(this._host,this._port)
+     * an input stream from the socket is established 
+     *  this._input.equals(new BufferedReader(new InputStringReader(_socket.getInputStream())))
+     * an output stream to the socket is established
+     *  this._output.equals(new ObjectOutputStream(_socket.getOutputStream()))
+     */
     public void connect ( ) {
         try {
             _socket = new Socket(_host, _port);
@@ -50,6 +72,9 @@ public class ClientNetworkManager {
         }
     }
 
+    /*
+     * Will send the given command through the output stream.
+     */
     public void sendCommandToServer ( NetworkCommand networkCommand ) {
         try {
             _output.writeObject(networkCommand);
