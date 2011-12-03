@@ -18,6 +18,8 @@ public class CTEUserManager implements Serializable, Cloneable {
 
     /**
      * Create the CTEUserManager.
+     *  @Ensures
+     *      this.getNumberOfUsers() == 0
      */
     public CTEUserManager ( ) { _users = new ConcurrentHashMap<String, CTEUser>(); }
 
@@ -58,11 +60,11 @@ public class CTEUserManager implements Serializable, Cloneable {
      * to that size - according to ColorList - and set the CTEUser's color
      * to that
      *
-     * Requires:
+     * @Requires
      *      userID != null
      *      userID is unique - not contained in _users already
      *      IPAddress != null
-     * Ensures:
+     * @Ensures
      *      user will be added
      *      user.getCursorColor == ColorList.getColor(_users.size())
      */
@@ -75,21 +77,32 @@ public class CTEUserManager implements Serializable, Cloneable {
     /**
      * Remove the user with the specified userID from the collection.
      *
-     * Requires:
+     * @Requires
      *      the user is contained in this CTEUserManager
-     * Ensures:
-     *      the user is not conatined in this CTEUserManager
+     * @Ensures
+     *      the user is not contained in this CTEUserManager
      */
     public synchronized void removeUser ( CTEUser user ) throws UserNotFoundException {
         if (_users.containsKey(user.getUniqueID())) { _users.remove(user.getUniqueID()); }
         else { throw new UserNotFoundException(user.getName()); }
     }
 
+    /*
+     * Returns the CTEUser with specified userID.
+     */
     public synchronized CTEUser getUser( String userID ) throws UserNotFoundException {
         if (_users.containsKey(userID)) { return _users.get(userID); }
         else { throw new UserNotFoundException(userID); }
     }
 
+    /*
+     * Set the position of the CTEuser to the specified TextPosition.
+     *  @Requires
+     *      user != null
+     *      pos != null
+     *  @Ensures
+     *      user.getPosition().getPosition() == pos.getPosition()
+     */
     public synchronized void setCursorForUser ( CTEUser user, TextPosition pos ) throws OutOfBoundsException, UserNotFoundException {
         getUser(user.getUniqueID()).setPosition(pos);
     }
@@ -140,6 +153,11 @@ public class CTEUserManager implements Serializable, Cloneable {
 
     /**
      * Change a User's name.
+     *  @Requires
+     *      user != null
+     *      name != null
+     *  @Ensures
+     *      user.getName() == name
      */
     public synchronized void setUserName ( CTEUser user, String name ) throws InvalidUserIDException, UserNotFoundException {
         String key = user.getUniqueID();
