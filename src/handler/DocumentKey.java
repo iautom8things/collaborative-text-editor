@@ -13,7 +13,7 @@ public class DocumentKey implements Serializable, Cloneable {
 
     private String _documentName; //Name of the Document
     private String _pass; //Password to connect to the Document
-    
+
     /*
      * DEFAULT CONSTRUCTOR
      * Will create a new DocumentKey with default variable values.
@@ -22,10 +22,10 @@ public class DocumentKey implements Serializable, Cloneable {
      *  this.getPass() == "default_password"
      */
     public DocumentKey () {
-      this._documentName = "deafult_document";
+      this._documentName = "default_document";
       this._pass = "default_password";
     }
-    
+
     /*
      * Create a new DocumentKey.
      *  @Requires

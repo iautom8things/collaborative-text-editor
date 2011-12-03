@@ -10,7 +10,7 @@ import static java.lang.System.out;
  * A Collaborative Text Editor Application.
  */
 public class CTEApplication {
-    
+
     /*
      * Run the application. Create a Client. Create a GUI, which will observe the Client.
      */
@@ -19,6 +19,6 @@ public class CTEApplication {
         EditorGUI gui = new EditorGUI( _client );
         _client.addObserver( gui );
         gui.launch();
-    }        
-    
+    }
+
 }

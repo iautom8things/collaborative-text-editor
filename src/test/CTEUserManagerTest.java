@@ -177,9 +177,7 @@ public class CTEUserManagerTest extends TestCase {
             TextPosition front = new TextPosition(22);
             TextPosition back = new TextPosition(42);
 
-            System.out.println( "" + _userManager + " >>> " + _userManager.getNumberOfUsers());
             _userManager.updateBetween(front, back);
-            System.out.println(_userManager);
 
             assertEquals(new TextPosition(21), manuel.getPosition());
             assertEquals(new TextPosition(22), pedro.getPosition());
